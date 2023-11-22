@@ -1,56 +1,98 @@
 import 'package:flutter/material.dart';
+import 'background.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
 
   @override
   State<LoginPage> createState() {
     return _LoginPageState();
   }
-}
 
-class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   void _handleLogin() {
-    // Add your authentication logic here
+    // authentication logic
   }
+
+  void _handleSignUp() {
+    // navigation logic
+  }
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('MYM-Raktaveer'),
-        backgroundColor: Colors.red,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
-            ),
-            const SizedBox(height: 16.0),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: const InputDecoration(labelText: 'Password'),
-            ),
-            const SizedBox(height: 32.0),
-            ElevatedButton(
-              onPressed: _handleLogin,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
+      body: Background(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // Email TextField
+              TextField(
+                controller: widget._usernameController,
+                decoration: const InputDecoration(
+                  labelText: 'Username',
+                  filled: true,
+                  fillColor: Colors.white,
+                ),
               ),
-              child: const Text(
-                'Login',
-                style: TextStyle(color: Colors.white),
+              const SizedBox(height: 16.0),
+
+              // Password TextFormField
+              TextFormField(
+                controller: widget._passwordController,
+                obscureText: !_isPasswordVisible,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  filled: true,
+                  fillColor: Colors.white,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Colors.grey,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 32.0),
+
+              // Login Button
+              ElevatedButton(
+                onPressed: widget._handleLogin,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                ),
+                child: const Text(
+                  'Login',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+
+              const SizedBox(height: 16.0),
+
+              // Sign-up Link
+              TextButton(
+                onPressed: widget._handleSignUp,
+                child: const Text(
+                  "Don't have an account? Sign up",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
