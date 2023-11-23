@@ -10,26 +10,55 @@ class Background extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Red Container (1/4 of the screen size)
-        Container(
-          color: Colors.red,
-          width: double.infinity,
-          height: MediaQuery.of(context).size.height / 4,
-        ),
+    double circularRadiusPercentage = 10.0;
 
-        // White Container Below Red Container
-        Positioned.fill(
-          top: MediaQuery.of(context).size.height / 4,
-          child: Container(
+    return Scaffold(
+      body: Stack(
+        children: [
+          // White Container
+          Container(
             color: Colors.white,
+            width: double.infinity,
+            height: double.infinity,
           ),
-        ),
-
-        // Child widget (e.g., login page, registration page, home page, etc.)
-        child,
-      ],
+          // Red Container
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: MediaQuery.of(context).size.height * 0.75,
+            child: Container(
+              color: Colors.red,
+              width: double.infinity,
+            ),
+          ),
+          // Another container
+          Positioned(
+            top: MediaQuery.of(context).size.height * 0.1,
+            left: MediaQuery.of(context).size.width * 0.04,
+            right: MediaQuery.of(context).size.width * 0.04,
+            bottom: MediaQuery.of(context).size.height * 0.04,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(
+                  MediaQuery.of(context).size.width *
+                      (circularRadiusPercentage / 230),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: child,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
