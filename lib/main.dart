@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mym_raktaveer/welcome.dart';
-// import 'login.dart';
-
-
+import 'package:mym_raktaveer/login.dart';
+// import 'package:mym_raktaveer/welcome.dart';
 
 void main() => runApp(const MyApp());
 
@@ -11,8 +9,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: WelcomePage(),
+    return MaterialApp(
+      home: LoginPage(),
     );
   }
 }

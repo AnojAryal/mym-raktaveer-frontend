@@ -26,16 +26,7 @@ class WelcomePage extends StatelessWidget {
                 ),
                 // const SizedBox(height: 16.0),
                 const Text(
-                  'MYM',
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 4.0), 
-                const Text(
-                  'Raktaveer',
+                  'MYM \nRaktaveer',
                   style: TextStyle(
                     color: Colors.red,
                     fontSize: 14.0,
