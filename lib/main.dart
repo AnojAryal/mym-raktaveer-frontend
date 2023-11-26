@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer/login.dart';
-// import 'package:mym_raktaveer/welcome.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() => runApp(const MyApp());
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,5 +19,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
