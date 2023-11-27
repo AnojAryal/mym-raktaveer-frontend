@@ -23,7 +23,6 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   final passwordController = TextEditingController();
 
   @override
-  @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();

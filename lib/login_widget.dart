@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mym_raktaveer_frontend/forgot_password.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
 
@@ -20,7 +21,6 @@ class _LoginWidgetState extends State<LoginWidget> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  @override
   @override
   void dispose() {
     emailController.dispose();
@@ -59,6 +59,22 @@ class _LoginWidgetState extends State<LoginWidget> {
           ElevatedButton(
             onPressed: signIn,
             child: const Text('Sign In'),
+          ),
+
+          const SizedBox(
+            height: 24,
+          ),
+
+          GestureDetector(
+            child: const Text(
+              'Forgot Password?',
+              style: TextStyle(
+                decoration: TextDecoration.underline,
+                color: Color.fromARGB(255, 235, 34, 34),
+              ),
+            ),
+            onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => const ForgotPasswordPage())),
           ),
 
           const SizedBox(
