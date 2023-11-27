@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/authPage.dart';
 import 'package:mym_raktaveer_frontend/homepage.dart';
+import 'package:mym_raktaveer_frontend/utils.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       navigatorKey: navigatorKey,
+      scaffoldMessengerKey: Utils.messengerKey,
       home: const MainPage(),
     );
   }

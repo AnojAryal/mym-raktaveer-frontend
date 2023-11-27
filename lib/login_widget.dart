@@ -2,6 +2,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
+import 'package:mym_raktaveer_frontend/utils.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({
@@ -107,7 +108,7 @@ class _LoginWidgetState extends State<LoginWidget> {
       );
     } on FirebaseAuthException catch (e) {
       // ignore: avoid_print
-      print(e);
+      Utils.showSnackBar(e.message);
     } finally {
       // ignore: use_build_context_synchronously
       navigatorKey.currentState!

@@ -3,6 +3,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
+import 'package:mym_raktaveer_frontend/utils.dart';
 
 class SignUpWidget extends StatefulWidget {
   const SignUpWidget({
@@ -125,7 +126,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       );
     } on FirebaseAuthException catch (e) {
       // ignore: avoid_print
-      print(e);
+      Utils.showSnackBar(e.message);
     } finally {
       navigatorKey.currentState!
           .popUntil((route) => route.isFirst); // Close the loading indicator
