@@ -13,32 +13,26 @@ class VerifyEmailPage extends StatefulWidget {
 }
 
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
-  bool isEmailVerified = false;
+  late bool isEmailVerified;
   Timer? timer;
-  bool canResendEmail = true;
-  int remainingTime = 60; // Initial remaining time in seconds
 
   @override
   void initState() {
     super.initState();
-
-    // Check if the user's email is already verified
-    isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    isEmailVerified = FirebaseAuth.instance.currentUser?.emailVerified ?? false;
 
     if (!isEmailVerified) {
-      // If not verified, send a verification email and set up a timer
       sendVerificationEmail();
 
       timer = Timer.periodic(
-        const Duration(seconds: 1),
-        (_) => updateRemainingTime(),
+        const Duration(seconds: 3),
+        (_) => checkEmailVerified(),
       );
     }
   }
 
   @override
   void dispose() {
-    // Cancel the timer to avoid memory leaks when the widget is disposed
     timer?.cancel();
     super.dispose();
   }
@@ -48,33 +42,22 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       final user = FirebaseAuth.instance.currentUser!;
 
       // Disable the button for one minute
-      setState(() => canResendEmail = false);
 
       // Send a verification email
       await user.sendEmailVerification();
 
       // Wait for one minute before enabling the button again
-      await Future.delayed(const Duration(minutes: 1));
-      setState(() {
-        canResendEmail = true;
-        remainingTime = 60; // Reset the remaining time
-      });
     } catch (e) {
-      // Show an error message if sending verification email fails
-      Utils.showSnackBar('Error: $e');
-    }
-  }
-
-  void updateRemainingTime() {
-    // Update the remaining time every second
-    setState(() {
-      remainingTime -= 1;
-
-      // If the countdown reaches 0, cancel the timer
-      if (remainingTime == 0) {
-        timer?.cancel();
+      print('Error sending verification email: $e');
+      if (e is FirebaseAuthException && e.code == 'too-many-requests') {
+        // Handle rate-limiting: Display a user-friendly message and provide guidance on when to retry
+        Utils.showSnackBar('Too many requests. Please try again later.');
+      } else {
+        // Show a generic error message for other types of errors
+        Utils.showSnackBar(
+            'Error sending verification email. Please try again.');
       }
-    });
+    }
   }
 
   @override
@@ -86,37 +69,47 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Please verify your email address by clicking on the link sent to your email.',
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: canResendEmail ? sendVerificationEmail : null,
-                  child: Text(
-                    canResendEmail
-                        ? 'Resend Verification Email'
-                        : 'Resend Email in: $remainingTime seconds',
-                  ),
-                ),
-              ],
-            ),
+            child: _buildVerificationForm(),
           ),
         );
 
+  Widget _buildVerificationForm() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          'Please verify your email address by clicking on the link sent to your email.',
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 16.0),
+        ElevatedButton(
+          onPressed: sendVerificationEmail,
+          child: const Text('Resend Verification Email'),
+        ),
+        const SizedBox(height: 8.0),
+        TextButton(
+          onPressed: () {
+            FirebaseAuth.instance.signOut();
+          },
+          child: const Text('Cancel'),
+        ),
+      ],
+    );
+  }
+
   Future<void> checkEmailVerified() async {
-    // Reload user data to get the latest email verification status
-    await FirebaseAuth.instance.currentUser!.reload();
+    try {
+      await FirebaseAuth.instance.currentUser?.reload();
+      setState(() {
+        isEmailVerified =
+            FirebaseAuth.instance.currentUser?.emailVerified ?? false;
+      });
 
-    // Update the UI based on the latest email verification status
-    setState(() {
-      isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
-    });
-
-    // If email is verified, cancel the timer
-    if (isEmailVerified) timer?.cancel();
+      if (isEmailVerified) {
+        timer?.cancel();
+      }
+    } catch (e) {
+      print('Error checking email verification: $e');
+    }
   }
 }
