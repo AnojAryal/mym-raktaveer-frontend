@@ -13,7 +13,7 @@ class VerifyEmailPage extends StatefulWidget {
 }
 
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
-  late bool isEmailVerified;
+  bool isEmailVerified = false;
   Timer? timer;
   int countdown = 60;
 
@@ -24,6 +24,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
     if (!isEmailVerified) {
       sendVerificationEmail();
+
+      timer = Timer.periodic(
+          const Duration(seconds: 3), (_) => checkEmailVerified());
     }
   }
 

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mym_raktaveer_frontend/authPage.dart';
+import 'package:mym_raktaveer_frontend/auth_page.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
 import 'package:mym_raktaveer_frontend/verify_email.dart';
 import 'firebase_options.dart';
