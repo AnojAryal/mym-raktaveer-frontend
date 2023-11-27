@@ -15,6 +15,7 @@ class VerifyEmailPage extends StatefulWidget {
 class _VerifyEmailPageState extends State<VerifyEmailPage> {
   late bool isEmailVerified;
   Timer? timer;
+  int countdown = 60;
 
   @override
   void initState() {
@@ -23,11 +24,6 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
     if (!isEmailVerified) {
       sendVerificationEmail();
-
-      timer = Timer.periodic(
-        const Duration(seconds: 3),
-        (_) => checkEmailVerified(),
-      );
     }
   }
 
@@ -41,23 +37,29 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     try {
       final user = FirebaseAuth.instance.currentUser!;
 
-      // Disable the button for one minute
+      // Disable the button for 30 seconds
+      setState(() {
+        countdown = 60;
+      });
+
+      timer = Timer.periodic(
+        const Duration(seconds: 1),
+        (Timer timer) {
+          setState(() {
+            if (countdown > 0) {
+              countdown--;
+            } else {
+              // Enable the button after 30 seconds
+              timer.cancel();
+            }
+          });
+        },
+      );
 
       // Send a verification email
       await user.sendEmailVerification();
-
-      // Wait for one minute before enabling the button again
-    } catch (e) {
-      print('Error sending verification email: $e');
-      if (e is FirebaseAuthException && e.code == 'too-many-requests') {
-        // Handle rate-limiting: Display a user-friendly message and provide guidance on when to retry
-        Utils.showSnackBar('Too many requests. Please try again later.');
-      } else {
-        // Show a generic error message for other types of errors
-        Utils.showSnackBar(
-            'Error sending verification email. Please try again.');
-      }
-    }
+      Utils.showSnackBar("Email Successfully Sent");
+    } catch (e) {}
   }
 
   @override
@@ -83,8 +85,10 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         ),
         const SizedBox(height: 16.0),
         ElevatedButton(
-          onPressed: sendVerificationEmail,
-          child: const Text('Resend Verification Email'),
+          onPressed: countdown > 0 ? null : sendVerificationEmail,
+          child: Text(countdown > 0
+              ? 'Resend Verification Email in: $countdown seconds'
+              : 'Resend Verification Email'),
         ),
         const SizedBox(height: 8.0),
         TextButton(
