@@ -15,14 +15,17 @@ void main() async {
   runApp(const MyApp());
 }
 
+final navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: MainPage(),
+    return MaterialApp(
+      navigatorKey: navigatorKey,
+      home: const MainPage(),
     );
   }
 }
@@ -35,7 +38,11 @@ class MainPage extends StatelessWidget {
           body: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Text("Something went wrong");
+          } else if (snapshot.hasData) {
             return const HomePage();
           } else {
             return const LoginWidget();
