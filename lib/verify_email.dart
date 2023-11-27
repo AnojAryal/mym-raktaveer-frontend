@@ -6,7 +6,7 @@ import 'package:mym_raktaveer_frontend/homepage.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
 
 class VerifyEmailPage extends StatefulWidget {
-  const VerifyEmailPage({Key? key}) : super(key: key);
+  const VerifyEmailPage({super.key});
 
   @override
   State<VerifyEmailPage> createState() => _VerifyEmailPageState();
@@ -59,7 +59,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       // Send a verification email
       await user.sendEmailVerification();
       Utils.showSnackBar("Email Successfully Sent");
-    } catch (e) {}
+    } catch (e) {
+      //
+    }
   }
 
   @override
@@ -113,7 +115,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         timer?.cancel();
       }
     } catch (e) {
-      print('Error checking email verification: $e');
+      //
     }
   }
 }

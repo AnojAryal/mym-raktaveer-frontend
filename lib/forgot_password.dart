@@ -5,7 +5,7 @@ import 'package:mym_raktaveer_frontend/main.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({Key? key}) : super(key: key);
+  const ForgotPasswordPage({super.key});
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordState();
