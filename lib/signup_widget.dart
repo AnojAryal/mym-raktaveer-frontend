@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
 
-class LoginWidget extends StatefulWidget {
-  const LoginWidget({
+class SignUpWidget extends StatefulWidget {
+  const SignUpWidget({
     super.key,
-    required this.onclickedSignUp,
+    required this.onclickedSignIn,
   });
 
-  final VoidCallback? onclickedSignUp;
+  final VoidCallback? onclickedSignIn;
 
   @override
-  State<LoginWidget> createState() => _LoginWidgetState();
+  State<SignUpWidget> createState() => _SignUpWidgetState();
 }
 
-class _LoginWidgetState extends State<LoginWidget> {
+class _SignUpWidgetState extends State<SignUpWidget> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
@@ -56,8 +56,8 @@ class _LoginWidgetState extends State<LoginWidget> {
 
           // Sign-In Button
           ElevatedButton(
-            onPressed: signIn,
-            child: const Text('Sign In'),
+            onPressed: signUp,
+            child: const Text('Sign Up'),
           ),
 
           const SizedBox(
@@ -67,18 +67,18 @@ class _LoginWidgetState extends State<LoginWidget> {
           RichText(
             text: TextSpan(
               style: const TextStyle(color: Color.fromARGB(255, 56, 55, 55)),
-              text: 'No account? ',
+              text: 'Already have an account? ',
               children: [
                 TextSpan(
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       // Check if the callback is not null before invoking it
-                      if (widget.onclickedSignUp != null) {
+                      if (widget.onclickedSignIn != null) {
                         // Pass the current context to the callback
-                        widget.onclickedSignUp!();
+                        widget.onclickedSignIn!();
                       }
                     },
-                  text: "Sign Up",
+                  text: "Sign In",
                   style: const TextStyle(
                     color: Color.fromARGB(255, 235, 34, 34),
                     decoration: TextDecoration.underline,
@@ -92,7 +92,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     );
   }
 
-  Future<void> signIn() async {
+  Future<void> signUp() async {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -101,7 +101,7 @@ class _LoginWidgetState extends State<LoginWidget> {
       ),
     );
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
@@ -109,7 +109,6 @@ class _LoginWidgetState extends State<LoginWidget> {
       // ignore: avoid_print
       print(e);
     } finally {
-      // ignore: use_build_context_synchronously
       navigatorKey.currentState!
           .popUntil((route) => route.isFirst); // Close the loading indicator
     }

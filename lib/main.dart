@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:mym_raktaveer_frontend/authPage.dart';
 import 'package:mym_raktaveer_frontend/homepage.dart';
-import 'package:mym_raktaveer_frontend/login_widget.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -45,7 +45,7 @@ class MainPage extends StatelessWidget {
           } else if (snapshot.hasData) {
             return const HomePage();
           } else {
-            return const LoginWidget();
+            return const AuthPage();
           }
         },
       ));
