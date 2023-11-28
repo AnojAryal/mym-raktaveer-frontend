@@ -21,6 +21,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -32,78 +33,93 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Email Input
-              TextFormField(
-                controller: emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
+      padding: const EdgeInsets.all(16.0),
+      child: Form(
+        key: formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Email Input
+            TextFormField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+              ),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (email) => email != null && !EmailValidator.validate(email)
+                  ? "Enter valid email"
+                  : null,
+              keyboardType: TextInputType.emailAddress,
+            ),
+            const SizedBox(height: 16.0),
+
+            // Password Input with Show/Hide Icon
+            TextFormField(
+              controller: passwordController,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      isPasswordVisible = !isPasswordVisible;
+                    });
+                  },
                 ),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (email) =>
-                    email != null && !EmailValidator.validate(email)
-                        ? "Enter valid email"
-                        : null,
-                keyboardType: TextInputType.emailAddress,
               ),
-              const SizedBox(height: 16.0),
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) => value != null && value.length < 6
+                  ? "Password is too short"
+                  : null,
+              obscureText: !isPasswordVisible,
+            ),
+            const SizedBox(height: 24.0),
 
-              // Password Input
-              TextFormField(
-                controller: passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Password',
+            // Red Sign-Up Button with White Text
+            ElevatedButton(
+              onPressed: signUp,
+              style: ElevatedButton.styleFrom(
+                primary: Colors.red, // Set your desired red color
+              ),
+              child: const Text(
+                'Sign Up',
+                style: TextStyle(
+                  color: Colors.white, // Set the text color to white
                 ),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) => value != null && value.length < 6
-                    ? "Password is too short"
-                    : null,
-                obscureText: true,
               ),
-              const SizedBox(height: 24.0),
+            ),
 
-              // Sign-In Button
-              ElevatedButton(
-                onPressed: signUp,
-                child: const Text('Sign Up'),
-              ),
+            const SizedBox(
+              height: 24,
+            ),
 
-              const SizedBox(
-                height: 24,
-              ),
-
-              RichText(
-                text: TextSpan(
-                  style:
-                      const TextStyle(color: Color.fromARGB(255, 56, 55, 55)),
-                  text: 'Already have an account? ',
-                  children: [
-                    TextSpan(
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          // Check if the callback is not null before invoking it
-                          if (widget.onclickedSignIn != null) {
-                            // Pass the current context to the callback
-                            widget.onclickedSignIn!();
-                          }
-                        },
-                      text: "Sign In",
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 235, 34, 34),
-                        decoration: TextDecoration.underline,
-                      ),
+            RichText(
+              text: TextSpan(
+                style: const TextStyle(color: Color.fromARGB(255, 56, 55, 55)),
+                text: 'Already have an account? ',
+                children: [
+                  TextSpan(
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        if (widget.onclickedSignIn != null) {
+                          widget.onclickedSignIn!();
+                        }
+                      },
+                    text: "Login",
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 99, 99, 210),
+                      decoration: TextDecoration.underline,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Future<void> signUp() async {
@@ -124,11 +140,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
         password: passwordController.text.trim(),
       );
     } on FirebaseAuthException catch (e) {
-      // ignore: avoid_print
       Utils.showSnackBar(e.message);
     } finally {
-      navigatorKey.currentState!
-          .popUntil((route) => route.isFirst); // Close the loading indicator
+      navigatorKey.currentState!.popUntil((route) => route.isFirst);
     }
   }
 }

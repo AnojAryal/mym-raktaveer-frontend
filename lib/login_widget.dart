@@ -20,6 +20,7 @@ class LoginWidget extends StatefulWidget {
 class _LoginWidgetState extends State<LoginWidget> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  bool isPasswordVisible = false; // Added to toggle password visibility
 
   @override
   void dispose() {
@@ -35,6 +36,17 @@ class _LoginWidgetState extends State<LoginWidget> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // MYM Raktabeer Heading
+          const Text(
+            'MYM Raktaveer',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.black, // Set your desired color
+            ),
+          ),
+          const SizedBox(height: 16.0),
+
           // Email Input
           TextField(
             controller: emailController,
@@ -45,22 +57,38 @@ class _LoginWidgetState extends State<LoginWidget> {
           ),
           const SizedBox(height: 16.0),
 
-          // Password Input
+          // Password Input with Show/Hide Icon
           TextField(
             controller: passwordController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Password',
+              suffixIcon: IconButton(
+                icon: Icon(
+                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    isPasswordVisible = !isPasswordVisible;
+                  });
+                },
+              ),
             ),
-            obscureText: true,
+            obscureText: !isPasswordVisible,
           ),
           const SizedBox(height: 24.0),
 
-          // Sign-In Button
+          // Red Sign-In Button
           ElevatedButton(
-            onPressed: signIn,
-            child: const Text('Sign In'),
-          ),
-
+              onPressed: signIn,
+              style: ElevatedButton.styleFrom(
+                primary: Colors.red,
+              ),
+              child: const Text(
+                'Login',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              )),
           const SizedBox(
             height: 24,
           ),
@@ -70,7 +98,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               'Forgot Password?',
               style: TextStyle(
                 decoration: TextDecoration.underline,
-                color: Color.fromARGB(255, 235, 34, 34),
+                color: Color.fromARGB(255, 99, 99, 210),
               ),
             ),
             onTap: () => Navigator.of(context).push(MaterialPageRoute(
@@ -78,13 +106,13 @@ class _LoginWidgetState extends State<LoginWidget> {
           ),
 
           const SizedBox(
-            height: 24,
+            height: 14,
           ),
 
           RichText(
             text: TextSpan(
-              style: const TextStyle(color: Color.fromARGB(255, 56, 55, 55)),
-              text: 'No account? ',
+              style: const TextStyle(color: Colors.black),
+              text: 'Dont have account? ',
               children: [
                 TextSpan(
                   recognizer: TapGestureRecognizer()
@@ -97,7 +125,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     },
                   text: "Sign Up",
                   style: const TextStyle(
-                    color: Color.fromARGB(255, 235, 34, 34),
+                    color: Color.fromARGB(255, 99, 99, 210),
                     decoration: TextDecoration.underline,
                   ),
                 ),

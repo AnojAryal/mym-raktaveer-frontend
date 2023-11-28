@@ -1,9 +1,11 @@
 import 'dart:async';
-
+import 'package:mym_raktaveer_frontend/background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/homepage.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
+
+
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({super.key});
@@ -20,13 +22,16 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   @override
   void initState() {
     super.initState();
-    isEmailVerified = FirebaseAuth.instance.currentUser?.emailVerified ?? false;
+    isEmailVerified =
+        FirebaseAuth.instance.currentUser?.emailVerified ?? false;
 
     if (!isEmailVerified) {
       sendVerificationEmail();
 
       timer = Timer.periodic(
-          const Duration(seconds: 3), (_) => checkEmailVerified());
+        const Duration(seconds: 3),
+        (_) => checkEmailVerified(),
+      );
     }
   }
 
@@ -40,7 +45,6 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     try {
       final user = FirebaseAuth.instance.currentUser!;
 
-      // Disable the button for 30 seconds
       setState(() {
         countdown = 60;
       });
@@ -52,14 +56,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
             if (countdown > 0) {
               countdown--;
             } else {
-              // Enable the button after 30 seconds
               timer.cancel();
             }
           });
         },
       );
 
-      // Send a verification email
       await user.sendEmailVerification();
       Utils.showSnackBar("Email Successfully Sent");
     } catch (e) {
@@ -70,13 +72,16 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   @override
   Widget build(BuildContext context) => isEmailVerified
       ? const HomePage()
-      : Scaffold(
-          appBar: AppBar(
-            title: const Text('Verify Email'),
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _buildVerificationForm(),
+      : Background(
+          // Use the Background widget here
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text('Verify Email'),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _buildVerificationForm(),
+            ),
           ),
         );
 
@@ -91,9 +96,11 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         const SizedBox(height: 16.0),
         ElevatedButton(
           onPressed: countdown > 0 ? null : sendVerificationEmail,
-          child: Text(countdown > 0
-              ? 'Resend Verification Email in: $countdown seconds'
-              : 'Resend Verification Email'),
+          child: Text(
+            countdown > 0
+                ? 'Resend Verification Email in: $countdown seconds'
+                : 'Resend Verification Email',
+          ),
         ),
         const SizedBox(height: 8.0),
         TextButton(
