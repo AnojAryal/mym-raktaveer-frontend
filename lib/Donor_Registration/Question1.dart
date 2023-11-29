@@ -115,7 +115,8 @@ class _UserChoicePageState extends State<UserChoicePage> {
           SizedBox(
             height: 16.0,
           ),
-          Center(
+          Align(
+            alignment: Alignment.bottomRight,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
