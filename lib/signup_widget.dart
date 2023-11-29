@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
+import 'package:http/http.dart' as http;
 
 class SignUpWidget extends StatefulWidget {
   const SignUpWidget({
@@ -165,28 +168,62 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   }
 
   Future<void> signUp() async {
-    final isValid = formKey.currentState!.validate();
-
-    if (!isValid) return;
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-    try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+    if (formKey.currentState?.validate() ?? false) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
       );
-    } on FirebaseAuthException catch (e) {
-      // ignore: avoid_print
-      Utils.showSnackBar(e.message);
-    } finally {
-      navigatorKey.currentState!
-          .popUntil((route) => route.isFirst); // Close the loading indicator
+      try {
+        final authResult =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+
+        final userUid = authResult.user?.uid;
+        await sendUserDataToApi(userUid!);
+      } on FirebaseAuthException catch (e) {
+        Utils.showSnackBar(e.message);
+      } finally {
+        navigatorKey.currentState!
+            .popUntil((route) => route.isFirst); // Close the loading indicator
+      }
+    }
+  }
+
+  Future<void> sendUserDataToApi(String userUid) async {
+    const String apiUrl =
+        'https://e09f-2400-1a00-b030-d590-dedf-3b84-2bdc-7c0e.ngrok-free.app/api/users';
+
+    final userData = {
+      'mobile_number': mobileNumberController.text.trim(),
+      'full_name': fullnameController.text.trim(),
+      'gender': genderController.text.trim(),
+      'age': ageController.text.trim(),
+      'email': emailController.text.trim(),
+      'firebase_uid': userUid,
+      'user_type': 'user',
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(userData),
+      );
+
+      if (response.statusCode == 201) {
+        print('User created successfully');
+        print('Response: ${response.body}');
+      } else {
+        print('Failed to create user. Status code: ${response.statusCode}');
+        print('Response: ${response.body}');
+      }
+    } catch (error) {
+      print('Error creating user: $error');
     }
   }
 }

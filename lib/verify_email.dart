@@ -45,19 +45,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         countdown = 60;
       });
 
-      timer = Timer.periodic(
-        const Duration(seconds: 1),
-        (Timer timer) {
-          setState(() {
-            if (countdown > 0) {
-              countdown--;
-            } else {
-              // Enable the button after 30 seconds
-              timer.cancel();
-            }
-          });
-        },
-      );
+      timer?.cancel(); // Cancel existing timer, if any
 
       // Send a verification email
       await user.sendEmailVerification();

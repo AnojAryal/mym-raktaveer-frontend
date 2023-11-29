@@ -39,6 +39,7 @@ dependencies:
   cloud_firestore: ^4.13.2
   firebase_core: ^2.23.0
   email_validator: ^2.1.17
+  http: ^1.1.2
 
 
 dev_dependencies:
