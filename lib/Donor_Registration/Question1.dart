@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
-import 'progress_bar.dart';
+
 
 class UserChoicePage extends StatefulWidget {
   const UserChoicePage({Key? key}) : super(key: key);
@@ -50,7 +50,7 @@ class _UserChoicePageState extends State<UserChoicePage> {
           Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: Text(
-              'Blood Group ABO', // <-- Subheading
+              'Blood Group ABO', 
               style: TextStyle(
                 color: Color(0xFF242323),
                 fontSize: 18,
