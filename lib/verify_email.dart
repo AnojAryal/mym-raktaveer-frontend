@@ -6,7 +6,6 @@ import 'package:mym_raktaveer_frontend/homepage.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
 
 
-
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({super.key});
 
