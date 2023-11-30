@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
+// import 'progress_bar.dart';
 
 class UserChoicePage extends StatefulWidget {
   const UserChoicePage({super.key});
@@ -32,9 +33,9 @@ class _UserChoicePageState extends State<UserChoicePage> {
           ),
           const SizedBox(
             height: 16.0,
-          ),
+          ), // Add some space between the title and the content
           const Padding(
-            padding:EdgeInsets.only(left: 16.0),
+            padding: EdgeInsets.only(left: 16.0),
             child: Text(
               'Select your Blood Type',
               style: TextStyle(
@@ -88,7 +89,7 @@ class _UserChoicePageState extends State<UserChoicePage> {
             height: 16.0,
           ), // Add some space between the text boxes and the subheadings
           const Padding(
-            padding:EdgeInsets.only(left: 16.0),
+            padding: EdgeInsets.only(left: 16.0),
             child: Text(
               'Blood Group RH',
               style: TextStyle(
@@ -106,12 +107,13 @@ class _UserChoicePageState extends State<UserChoicePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildClickableRhFactorBox('+ve'),
-                const SizedBox(width: 9.0), // Adjust the space between +ve and -ve
+                const SizedBox(
+                    width: 9.0), // Adjust the space between +ve and -ve
                 _buildClickableRhFactorBox('-ve'),
               ],
             ),
           ),
-          const  SizedBox(
+          const SizedBox(
             height: 16.0,
           ),
           Center(
@@ -122,9 +124,9 @@ class _UserChoicePageState extends State<UserChoicePage> {
                   // Handle the button press
                   // Add your navigation logic or any action needed
                 },
-                style:ElevatedButton.styleFrom(
+                style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.only(left: 60, right: 60),
-                  backgroundColor:const Color(0xFFFD1A00), // Red background
+                  backgroundColor: const Color(0xFFFD1A00), // Red background
                 ),
                 child: const Text(
                   'Next',
@@ -151,8 +153,8 @@ class _UserChoicePageState extends State<UserChoicePage> {
       child: Container(
         width: 80,
         height: 40,
-        margin:
-            const EdgeInsets.only(left: 8.0), // Adjust the margin for the text boxes
+        margin: const EdgeInsets.only(
+            left: 8.0), // Adjust the margin for the text boxes
         decoration: BoxDecoration(
           color: isSelected ? Colors.red : Colors.white,
           borderRadius: BorderRadius.circular(8),
