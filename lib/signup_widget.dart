@@ -4,6 +4,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
 import 'package:http/http.dart' as http;
@@ -195,8 +196,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   }
 
   Future<void> sendUserDataToApi(String userUid) async {
-    const String apiUrl =
-        'https://e09f-2400-1a00-b030-d590-dedf-3b84-2bdc-7c0e.ngrok-free.app/api/users';
+    String? baseUrl = dotenv.env['BASE_URL'];
+
+    String? apiUrl = '$baseUrl/api/users';
 
     final userData = {
       'mobile_number': mobileNumberController.text.trim(),

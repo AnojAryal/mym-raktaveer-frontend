@@ -5,6 +5,7 @@ import 'package:mym_raktaveer_frontend/auth_page.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
 import 'package:mym_raktaveer_frontend/verify_email.dart';
 import 'firebase_options.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,6 +13,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   // Initialize Firebase
+  await dotenv.load();
 
   runApp(const MyApp());
 }
