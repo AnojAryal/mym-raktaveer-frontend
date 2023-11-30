@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 
-
 class UserChoicePage extends StatefulWidget {
-  const UserChoicePage({Key? key}) : super(key: key);
+  const UserChoicePage({super.key});
 
   @override
-  _UserChoicePageState createState() => _UserChoicePageState();
+  State<UserChoicePage> createState() => _UserChoicePageState();
 }
 
 class _UserChoicePageState extends State<UserChoicePage> {
@@ -20,8 +19,8 @@ class _UserChoicePageState extends State<UserChoicePage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: 5.0), // Add margin to the top
-          Center(
+          const SizedBox(height: 5.0), // Add margin to the top
+          const Center(
             child: Text(
               'Mym Raktaveer', // <-- New title
               style: TextStyle(
@@ -31,11 +30,11 @@ class _UserChoicePageState extends State<UserChoicePage> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 16.0,
-          ), // Add some space between the title and the content
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0),
+          ),
+          const Padding(
+            padding:EdgeInsets.only(left: 16.0),
             child: Text(
               'Select your Blood Type',
               style: TextStyle(
@@ -46,19 +45,19 @@ class _UserChoicePageState extends State<UserChoicePage> {
             ),
           ),
 
-          SizedBox(height: 8.0),
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0),
+          const SizedBox(height: 8.0),
+          const Padding(
+            padding: EdgeInsets.only(left: 16.0),
             child: Text(
-              'Blood Group ABO', 
+              'Blood Group ABO',
               style: TextStyle(
                 color: Color(0xFF242323),
                 fontSize: 18,
               ),
             ),
           ),
-          SizedBox(height: 8.0),
-          SizedBox(
+          const SizedBox(height: 8.0),
+          const SizedBox(
             height: 16.0,
           ), // Add some space between the heading and text boxes
           Padding(
@@ -67,14 +66,14 @@ class _UserChoicePageState extends State<UserChoicePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildClickableBloodTypeBox('A', context),
-                SizedBox(width: 8.0),
+                const SizedBox(width: 8.0),
                 _buildClickableBloodTypeBox('O', context),
-                SizedBox(width: 8.0),
+                const SizedBox(width: 8.0),
                 _buildClickableBloodTypeBox('B', context),
               ],
             ),
           ),
-          SizedBox(height: 8.0),
+          const SizedBox(height: 8.0),
           Padding(
             padding: const EdgeInsets.only(
                 left: 22.0), // Adjust the left padding for the Row
@@ -85,11 +84,11 @@ class _UserChoicePageState extends State<UserChoicePage> {
               ],
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 16.0,
           ), // Add some space between the text boxes and the subheadings
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0),
+          const Padding(
+            padding:EdgeInsets.only(left: 16.0),
             child: Text(
               'Blood Group RH',
               style: TextStyle(
@@ -98,7 +97,7 @@ class _UserChoicePageState extends State<UserChoicePage> {
               ),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 16.0,
           ),
           Padding(
@@ -107,16 +106,15 @@ class _UserChoicePageState extends State<UserChoicePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildClickableRhFactorBox('+ve'),
-                SizedBox(width: 9.0), // Adjust the space between +ve and -ve
+                const SizedBox(width: 9.0), // Adjust the space between +ve and -ve
                 _buildClickableRhFactorBox('-ve'),
               ],
             ),
           ),
-          SizedBox(
+          const  SizedBox(
             height: 16.0,
           ),
-          Align(
-            alignment: Alignment.bottomRight,
+          Center(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
@@ -124,11 +122,11 @@ class _UserChoicePageState extends State<UserChoicePage> {
                   // Handle the button press
                   // Add your navigation logic or any action needed
                 },
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.only(left: 60, right: 60),
-                  backgroundColor: Color(0xFFFD1A00), // Red background
+                style:ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.only(left: 60, right: 60),
+                  backgroundColor:const Color(0xFFFD1A00), // Red background
                 ),
-                child: Text(
+                child: const Text(
                   'Next',
                   style: TextStyle(color: Colors.white),
                 ),
@@ -154,7 +152,7 @@ class _UserChoicePageState extends State<UserChoicePage> {
         width: 80,
         height: 40,
         margin:
-            EdgeInsets.only(left: 8.0), // Adjust the margin for the text boxes
+            const EdgeInsets.only(left: 8.0), // Adjust the margin for the text boxes
         decoration: BoxDecoration(
           color: isSelected ? Colors.red : Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -189,7 +187,7 @@ class _UserChoicePageState extends State<UserChoicePage> {
       child: Container(
         width: 80,
         height: 40,
-        margin: EdgeInsets.only(left: 8.0),
+        margin: const EdgeInsets.only(left: 8.0),
         decoration: BoxDecoration(
           color: isSelected ? Colors.red : Colors.white,
           borderRadius: BorderRadius.circular(8),
