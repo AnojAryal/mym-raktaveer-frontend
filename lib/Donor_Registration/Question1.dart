@@ -3,10 +3,10 @@ import 'package:mym_raktaveer_frontend/background.dart';
 // import 'progress_bar.dart';
 
 class UserChoicePage extends StatefulWidget {
-  const UserChoicePage({Key? key}) : super(key: key);
+  const UserChoicePage({super.key});
 
   @override
-  _UserChoicePageState createState() => _UserChoicePageState();
+  State<UserChoicePage> createState() => _UserChoicePageState();
 }
 
 class _UserChoicePageState extends State<UserChoicePage> {
@@ -50,7 +50,7 @@ class _UserChoicePageState extends State<UserChoicePage> {
           const Padding(
             padding: EdgeInsets.only(left: 16.0),
             child: Text(
-              'Blood Group ABO', // <-- Subheading
+              'Blood Group ABO',
               style: TextStyle(
                 color: Color(0xFF242323),
                 fontSize: 18,
@@ -116,8 +116,7 @@ class _UserChoicePageState extends State<UserChoicePage> {
           const SizedBox(
             height: 16.0,
           ),
-          Align(
-            alignment: Alignment.bottomRight,
+          Center(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
