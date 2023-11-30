@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mym_raktaveer_frontend/Donor_Registration/question3.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 
 class QuestionPage extends StatefulWidget {
@@ -15,7 +16,18 @@ class _QuestionPageState extends State<QuestionPage> {
   @override
   Widget build(BuildContext context) {
     return Background(
-      child: Padding(
+        child: Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Mym Raktaveer',
+          style: TextStyle(
+            color: Color(0xFFFD1A00),
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +62,8 @@ class _QuestionPageState extends State<QuestionPage> {
                   ),
                   children: [
                     TextSpan(
-                      text: 'You can leave the box empty if you haven\'t donated blood recently.',
+                      text:
+                          'You can leave the box empty if you haven\'t donated blood recently.',
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 12.0,
@@ -85,6 +98,11 @@ class _QuestionPageState extends State<QuestionPage> {
               alignment: Alignment.topRight,
               child: ElevatedButton(
                 onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BloodDonationJourneyPage()),
+                  );
                   // Handle the 'Next' button click
                   // You can navigate to the next screen or perform any other action
                 },
@@ -102,7 +120,7 @@ class _QuestionPageState extends State<QuestionPage> {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget buildDateInput({

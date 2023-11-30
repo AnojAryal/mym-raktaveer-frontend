@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mym_raktaveer_frontend/Donor_Registration/Question2.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 // import 'progress_bar.dart';
 
@@ -116,21 +117,26 @@ class _UserChoicePageState extends State<UserChoicePage> {
           const SizedBox(
             height: 16.0,
           ),
-          Center(
+          Align(
+            alignment: Alignment.bottomRight,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: ElevatedButton(
                 onPressed: () {
-                  // Handle the button press
-                  // Add your navigation logic or any action needed
+                  // Navigate to the QuestionPage or handle the 'Next' button click
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => QuestionPage()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.only(left: 60, right: 60),
-                  backgroundColor: const Color(0xFFFD1A00), // Red background
+                  backgroundColor: Colors.red,
                 ),
                 child: const Text(
                   'Next',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),

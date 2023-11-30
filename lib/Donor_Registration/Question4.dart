@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 
 class Question4Page extends StatefulWidget {
-  const Question4Page({super. key});
+  const Question4Page({super.key});
 
   @override
   State<Question4Page> createState() => _Question4PageState();
@@ -12,11 +12,24 @@ class _Question4PageState extends State<Question4Page> {
   @override
   Widget build(BuildContext context) {
     return Background(
-      child: Padding(
+        child: Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Mym Raktaveer',
+          style: TextStyle(
+            color: Color(0xFFFD1A00),
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Center content vertically
-          crossAxisAlignment: CrossAxisAlignment.center, // Center content horizontally
+          mainAxisAlignment:
+              MainAxisAlignment.center, // Center content vertically
+          crossAxisAlignment:
+              CrossAxisAlignment.center, // Center content horizontally
           children: [
             // Empty Container for Future Contents
             Container(
@@ -44,7 +57,7 @@ class _Question4PageState extends State<Question4Page> {
             ),
             const SizedBox(height: 20.0),
             Center(
-              child:ElevatedButton(
+              child: ElevatedButton(
                 onPressed: () {
                   // Handle button click, e.g., navigate to home
                 },
@@ -62,6 +75,6 @@ class _Question4PageState extends State<Question4Page> {
           ],
         ),
       ),
-    );
+    ));
   }
 }

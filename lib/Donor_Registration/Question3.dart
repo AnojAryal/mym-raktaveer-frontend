@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mym_raktaveer_frontend/Donor_Registration/Question4.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 
 class BloodDonationJourneyPage extends StatefulWidget {
+  const BloodDonationJourneyPage({super.key});
+
   @override
   _BloodDonationJourneyPageState createState() =>
       _BloodDonationJourneyPageState();
@@ -148,6 +151,11 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
                 alignment: Alignment.bottomRight,
                 child: ElevatedButton(
                   onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Question4Page()),
+                    );
                     // Handle the 'Next' button click
                     // You can navigate to the next screen or perform any other action
                   },
