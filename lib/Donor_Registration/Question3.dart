@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 
-class BloodDonationJourneyPage extends StatelessWidget {
+class BloodDonationJourneyPage extends StatefulWidget {
+  @override
+  _BloodDonationJourneyPageState createState() =>
+      _BloodDonationJourneyPageState();
+}
+
+class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
   final List<String> conditions = [
     'High Blood Pressure',
     'Kidney Related Diseases',
@@ -21,6 +27,8 @@ class BloodDonationJourneyPage extends StatelessWidget {
     'Recently Vaccinated',
   ];
 
+  List<bool> isCheckedList = List.generate(16, (index) => false);
+
   @override
   Widget build(BuildContext context) {
     return Background(
@@ -28,8 +36,8 @@ class BloodDonationJourneyPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const SizedBox(height: 5.0),
-          const Center(
+          SizedBox(height: 5.0),
+          Center(
             child: Padding(
               padding: EdgeInsets.only(left: 16.0),
               child: Text(
@@ -43,10 +51,10 @@ class BloodDonationJourneyPage extends StatelessWidget {
             ),
           ), // Add margin to the top
 
-          const SizedBox(
+          SizedBox(
             height: 16.0,
           ), // Add some space between the title and the content
-          const Padding(
+          Padding(
             padding: EdgeInsets.only(left: 16.0),
             child: Text(
               'Blood Donation Journey',
@@ -58,23 +66,23 @@ class BloodDonationJourneyPage extends StatelessWidget {
             ),
           ),
           Container(
-            margin: const EdgeInsets.all(16.0),
-            padding: const EdgeInsets.all(16.0),
+            margin: EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(16.0),
             width: double.infinity,
             decoration: BoxDecoration(
-              color: const Color(0xFFFFF7DA), // Corrected color code
+              color: Color(0xFFFFF7DA), // Corrected color code
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
                   spreadRadius: 2,
                   blurRadius: 5,
-                  offset: const Offset(0, 3),
+                  offset: Offset(0, 3),
                 ),
               ],
             ),
             child: RichText(
-              text: const TextSpan(
+              text: TextSpan(
                 style: TextStyle(
                   color: Colors.black, // Default text color
                   fontSize: 14, // Changed font size to 10
@@ -94,9 +102,9 @@ class BloodDonationJourneyPage extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 16.0),
+          SizedBox(height: 16.0),
           Container(
-            padding: const EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(8.0),
             child: Column(
               children: [
                 for (int i = 0; i < conditions.length; i += 2)
@@ -104,31 +112,38 @@ class BloodDonationJourneyPage extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Checkbox(
-                          value: false,
-                          onChanged: (_) {},
+                          value: isCheckedList[i],
+                          onChanged: (value) {
+                            setState(() {
+                              isCheckedList[i] = value!;
+                            });
+                          },
                         ),
                       ),
                       Expanded(
                         child: Text(
                           conditions[i],
-                          style: const TextStyle(fontSize: 11),
+                          style: TextStyle(fontSize: 10),
                         ),
                       ),
                       if (i + 1 < conditions.length)
-                        const SizedBox(
-                            width: 16.0), // Adjust the gap between columns
+                        SizedBox(width: 16.0), // Adjust the gap between columns
                       if (i + 1 < conditions.length)
                         Expanded(
                           child: Checkbox(
-                            value: false,
-                            onChanged: (_) {},
+                            value: isCheckedList[i + 1],
+                            onChanged: (value) {
+                              setState(() {
+                                isCheckedList[i + 1] = value!;
+                              });
+                            },
                           ),
                         ),
                       if (i + 1 < conditions.length)
                         Expanded(
                           child: Text(
                             conditions[i + 1],
-                            style: const TextStyle(fontSize: 11),
+                            style: TextStyle(fontSize: 10),
                           ),
                         ),
                     ],
@@ -136,6 +151,7 @@ class BloodDonationJourneyPage extends StatelessWidget {
               ],
             ),
           ),
+          Spacer(),
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
