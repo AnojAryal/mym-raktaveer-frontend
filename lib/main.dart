@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
+import 'package:mym_raktaveer_frontend/Donor_Registration/question_1.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,11 +16,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: Scaffold(
-        body: const MyProgressBar(
-          currentPage: 1, // Set the current page
-          totalPages: 4,  // Set the total number of pages
-        ),
+      home: const Scaffold(
+        body: UserChoicePage(),
       ),
     );
   }

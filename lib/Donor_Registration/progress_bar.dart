@@ -14,7 +14,7 @@ class MyProgressBar extends StatelessWidget {
   Widget build(BuildContext context) {
     double progress = currentPage / totalPages;
 
-    double progressBarHeight = MediaQuery.of(context).size.height * 0.02;
+    double progressBarHeight = MediaQuery.of(context).size.height * 0.01;
     double progressBarPadding = MediaQuery.of(context).size.width * 0.1;
 
     return Padding(
