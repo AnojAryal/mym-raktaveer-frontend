@@ -1,21 +1,37 @@
 import 'package:flutter/material.dart';
 
 class MyProgressBar extends StatelessWidget {
-  const MyProgressBar({super. key});
+  final int currentPage;
+  final int totalPages;
+
+  const MyProgressBar({
+    super.key,
+    required this.currentPage,
+    required this.totalPages,
+  }) ;
 
   @override
   Widget build(BuildContext context) {
-    double progress = 0.5;
+    double progress = currentPage / totalPages;
 
-    return Column(
-      children: [
-        LinearProgressIndicator(
-          backgroundColor: Colors.grey[200],
-          valueColor: const AlwaysStoppedAnimation<Color>(Colors.black),
-          value: progress,
+    double progressBarHeight = MediaQuery.of(context).size.height * 0.02;
+    double progressBarPadding = MediaQuery.of(context).size.width * 0.1;
+
+    return Padding(
+      padding: EdgeInsets.all(progressBarPadding),
+      child: Container(
+        padding: const EdgeInsets.all(8.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.0),
         ),
-        const SizedBox(height: 8.0),
-      ],
+        child: LinearProgressIndicator(
+          backgroundColor: Colors.black,
+          valueColor: const AlwaysStoppedAnimation<Color>(Colors.red),
+          value: progress,
+          minHeight: progressBarHeight,
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+      ),
     );
   }
 }
