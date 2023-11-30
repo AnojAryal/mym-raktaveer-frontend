@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/Donor_Registration/question_1.dart';
 
+
 void main() {
   runApp(const MyApp());
 }
@@ -16,9 +17,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: const Scaffold(
-        body: UserChoicePage(),
-      ),
+      home:const UserChoicePage(),
     );
   }
 }

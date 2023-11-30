@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
+import 'package:mym_raktaveer_frontend/Donor_Registration/question_4.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 
 class BloodDonationJourneyPage extends StatefulWidget {
-  const BloodDonationJourneyPage({super.key});
+  const BloodDonationJourneyPage({super. key});
 
   @override
   State<BloodDonationJourneyPage> createState() =>
@@ -34,145 +36,138 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
   @override
   Widget build(BuildContext context) {
     return Background(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          const SizedBox(height: 5.0),
-          const Center(
-            child:Padding(
-              padding: EdgeInsets.only(left: 16.0),
-              child: Text(
-                'Mym Raktaveer', // <-- New title
-                style: TextStyle(
-                  color: Color(0xFFFD1A00), // Red color
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-          ), // Add margin to the top
-
-          const SizedBox(
-            height: 16.0,
-          ), // Add some space between the title and the content
-          const Padding(
-            padding: EdgeInsets.only(left: 16.0),
-            child: Text(
-              'Blood Donation Journey',
-              style: TextStyle(
-                color: Color(0xFF242323),
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+      child: Stack(
+        children: [  
+           const MyProgressBar(
+            currentPage: 3,
+            totalPages: 4,
           ),
-          Container(
-            margin:const EdgeInsets.all(16.0),
-            padding:const EdgeInsets.all(16.0),
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color:const Color(0xFFFFF7DA), // Corrected color code
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.3),
-                  spreadRadius: 2,
-                  blurRadius: 5,
-                  offset:const Offset(0, 3),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Health Conditions',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-              ],
-            ),
-            child:RichText(
-              text: const TextSpan(
-                style: TextStyle(
-                  color: Colors.black, // Default text color
-                  fontSize: 14, // Changed font size to 10
-                ),
-                children: [
-                  TextSpan(
-                    text: 'Note : ',
-                    style: TextStyle(
-                      color: Color(0xFFFD1A00), // Red color for 'Note'
+                const SizedBox(height: 16.0),
+                Container(
+                  margin: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.all(10.0),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF7DA), // Corrected color code
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        spreadRadius: 2,
+                        blurRadius: 5,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: RichText(
+                    text: const TextSpan(
+                      style: TextStyle(
+                        color: Colors.black, // Default text color
+                        fontSize: 14, // Changed font size to 10
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'Note : ',
+                          style: TextStyle(
+                            color: Color(0xFFFD1A00), // Red color for 'Note'
+                          ),
+                        ),
+                        TextSpan(
+                          text:
+                              'Please indicate if any of the following apply to you by ticking the relevant options.',
+                        ),
+                      ],
                     ),
                   ),
-                  TextSpan(
-                    text:
-                        'Please indicate if any of the following apply to you by ticking the relevant options.',
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          Container(
-            padding:const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                for (int i = 0; i < conditions.length; i += 2)
-                  Row(
+                ),
+                const SizedBox(height: 16.0),
+                Expanded(
+                  child: ListView(
                     children: [
-                      Expanded(
-                        child: Checkbox(
-                          value: isCheckedList[i],
-                          onChanged: (value) {
-                            setState(() {
-                              isCheckedList[i] = value!;
-                            });
-                          },
-                        ),
-                      ),
-                      Expanded(
-                        child: Text(
-                          conditions[i],
-                          style:const TextStyle(fontSize: 10),
-                        ),
-                      ),
-                      if (i + 1 < conditions.length)
-                        const SizedBox(width: 16.0), // Adjust the gap between columns
-                      if (i + 1 < conditions.length)
-                        Expanded(
-                          child: Checkbox(
-                            value: isCheckedList[i + 1],
-                            onChanged: (value) {
-                              setState(() {
-                                isCheckedList[i + 1] = value!;
-                              });
-                            },
-                          ),
-                        ),
-                      if (i + 1 < conditions.length)
-                        Expanded(
-                          child: Text(
-                            conditions[i + 1],
-                            style:const TextStyle(fontSize: 10),
-                          ),
+                      for (int index = 0; index < conditions.length; index += 2)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Checkbox(
+                                value: isCheckedList[index],
+                                onChanged: (value) {
+                                  setState(() {
+                                    isCheckedList[index] = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                conditions[index],
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                            const SizedBox(width: 16.0),
+                            Expanded(
+                              child: Checkbox(
+                                value: (index + 1 < conditions.length)
+                                    ? isCheckedList[index + 1]
+                                    : false,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isCheckedList[index + 1] = value!;
+                                  });
+                                },
+                              ),
+                            ),
+                            if (index + 1 < conditions.length)
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  conditions[index + 1],
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                          ],
                         ),
                     ],
                   ),
-              ],
-            ),
-          ),
-          const Spacer(),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle the 'Next' button click
-                  // You can navigate to the next screen or perform any other action
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
                 ),
-                child: const Text(
-                  'Next',
-                  style: TextStyle(
-                    color: Colors.white,
+                const SizedBox(height: 16.0),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Question4Page()),
+                      );
+                      // Handle the 'Next' button click
+                      // You can navigate to the next screen or perform any other action
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    child: const Text(
+                      'Next',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ],

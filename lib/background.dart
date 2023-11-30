@@ -22,15 +22,11 @@ class Background extends StatelessWidget {
             height: double.infinity,
           ),
           // Red Container
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: MediaQuery.of(context).size.height * 0.75,
-            child: Container(
-              color: Colors.red,
-              width: double.infinity,
-            ),
+          Container(
+            color: Colors.red,
+            width: double.infinity,
+            height:
+                MediaQuery.of(context).size.height * 0.25,
           ),
           // Another container
           Positioned(

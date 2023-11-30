@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
+import 'package:mym_raktaveer_frontend/Donor_Registration/question_3.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 
 class QuestionPage extends StatefulWidget {
-  const QuestionPage({super.key});
+  const QuestionPage({super. key});
 
   @override
   State<QuestionPage> createState() => _QuestionPageState();
@@ -15,92 +17,112 @@ class _QuestionPageState extends State<QuestionPage> {
   @override
   Widget build(BuildContext context) {
     return Background(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Empty Container for Image or Back Button
-            Container(
-              height: 80.0, // Adjust the height as needed
-              // Add child components (e.g., image, back button) here
-            ),
-            const SizedBox(height: 14.0),
-            const Text(
-              'Blood Donation Journey',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18.0,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 14.0),
-            Container(
-              padding: const EdgeInsets.all(12.0),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF7DA),
-                borderRadius: BorderRadius.circular(12.0),
-              ),
-              child: RichText(
-                text: const TextSpan(
-                  text: 'Note: ',
+      child: Stack(
+        children: [
+          const MyProgressBar(
+            currentPage: 2,
+            totalPages: 4,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context); // Go back to the previous screen
+                  },
+                ),
+                Container(
+                  height: 40.0, // Adjust the height as needed
+                  // Add child components (e.g., image, back button) here
+                ),
+                const SizedBox(height: 14.0),
+                const Text(
+                  'Blood Donation Journey',
                   style: TextStyle(
-                    color: Colors.red, // Set to red
-                    fontSize: 12.0,
+                    color: Colors.black,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w500,
                   ),
-                  children: [
-                    TextSpan(
-                      text: 'You can leave the box empty if you haven\'t donated blood recently.',
+                ),
+                const SizedBox(height: 14.0),
+                Container(
+                  padding: const EdgeInsets.all(12.0),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFF7DA),
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: RichText(
+                    text: const TextSpan(
+                      text: 'Note: ',
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.red, // Set to red
                         fontSize: 12.0,
                       ),
+                      children: [
+                        TextSpan(
+                          text:
+                              'You can leave the box empty if you haven\'t donated blood recently.',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 12.0,
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20.0),
-            buildDateInput(
-              label: 'Last Blood Donation Date',
-              onSelectDate: (date) {
-                setState(() {
-                  _selectedDonationDate = date;
-                });
-              },
-              selectedDate: _selectedDonationDate,
-            ),
-            const SizedBox(height: 20.0),
-            buildDateInput(
-              label: 'Last Blood Received Date',
-              onSelectDate: (date) {
-                setState(() {
-                  _selectedReceivedDate = date;
-                });
-              },
-              selectedDate: _selectedReceivedDate,
-            ),
-            const SizedBox(height: 20.0),
-            Container(
-              alignment: Alignment.topRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Handle the 'Next' button click
-                  // You can navigate to the next screen or perform any other action
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                ),
-                child: const Text(
-                  'Next',
-                  style: TextStyle(
-                    color: Colors.white,
                   ),
                 ),
-              ),
+                const SizedBox(height: 20.0),
+                buildDateInput(
+                  label: 'Last Blood Donation Date',
+                  onSelectDate: (date) {
+                    setState(() {
+                      _selectedDonationDate = date;
+                    });
+                  },
+                  selectedDate: _selectedDonationDate,
+                ),
+                const SizedBox(height: 20.0),
+                buildDateInput(
+                  label: 'Last Blood Received Date',
+                  onSelectDate: (date) {
+                    setState(() {
+                      _selectedReceivedDate = date;
+                    });
+                  },
+                  selectedDate: _selectedReceivedDate,
+                ),
+                const SizedBox(height: 20.0),
+                Container(
+                  alignment: Alignment.topRight,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const BloodDonationJourneyPage()),
+                      );
+                      // Handle the 'Next' button click
+                      // You can navigate to the next screen or perform any other action
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    child: const Text(
+                      'Next',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

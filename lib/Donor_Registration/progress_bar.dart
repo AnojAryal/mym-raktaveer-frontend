@@ -8,7 +8,7 @@ class MyProgressBar extends StatelessWidget {
     super.key,
     required this.currentPage,
     required this.totalPages,
-  }) ;
+  });
 
   @override
   Widget build(BuildContext context) {
