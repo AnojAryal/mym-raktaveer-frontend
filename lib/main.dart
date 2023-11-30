@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/Donor_Registration/question3.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -19,4 +19,5 @@ class MyApp extends StatelessWidget {
       home: BloodDonationJourneyPage(),
     );
   }
+  
 }

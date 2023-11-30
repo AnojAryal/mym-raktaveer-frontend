@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 
 class BloodDonationJourneyPage extends StatefulWidget {
+  const BloodDonationJourneyPage({super.key});
+
   @override
-  _BloodDonationJourneyPageState createState() =>
+  State<BloodDonationJourneyPage> createState() =>
       _BloodDonationJourneyPageState();
 }
 
@@ -36,9 +38,9 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          SizedBox(height: 5.0),
-          Center(
-            child: Padding(
+          const SizedBox(height: 5.0),
+          const Center(
+            child:Padding(
               padding: EdgeInsets.only(left: 16.0),
               child: Text(
                 'Mym Raktaveer', // <-- New title
@@ -51,10 +53,10 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
             ),
           ), // Add margin to the top
 
-          SizedBox(
+          const SizedBox(
             height: 16.0,
           ), // Add some space between the title and the content
-          Padding(
+          const Padding(
             padding: EdgeInsets.only(left: 16.0),
             child: Text(
               'Blood Donation Journey',
@@ -66,23 +68,23 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
             ),
           ),
           Container(
-            margin: EdgeInsets.all(16.0),
-            padding: EdgeInsets.all(16.0),
+            margin:const EdgeInsets.all(16.0),
+            padding:const EdgeInsets.all(16.0),
             width: double.infinity,
             decoration: BoxDecoration(
-              color: Color(0xFFFFF7DA), // Corrected color code
+              color:const Color(0xFFFFF7DA), // Corrected color code
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
                   spreadRadius: 2,
                   blurRadius: 5,
-                  offset: Offset(0, 3),
+                  offset:const Offset(0, 3),
                 ),
               ],
             ),
-            child: RichText(
-              text: TextSpan(
+            child:RichText(
+              text: const TextSpan(
                 style: TextStyle(
                   color: Colors.black, // Default text color
                   fontSize: 14, // Changed font size to 10
@@ -102,9 +104,9 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
               ),
             ),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Container(
-            padding: EdgeInsets.all(8.0),
+            padding:const EdgeInsets.all(8.0),
             child: Column(
               children: [
                 for (int i = 0; i < conditions.length; i += 2)
@@ -123,11 +125,11 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
                       Expanded(
                         child: Text(
                           conditions[i],
-                          style: TextStyle(fontSize: 10),
+                          style:const TextStyle(fontSize: 10),
                         ),
                       ),
                       if (i + 1 < conditions.length)
-                        SizedBox(width: 16.0), // Adjust the gap between columns
+                        const SizedBox(width: 16.0), // Adjust the gap between columns
                       if (i + 1 < conditions.length)
                         Expanded(
                           child: Checkbox(
@@ -143,7 +145,7 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
                         Expanded(
                           child: Text(
                             conditions[i + 1],
-                            style: TextStyle(fontSize: 10),
+                            style:const TextStyle(fontSize: 10),
                           ),
                         ),
                     ],
@@ -151,7 +153,7 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
               ],
             ),
           ),
-          Spacer(),
+          const Spacer(),
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(

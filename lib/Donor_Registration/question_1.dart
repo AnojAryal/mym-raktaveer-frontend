@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
-// import 'progress_bar.dart';
+
 
 class UserChoicePage extends StatefulWidget {
   const UserChoicePage({super.key});
