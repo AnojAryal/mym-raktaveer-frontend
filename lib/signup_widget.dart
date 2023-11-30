@@ -96,16 +96,28 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                     const SizedBox(height: 16.0),
 
                     // Gender Input
-                    TextFormField(
-                      controller: emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                      ),
-                      validator: (email) =>
-                          email != null && !EmailValidator.validate(email)
-                              ? 'Enter a valid email'
-                              : null,
-                      keyboardType: TextInputType.emailAddress,
+                    DropdownButtonFormField<Gender>(
+                      value: selectedGender,
+                      onChanged: (value) {
+                        // Update the selected gender when changed
+                        selectedGender = value;
+                      },
+                      items: const [
+                        DropdownMenuItem(
+                          value: Gender.Male,
+                          child: Text('Male'),
+                        ),
+                        DropdownMenuItem(
+                          value: Gender.Female,
+                          child: Text('Female'),
+                        ),
+                        DropdownMenuItem(
+                          value: Gender.Others,
+                          child: Text('Others'),
+                        ),
+                      ],
+                      validator: (gender) =>
+                          gender == null ? 'Select your gender' : null,
                     ),
                     const SizedBox(height: 16.0),
 
