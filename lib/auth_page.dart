@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'background.dart';
 import 'login_widget.dart';
 import 'signup_widget.dart';
+
 class AuthPage extends StatefulWidget {
-  const AuthPage({super. key});
+  const AuthPage({super.key});
 
   @override
   State<AuthPage> createState() => _AuthPageState();
@@ -21,6 +22,7 @@ class _AuthPageState extends State<AuthPage> {
             )
           : SignUpWidget(
               onclickedSignIn: toggle,
+              onClickedSignIn: () {},
             ),
     );
   }
