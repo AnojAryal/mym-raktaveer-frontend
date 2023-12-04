@@ -1,17 +1,21 @@
+import 'dart:convert';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
+import 'package:http/http.dart' as http;
 
 enum Gender { Male, Female, Others }
 
 class SignUpWidget extends StatefulWidget {
   const SignUpWidget({
-    super.key,
+    Key? key,
     required this.onClickedSignIn,
-  });
+  }) : super(key: key);
 
   final VoidCallback? onClickedSignIn;
 
@@ -23,8 +27,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   final formKey = GlobalKey<FormState>();
   final fullnameController = TextEditingController();
   final emailController = TextEditingController();
-  final genderController = TextEditingController();
   final ageController = TextEditingController();
+  final mobileNumberController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
   Gender? selectedGender = Gender.Male;
@@ -35,8 +39,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   void dispose() {
     fullnameController.dispose();
     emailController.dispose();
-    genderController.dispose();
     ageController.dispose();
+    mobileNumberController.dispose();
     passwordController.dispose();
     confirmPasswordController.dispose();
     super.dispose();
@@ -130,6 +134,21 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       validator: (value) =>
                           value!.trim().isEmpty ? 'Enter your age' : null,
                     ),
+
+                    const SizedBox(height: 16.0),
+
+                    // Age Input
+                    TextFormField(
+                      controller: mobileNumberController,
+                      decoration: const InputDecoration(
+                        labelText: 'Mobile Number',
+                      ),
+                      keyboardType: TextInputType.number,
+                      validator: (value) => value!.trim().isEmpty
+                          ? 'Enter your Mobile Number'
+                          : null,
+                    ),
+
                     const SizedBox(height: 16.0),
 
                     // Password Input with Show/Hide Icon
@@ -281,29 +300,89 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   }
 
   Future<void> signUp() async {
-    final isValid = formKey.currentState!.validate();
+    if (formKey.currentState?.validate() ?? false) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+      try {
+        final authResult =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
 
-    if (!isValid) return;
+        final userUid = authResult.user?.uid;
+        await sendUserDataToApi(userUid!);
+      } on FirebaseAuthException catch (e) {
+        Utils.showSnackBar(e.message);
+      } finally {
+        navigatorKey.currentState!
+            .popUntil((route) => route.isFirst); // Close the loading indicator
+      }
+    }
+  }
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+  Future<void> sendUserDataToApi(String userUid) async {
+    String? baseUrl = dotenv.env['BASE_URL'];
+
+    String? apiUrl = '$baseUrl/api/users';
+
+    final userData = {
+      'mobile_number': mobileNumberController.text.trim(),
+      'full_name': fullnameController.text.trim(),
+      'gender': selectedGender.toString().split('.').last, // Fix the typo here
+      'age': ageController.text.trim(),
+      'email': emailController.text.trim(),
+      'firebase_uid': userUid,
+      'user_type': 'user',
+    };
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(userData),
       );
 
-      // Additional signup logic for Fullname, Gender, Age can be added here
-    } on FirebaseAuthException catch (e) {
-      Utils.showSnackBar(e.message);
-    } finally {
-      navigatorKey.currentState!.popUntil((route) => route.isFirst);
+      if (response.statusCode == 201) {
+        print('User created successfully');
+        print('Response: ${response.body}');
+      } else {
+        print('Failed to create user. Status code: ${response.statusCode}');
+        print('Response: ${response.body}');
+      }
+    } catch (error) {
+      print('Error creating user: $error');
+      print(userData);
+      final isValid = formKey.currentState!.validate();
+
+      if (!isValid) return;
+
+      // ignore: use_build_context_synchronously
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+      try {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim(),
+        );
+
+        // Additional signup logic for Fullname, Gender, Age can be added here
+      } on FirebaseAuthException catch (e) {
+        Utils.showSnackBar(e.message);
+      } finally {
+        navigatorKey.currentState!.popUntil((route) => route.isFirst);
+      }
     }
   }
 }
