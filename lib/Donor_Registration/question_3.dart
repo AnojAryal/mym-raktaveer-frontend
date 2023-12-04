@@ -48,12 +48,6 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.pop(context); // Go back to the previous screen
-                  },
-                ),
                 const MyProgressBar(
                   currentPage: 3,
                   totalPages: 4,
@@ -154,30 +148,53 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
                   ),
                 ),
                 const SizedBox(height: 16.0),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      // Call the function to update the model
-                      updateModel();
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const Question4Page(),
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            fixedSize: const Size(100, 40),
+                          ),
+                          child: const Text(
+                            'Previous',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
                         ),
-                      );
-                      // Handle the 'Submit' button click
-                      // You can navigate to the next screen or perform any other action
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    child: const Text(
-                      'Submit',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                        ElevatedButton(
+                          onPressed: () {
+                            updateModel();
+
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const Question4Page(),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            fixedSize: const Size(100, 40),
+                          ),
+                          child: const Text(
+                            'Submit',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),

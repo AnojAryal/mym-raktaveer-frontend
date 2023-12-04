@@ -19,22 +19,19 @@ class _Question4PageState extends State<Question4Page> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                // Empty container for future use
-                Container(
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back,
-                          color: Colors.black,
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      // You can add additional widgets here if needed
-                    ],
-                  ),
+                const Row(
+                  children: [
+                    // IconButton(
+                    //   icon: const Icon(
+                    //     Icons.arrow_back,
+                    //     color: Colors.black,
+                    //   ),
+                    //   onPressed: () {
+                    //     Navigator.pop(context);
+                    //   },
+                    // ),
+                    // You can add additional widgets here if needed
+                  ],
                 ),
                 const MyProgressBar(
                   currentPage: 4,
