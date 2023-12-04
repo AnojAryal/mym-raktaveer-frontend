@@ -82,7 +82,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
             ElevatedButton(
               onPressed: signUp,
               style: ElevatedButton.styleFrom(
-                primary: Colors.red, // Set your desired red color
+                backgroundColor: Colors.red, // Set your desired red color
               ),
               child: const Text(
                 'Sign Up',
