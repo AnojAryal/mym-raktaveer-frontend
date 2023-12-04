@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mym_raktaveer_frontend/homepage.dart';
+import 'package:mym_raktaveer_frontend/user_choice.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
 
 class VerifyEmailPage extends StatefulWidget {
@@ -71,7 +71,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
   @override
   Widget build(BuildContext context) => isEmailVerified
-      ? const HomePage()
+      ? const UserChoice()
       : Scaffold(
           appBar: AppBar(
             title: const Text('Verify Email'),
