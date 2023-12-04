@@ -61,7 +61,7 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
                   padding: const EdgeInsets.all(10.0),
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFFFF7DA), // Corrected color code
+                    color: const Color(0xFFFFF7DA), 
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
