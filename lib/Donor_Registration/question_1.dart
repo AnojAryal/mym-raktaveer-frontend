@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
 import 'package:mym_raktaveer_frontend/Donor_Registration/question_2.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
+import 'package:mym_raktaveer_frontend/personal_detail_model.dart';
 
 class UserChoicePage extends StatefulWidget {
   const UserChoicePage({super.key});
@@ -13,6 +14,8 @@ class UserChoicePage extends StatefulWidget {
 class _UserChoicePageState extends State<UserChoicePage> {
   String selectedBloodType = '';
   String selectedRhFactor = '';
+
+  PersonalDetailModel personalDetailModel = PersonalDetailModel();
 
   @override
   Widget build(BuildContext context) {
@@ -129,11 +132,14 @@ class _UserChoicePageState extends State<UserChoicePage> {
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
                     onPressed: () {
+                      updateModel();
+
                       // Handle the 'Next' button click
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const QuestionPage()),
+                            builder: (context) => QuestionPage(
+                                personalDetailModel: personalDetailModel)),
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -224,5 +230,10 @@ class _UserChoicePageState extends State<UserChoicePage> {
         ),
       ),
     );
+  }
+
+  void updateModel() {
+    personalDetailModel.bloodGroupAbo = selectedBloodType;
+    personalDetailModel.bloodGroupRh = selectedRhFactor;
   }
 }

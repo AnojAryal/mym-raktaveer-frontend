@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
 import 'package:mym_raktaveer_frontend/Donor_Registration/question_3.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
+import 'package:mym_raktaveer_frontend/personal_detail_model.dart';
 
 class QuestionPage extends StatefulWidget {
-  const QuestionPage({super.key});
+  const QuestionPage({super.key, required this.personalDetailModel});
+
+  final PersonalDetailModel personalDetailModel;
 
   @override
   State<QuestionPage> createState() => _QuestionPageState();
@@ -99,11 +102,13 @@ class _QuestionPageState extends State<QuestionPage> {
                   alignment: Alignment.topRight,
                   child: ElevatedButton(
                     onPressed: () {
+                      updateModel();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const BloodDonationJourneyPage()),
+                            builder: (context) => BloodDonationJourneyPage(
+                                personalDetailModel:
+                                    widget.personalDetailModel)),
                       );
                       // Handle the 'Next' button click
                       // You can navigate to the next screen or perform any other action
@@ -125,6 +130,12 @@ class _QuestionPageState extends State<QuestionPage> {
         ],
       ),
     );
+  }
+
+  void updateModel() {
+    // Update the PersonalDetailModel with selected dates
+    widget.personalDetailModel.lastDonationDate = _selectedDonationDate;
+    widget.personalDetailModel.lastDonationReceived = _selectedReceivedDate;
   }
 
   Widget buildDateInput({

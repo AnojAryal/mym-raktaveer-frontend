@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
 import 'package:mym_raktaveer_frontend/Donor_Registration/question_4.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
+import 'package:mym_raktaveer_frontend/personal_detail_model.dart';
 
 class BloodDonationJourneyPage extends StatefulWidget {
-  const BloodDonationJourneyPage({super.key});
+  const BloodDonationJourneyPage(
+      {super.key, required this.personalDetailModel});
+
+  final PersonalDetailModel personalDetailModel;
 
   @override
   State<BloodDonationJourneyPage> createState() =>
@@ -154,12 +158,16 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
                   alignment: Alignment.bottomRight,
                   child: ElevatedButton(
                     onPressed: () {
+                      // Call the function to update the model
+                      updateModel();
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Question4Page()),
+                          builder: (context) => const Question4Page(),
+                        ),
                       );
-                      // Handle the 'Next' button click
+                      // Handle the 'Submit' button click
                       // You can navigate to the next screen or perform any other action
                     },
                     style: ElevatedButton.styleFrom(
@@ -179,5 +187,37 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
         ],
       ),
     );
+  }
+
+  void updateModel() {
+    // Update the PersonalDetailModel with selected health conditions
+
+    widget.personalDetailModel.healthConditions = Map.fromEntries(
+      conditions
+          .asMap()
+          .entries
+          .where((entry) => isCheckedList[entry.key])
+          .map((entry) => MapEntry(entry.value, true)),
+    );
+
+    // Print all collected data
+    print("Collected Data:");
+    print("Blood Group ABO: ${widget.personalDetailModel.bloodGroupAbo}");
+    print("Blood Group Rh: ${widget.personalDetailModel.bloodGroupRh}");
+    print("Last Donation Date: ${widget.personalDetailModel.lastDonationDate}");
+    print(
+        "Last Donation Received: ${widget.personalDetailModel.lastDonationReceived}");
+    print(
+        "Health Conditions Map: ${widget.personalDetailModel.healthConditions}");
+  }
+}
+
+extension IterableExtension<T> on Iterable<T> {
+  Iterable<R> mapIndexed<R>(R Function(int index, T element) f) sync* {
+    var index = 0;
+    for (var element in this) {
+      yield f(index, element);
+      index++;
+    }
   }
 }
