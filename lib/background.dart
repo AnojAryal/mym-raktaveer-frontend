@@ -26,7 +26,7 @@ class Background extends StatelessWidget {
             color: Colors.red,
             width: double.infinity,
             height:
-                MediaQuery.of(context).size.height * 0.25, // Set a fixed height
+                MediaQuery.of(context).size.height * 0.25,
           ),
           // Another container
           Positioned(

@@ -1,27 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/auth_page.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
 import 'package:mym_raktaveer_frontend/verify_email.dart';
-import 'firebase_options.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  // Initialize Firebase
 
+void main() {
   runApp(const MyApp());
 }
-
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,6 +23,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
 
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
@@ -52,6 +46,11 @@ class MainPage extends StatelessWidget {
         },
       ));
 }
+
+
+
+
+
 // import 'package:flutter/material.dart';
 // import 'package:mym_raktaveer_frontend/Donor_Registration/Question1.dart';
 
