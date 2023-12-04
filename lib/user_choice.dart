@@ -1,40 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:mym_raktaveer_frontend/homepage.dart';
-import 'package:mym_raktaveer_frontend/question_first.dart';
+import 'background.dart';
 
-class UserChoice extends StatefulWidget {
-  const UserChoice({super.key});
+class UserChoicePage extends StatelessWidget {
+  const UserChoicePage({super.key});
 
-  @override
-  State<UserChoice> createState() => _UserChoiceState();
-}
-
-class _UserChoiceState extends State<UserChoice> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('User Choice'),
-      ),
-      body: Center(
+    return Background(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
               onPressed: () {
-                // Navigate to receiver screen
-                Navigator.push(context, const HomePage() as Route<Object?>);
+                // Handle the logic when the user chooses to log in as a receiver
+                // You can navigate to the receiver login page or perform other actions
               },
-              child: const Text('Receiver'),
+              child: const Text('Login as Receiver'),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                // Navigate to donor screen
-                Navigator.push(
-                    context, const QuestionFirst() as Route<Object?>);
+                // Handle the logic when the user chooses to log in as a donor
+                // You can navigate to the donor login page or perform other actions
               },
-              child: const Text('Donor'),
+              child: const Text('Login as Donor'),
             ),
           ],
         ),
