@@ -166,7 +166,7 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
                       backgroundColor: Colors.red,
                     ),
                     child: const Text(
-                      'Next',
+                      'Submit',
                       style: TextStyle(
                         color: Colors.white,
                       ),
