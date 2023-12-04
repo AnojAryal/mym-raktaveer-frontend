@@ -28,7 +28,6 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   final formKey = GlobalKey<FormState>();
   final fullnameController = TextEditingController();
   final emailController = TextEditingController();
-  final genderController = TextEditingController();
   final ageController = TextEditingController();
   final mobileNumberController = TextEditingController();
   final passwordController = TextEditingController();
@@ -41,7 +40,6 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   void dispose() {
     fullnameController.dispose();
     emailController.dispose();
-    genderController.dispose();
     ageController.dispose();
     mobileNumberController.dispose();
     passwordController.dispose();
@@ -337,7 +335,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     final userData = {
       'mobile_number': mobileNumberController.text.trim(),
       'full_name': fullnameController.text.trim(),
-      'gender': genderController.text.trim(),
+      'gender': selectedGender.toString().split('.').last, // Fix the typo here
       'age': ageController.text.trim(),
       'email': emailController.text.trim(),
       'firebase_uid': userUid,
@@ -360,6 +358,7 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       }
     } catch (error) {
       print('Error creating user: $error');
+      print(userData);
       final isValid = formKey.currentState!.validate();
 
       if (!isValid) return;
