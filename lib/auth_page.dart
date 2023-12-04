@@ -21,8 +21,7 @@ class _AuthPageState extends State<AuthPage> {
               onclickedSignUp: toggle,
             )
           : SignUpWidget(
-              onclickedSignIn: toggle,
-              onClickedSignIn: () {},
+              onClickedSignIn: toggle,
             ),
     );
   }

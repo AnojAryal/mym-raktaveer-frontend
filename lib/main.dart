@@ -56,6 +56,7 @@ class MainPage extends StatelessWidget {
 }
 // import 'package:flutter/material.dart';
 // import 'package:mym_raktaveer_frontend/Donor_Registration/Question1.dart';
+// import 'package:mym_raktaveer_frontend/user_choice.dart';
 
 // void main() {
 //   runApp(MyApp());
@@ -70,7 +71,7 @@ class MainPage extends StatelessWidget {
 //         primarySwatch: Colors.blue,
 //         visualDensity: VisualDensity.adaptivePlatformDensity,
 //       ),
-//       home: UserChoicePage(),
+//       home: const UserChoice(),
 //     );
 //   }
 // }
