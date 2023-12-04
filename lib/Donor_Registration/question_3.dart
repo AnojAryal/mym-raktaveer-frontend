@@ -4,7 +4,7 @@ import 'package:mym_raktaveer_frontend/Donor_Registration/question_4.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 
 class BloodDonationJourneyPage extends StatefulWidget {
-  const BloodDonationJourneyPage({super. key});
+  const BloodDonationJourneyPage({super.key});
 
   @override
   State<BloodDonationJourneyPage> createState() =>
@@ -37,17 +37,23 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
   Widget build(BuildContext context) {
     return Background(
       child: Stack(
-        children: [  
-           const MyProgressBar(
-            currentPage: 3,
-            totalPages: 4,
-          ),
+        children: [
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context); // Go back to the previous screen
+                  },
+                ),
+                const MyProgressBar(
+                  currentPage: 3,
+                  totalPages: 4,
+                ),
                 const Text(
                   'Health Conditions',
                   style: TextStyle(
