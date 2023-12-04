@@ -31,12 +31,6 @@ class _QuestionPageState extends State<QuestionPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.pop(context); // Go back to the previous screen
-                  },
-                ),
                 Container(
                   height: 40.0, // Adjust the height as needed
                   // Add child components (e.g., image, back button) here
@@ -61,7 +55,7 @@ class _QuestionPageState extends State<QuestionPage> {
                     text: const TextSpan(
                       text: 'Note: ',
                       style: TextStyle(
-                        color: Colors.red, // Set to red
+                        color: Colors.red,
                         fontSize: 12.0,
                       ),
                       children: [
@@ -99,29 +93,52 @@ class _QuestionPageState extends State<QuestionPage> {
                 ),
                 const SizedBox(height: 20.0),
                 Container(
-                  alignment: Alignment.topRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      updateModel();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => BloodDonationJourneyPage(
-                                personalDetailModel:
-                                    widget.personalDetailModel)),
-                      );
-                      // Handle the 'Next' button click
-                      // You can navigate to the next screen or perform any other action
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(
-                        color: Colors.white,
+                  padding: const EdgeInsets.all(12.0),
+                  // alignment: Alignment.bottomCenter,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                           fixedSize: const Size(100, 40),
+                        ),
+                        child: const Text(
+                          'Previous',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
-                    ),
+                      ElevatedButton(
+                        onPressed: () {
+                          updateModel();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BloodDonationJourneyPage(
+                                personalDetailModel: widget.personalDetailModel,
+                              ),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          fixedSize: const Size(100, 40),
+                        ),
+                        child: const Text(
+                          'Next',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

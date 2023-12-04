@@ -124,36 +124,60 @@ class _UserChoicePageState extends State<UserChoicePage> {
                 ),
               ),
               const SizedBox(
-                height: 16.0,
+                height: 32.0,
               ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      updateModel();
-
-                      // Handle the 'Next' button click
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => QuestionPage(
-                                personalDetailModel: personalDetailModel)),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                    ),
-                    child: const Text(
-                      'Next',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+             Container(
+  alignment: Alignment.bottomCenter,
+  child: Container(
+    padding:const EdgeInsets.symmetric(horizontal: 16),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            fixedSize: const Size(100, 40),
+          ),
+          child: const Text(
+            'Previous',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+            ),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            updateModel();
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => QuestionPage(
+                  personalDetailModel: personalDetailModel,
                 ),
               ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red,
+            fixedSize: const Size(100, 40),
+          ),
+          child: const Text(
+            'Next',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+),
+
             ],
           ),
         ],

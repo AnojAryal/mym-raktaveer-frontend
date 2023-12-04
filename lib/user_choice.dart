@@ -33,7 +33,7 @@ class _UserChoiceState extends State<UserChoice> {
                   padding: const EdgeInsets.all(10),
                   margin: const EdgeInsets.symmetric(
                       horizontal:
-                          20), // Adjust the margin for smaller container
+                          15), // Adjust the margin for smaller container
                   child: const Column(
                     children: [
                       Text(
