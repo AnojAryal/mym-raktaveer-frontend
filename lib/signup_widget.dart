@@ -361,28 +361,6 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       final isValid = formKey.currentState!.validate();
 
       if (!isValid) return;
-
-      // ignore: use_build_context_synchronously
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-
-      try {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
-        );
-
-        // Additional signup logic for Fullname, Gender, Age can be added here
-      } on FirebaseAuthException catch (e) {
-        Utils.showSnackBar(e.message);
-      } finally {
-        navigatorKey.currentState!.popUntil((route) => route.isFirst);
-      }
     }
   }
 }

@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
 import 'package:mym_raktaveer_frontend/Donor_Registration/question_4.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 import 'package:mym_raktaveer_frontend/personal_detail_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:firebase_auth/firebase_auth.dart';
 
 class BloodDonationJourneyPage extends StatefulWidget {
   const BloodDonationJourneyPage(
@@ -214,18 +219,61 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
           .asMap()
           .entries
           .where((entry) => isCheckedList[entry.key])
-          .map((entry) => MapEntry(entry.value, true)),
+          .map((entry) => MapEntry(camelCaseToSnakeCase(entry.value), true)),
     );
 
+    final userUid = FirebaseAuth.instance.currentUser?.uid;
+
+    sendPersonalDataToApi(userUid);
+
     // Print all collected data
-    print("Collected Data:");
-    print("Blood Group ABO: ${widget.personalDetailModel.bloodGroupAbo}");
-    print("Blood Group Rh: ${widget.personalDetailModel.bloodGroupRh}");
-    print("Last Donation Date: ${widget.personalDetailModel.lastDonationDate}");
-    print(
-        "Last Donation Received: ${widget.personalDetailModel.lastDonationReceived}");
-    print(
-        "Health Conditions Map: ${widget.personalDetailModel.healthConditions}");
+  }
+
+  String camelCaseToSnakeCase(String input) {
+    return input
+        .replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
+          return '${match.group(1)}_${match.group(2)!.toLowerCase()}';
+        })
+        .replaceAll(' ', '_')
+        .toLowerCase();
+  }
+
+  Future<void> sendPersonalDataToApi(String? userUid) async {
+    String? baseUrl = dotenv.env['BASE_URL'];
+
+    String? apiUrl = '$baseUrl/api/personal-details';
+
+    final personalData = {
+      'blood_group_abo': widget.personalDetailModel.bloodGroupAbo,
+      'blood_group_rh': widget.personalDetailModel.bloodGroupRh,
+      'user_id': userUid,
+      if (widget.personalDetailModel.lastDonationDate != null)
+        'last_donation_date': widget.personalDetailModel.lastDonationDate,
+      if (widget.personalDetailModel.lastDonationReceived != null)
+        'last_donation_received':
+            widget.personalDetailModel.lastDonationReceived,
+      ...?widget.personalDetailModel.healthConditions,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(personalData),
+      );
+
+      if (response.statusCode == 201) {
+        print('User created successfully');
+        print('Response: ${response.body}');
+      } else {
+        print(
+            'Failed to create user. Status code: ${response.statusCode} data : $personalData');
+        print('Response: ${response.body}');
+      }
+    } catch (error) {
+      print('Error creating user: $error');
+      print(personalData);
+    }
   }
 }
 

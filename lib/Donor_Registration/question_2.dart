@@ -104,7 +104,7 @@ class _QuestionPageState extends State<QuestionPage> {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
-                           fixedSize: const Size(100, 40),
+                          fixedSize: const Size(100, 40),
                         ),
                         child: const Text(
                           'Previous',
@@ -150,7 +150,7 @@ class _QuestionPageState extends State<QuestionPage> {
   }
 
   void updateModel() {
-    // Update the PersonalDetailModel with selected dates
+    // Check if _selectedDonationDate is not null before updating the model
     widget.personalDetailModel.lastDonationDate = _selectedDonationDate;
     widget.personalDetailModel.lastDonationReceived = _selectedReceivedDate;
   }
