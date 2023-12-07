@@ -1,6 +1,8 @@
 import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 import 'package:flutter/material.dart';
+import 'package:mym_raktaveer_frontend/homepage.dart';
+import 'package:mym_raktaveer_frontend/main.dart';
 
 class Question4Page extends StatefulWidget {
   const Question4Page({super.key});
@@ -60,7 +62,12 @@ class _Question4PageState extends State<Question4Page> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      // Handle button click, e.g., navigate to home
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomePage(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
