@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? bloodGroup = '';
   int? donationCount = 0;
+  bool? status;
 
   @override
   void initState() {
@@ -39,6 +40,7 @@ class _HomePageState extends State<HomePage> {
           bloodGroup = data['blood_detail']['blood_group_abo'] +
               data['blood_detail']['blood_group_rh'];
           donationCount = data['blood_detail']['donation_count'];
+          status = data['blood_detail']['status'];
         });
       } else {
         print('Not Found: ${response.statusCode}');
@@ -71,6 +73,8 @@ class _HomePageState extends State<HomePage> {
           Text('Blood Group : $bloodGroup'),
           SizedBox(height: 10),
           Text('Life Saved: $donationCount'),
+          SizedBox(height: 10),
+          Text('Status: $status'),
         ],
       ),
     );
