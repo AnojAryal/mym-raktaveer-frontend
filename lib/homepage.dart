@@ -36,11 +36,17 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body)['data'];
+
+        String? bloodGroupAbo = data['blood_detail']?['blood_group_abo'];
+        String? bloodGroupRh = data['blood_detail']?['blood_group_rh'];
+
         setState(() {
-          bloodGroup = data['blood_detail']['blood_group_abo'] +
-              data['blood_detail']['blood_group_rh'];
-          donationCount = data['blood_detail']['donation_count'];
-          status = data['blood_detail']['status'];
+          bloodGroup = (bloodGroupAbo != null && bloodGroupRh != null)
+              ? bloodGroupAbo + bloodGroupRh
+              : 'N/A';
+
+          donationCount = data['blood_detail']?['donation_count'] ?? 0;
+          status = data['blood_detail']?['status'] ?? false;
         });
       } else {
         print('Not Found: ${response.statusCode}');
@@ -63,7 +69,6 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton.icon(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
-              // You can navigate to the sign-in page or any other page after signing out.
             },
             icon: const Icon(Icons.exit_to_app),
             label: const Text("Sign Out"),

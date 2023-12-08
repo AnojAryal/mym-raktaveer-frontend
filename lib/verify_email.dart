@@ -1,12 +1,16 @@
 import 'dart:async';
-import 'package:mym_raktaveer_frontend/background.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
+import 'package:mym_raktaveer_frontend/background.dart';
+import 'package:mym_raktaveer_frontend/homepage.dart';
 import 'package:mym_raktaveer_frontend/user_choice.dart';
 import 'package:mym_raktaveer_frontend/utils.dart';
 
 class VerifyEmailPage extends StatefulWidget {
-  const VerifyEmailPage({super.key});
+  const VerifyEmailPage({Key? key}) : super(key: key);
 
   @override
   State<VerifyEmailPage> createState() => _VerifyEmailPageState();
@@ -16,6 +20,9 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   bool isEmailVerified = false;
   Timer? timer;
   int countdown = 60;
+  final user = FirebaseAuth.instance.currentUser!;
+  bool didFetchData =
+      false; // Track whether data has been fetched to avoid unnecessary calls
 
   @override
   void initState() {
@@ -25,10 +32,8 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     if (!isEmailVerified) {
       sendVerificationEmail();
 
-      timer = Timer.periodic(
-        const Duration(seconds: 3),
-        (_) => checkEmailVerified(),
-      );
+      // Use Timer instead of Timer.periodic to avoid multiple instances
+      timer = Timer(Duration(seconds: 3), checkEmailVerified);
     }
   }
 
@@ -40,16 +45,14 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
   Future<void> sendVerificationEmail() async {
     try {
-      final user = FirebaseAuth.instance.currentUser!;
-
       setState(() {
         countdown = 60;
       });
 
-      timer?.cancel(); // Cancel existing timer, if any/
+      timer?.cancel(); // Cancel existing timer, if any
 
       timer = Timer.periodic(
-        const Duration(seconds: 1),
+        Duration(seconds: 1),
         (Timer timer) {
           setState(() {
             if (countdown > 0) {
@@ -64,24 +67,56 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       await user.sendEmailVerification();
       Utils.showSnackBar("Email Successfully Sent");
     } catch (e) {
-      //
+      // Handle exceptions
     }
   }
 
   @override
-  Widget build(BuildContext context) => isEmailVerified
-      ? const UserChoice()
-      : Background(
-          // Use the Background widget here
-          child: Stack(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: _buildVerificationForm(),
-              ),
-            ],
-          ),
+  Widget build(BuildContext context) {
+    if (isEmailVerified) {
+      if (!didFetchData) {
+        // Only fetch data if it hasn't been fetched before
+        return FutureBuilder(
+          future: fetchData(
+              'https://613f-2400-1a00-b030-d590-dedf-3b84-2bdc-7c0e.ngrok-free.app/api/personal-details/${user.uid}'),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            } else {
+              final responseData = snapshot.data;
+
+              if (responseData?['data']?['health_condition'] != null &&
+                  responseData?['data']?['blood_detail'] != null) {
+                // Set didFetchData to true after successful data fetch
+                didFetchData = true;
+                return const HomePage();
+              } else {
+                // Set didFetchData to true even if conditions are not met
+                didFetchData = true;
+                return const UserChoice();
+              }
+            }
+          },
         );
+      } else {
+        // Return placeholder widget if data has already been fetched
+        return const SizedBox.shrink();
+      }
+    } else {
+      return Background(
+        child: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: _buildVerificationForm(),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 
   Widget _buildVerificationForm() {
     return Column(
@@ -111,6 +146,16 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     );
   }
 
+  Future<Map<String, dynamic>> fetchData(String apiUrl) async {
+    final response = await http.get(Uri.parse(apiUrl));
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
   Future<void> checkEmailVerified() async {
     try {
       await FirebaseAuth.instance.currentUser?.reload();
@@ -123,7 +168,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         timer?.cancel();
       }
     } catch (e) {
-      //
+      // Handle exceptions
     }
   }
 }

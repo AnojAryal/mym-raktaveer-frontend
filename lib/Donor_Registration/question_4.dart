@@ -2,7 +2,6 @@ import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
 import 'package:mym_raktaveer_frontend/background.dart';
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/homepage.dart';
-import 'package:mym_raktaveer_frontend/main.dart';
 
 class Question4Page extends StatefulWidget {
   const Question4Page({super.key});
@@ -21,20 +20,6 @@ class _Question4PageState extends State<Question4Page> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                const Row(
-                  children: [
-                    // IconButton(
-                    //   icon: const Icon(
-                    //     Icons.arrow_back,
-                    //     color: Colors.black,
-                    //   ),
-                    //   onPressed: () {
-                    //     Navigator.pop(context);
-                    //   },
-                    // ),
-                    // You can add additional widgets here if needed
-                  ],
-                ),
                 const MyProgressBar(
                   currentPage: 4,
                   totalPages: 4,
