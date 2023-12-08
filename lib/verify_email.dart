@@ -78,7 +78,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         // Only fetch data if it hasn't been fetched before
         return FutureBuilder(
           future: fetchData(
-              'https://5902-2400-1a00-b030-d590-dedf-3b84-2bdc-7c0e.ngrok-free.app/api/personal-details/${user.uid}'),
+              'https://6650-27-34-90-92.ngrok-free.app/api/personal-details/${user.uid}'),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
@@ -91,7 +91,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                   responseData?['data']?['blood_detail'] != null) {
                 // Set didFetchData to true after successful data fetch
                 didFetchData = true;
-                return const HomePage();
+                return HomePage();
               } else {
                 // Set didFetchData to true even if conditions are not met
                 didFetchData = true;
