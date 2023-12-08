@@ -63,7 +63,8 @@ class _UserChoiceState extends State<UserChoice> {
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () {
-                    Navigator.push(
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => const HomePage()),
                     );
