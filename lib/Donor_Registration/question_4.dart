@@ -47,11 +47,11 @@ class _Question4PageState extends State<Question4Page> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.popUntil(context, (route) => route.isFirst);
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HomePage(),
-                        ),
+                            builder: (context) => const HomePage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

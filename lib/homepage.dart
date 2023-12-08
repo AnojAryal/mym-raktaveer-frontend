@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
+import 'package:mym_raktaveer_frontend/auth_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -69,6 +70,13 @@ class _HomePageState extends State<HomePage> {
           ElevatedButton.icon(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AuthPage()),
+              );
+
+              // Navigate to the authentication page (e.g., login or signup page)
             },
             icon: const Icon(Icons.exit_to_app),
             label: const Text("Sign Out"),
