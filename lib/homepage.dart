@@ -8,13 +8,15 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
+  // ignore: library_private_types_in_public_api
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  CarouselController _carouselController = CarouselController();
-  CarouselController _secondCarouselController = CarouselController();
+  final CarouselController _carouselController = CarouselController();
 
   String? bloodGroup = '';
   int? donationCount = 0;
