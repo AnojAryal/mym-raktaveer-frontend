@@ -78,7 +78,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         // Only fetch data if it hasn't been fetched before
         return FutureBuilder(
           future: fetchData(
-              'https://6650-27-34-90-92.ngrok-free.app/api/personal-details/${user.uid}'),
+              'https://7169-2400-1a00-b030-d590-dedf-3b84-2bdc-7c0e.ngrok-free.app/api/personal-details/${user.uid}'),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
