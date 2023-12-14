@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'background.dart';
+import 'widgets/background.dart';
 
 class Profile extends StatelessWidget {
   // Placeholder data

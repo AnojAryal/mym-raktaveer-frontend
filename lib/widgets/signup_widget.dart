@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
-import 'package:mym_raktaveer_frontend/utils.dart';
+import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
 import 'package:http/http.dart' as http;
 
 enum Gender { Male, Female, Others }

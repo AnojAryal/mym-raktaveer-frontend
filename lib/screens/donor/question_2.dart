@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
-import 'package:mym_raktaveer_frontend/Donor_Registration/question_3.dart';
-import 'package:mym_raktaveer_frontend/background.dart';
-import 'package:mym_raktaveer_frontend/personal_detail_model.dart';
+import 'package:mym_raktaveer_frontend/widgets/progress_bar.dart';
+import 'package:mym_raktaveer_frontend/screens/donor/question_3.dart';
+import 'package:mym_raktaveer_frontend/widgets/background.dart';
+import 'package:mym_raktaveer_frontend/models/personal_detail_model.dart';
 
 class QuestionPage extends StatefulWidget {
   const QuestionPage({super.key, required this.personalDetailModel});

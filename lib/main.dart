@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:mym_raktaveer_frontend/auth_page.dart';
-import 'package:mym_raktaveer_frontend/utils.dart';
-import 'package:mym_raktaveer_frontend/verify_email.dart';
-import 'firebase_options.dart';
+import 'package:mym_raktaveer_frontend/models/firebase_auth/auth_page.dart';
+import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
+import 'package:mym_raktaveer_frontend/models/firebase_auth/verify_email.dart';
+import 'models/firebase_auth/firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {

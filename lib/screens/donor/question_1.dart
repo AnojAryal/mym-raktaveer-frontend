@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
-import 'package:mym_raktaveer_frontend/Donor_Registration/question_2.dart';
-import 'package:mym_raktaveer_frontend/background.dart';
-import 'package:mym_raktaveer_frontend/personal_detail_model.dart';
+import 'package:mym_raktaveer_frontend/widgets/progress_bar.dart';
+import 'package:mym_raktaveer_frontend/screens/donor/question_2.dart';
+import 'package:mym_raktaveer_frontend/widgets/background.dart';
+import 'package:mym_raktaveer_frontend/models/personal_detail_model.dart';
 
 class UserChoicePage extends StatefulWidget {
   const UserChoicePage({super.key});

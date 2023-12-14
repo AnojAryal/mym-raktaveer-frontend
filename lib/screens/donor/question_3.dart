@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:mym_raktaveer_frontend/Donor_Registration/progress_bar.dart';
-import 'package:mym_raktaveer_frontend/Donor_Registration/question_4.dart';
-import 'package:mym_raktaveer_frontend/background.dart';
-import 'package:mym_raktaveer_frontend/personal_detail_model.dart';
+import 'package:mym_raktaveer_frontend/widgets/progress_bar.dart';
+import 'package:mym_raktaveer_frontend/screens/donor/question_4.dart';
+import 'package:mym_raktaveer_frontend/widgets/background.dart';
+import 'package:mym_raktaveer_frontend/models/personal_detail_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
 

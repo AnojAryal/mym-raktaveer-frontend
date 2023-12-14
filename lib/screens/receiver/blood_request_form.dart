@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/services.dart';
-import 'background.dart';
+import '../../widgets/background.dart';
 
 class BloodRequestForm extends StatefulWidget {
   @override

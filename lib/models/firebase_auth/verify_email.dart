@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
-import 'package:mym_raktaveer_frontend/background.dart';
-import 'package:mym_raktaveer_frontend/homepage.dart';
-import 'package:mym_raktaveer_frontend/user_choice.dart';
-import 'package:mym_raktaveer_frontend/utils.dart';
+import 'package:mym_raktaveer_frontend/widgets/background.dart';
+import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
+import 'package:mym_raktaveer_frontend/widgets/user_choice.dart';
+import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({Key? key}) : super(key: key);

@@ -2,8 +2,8 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
-import 'package:mym_raktaveer_frontend/utils.dart';
-import 'background.dart';  // Import background.dart
+import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
+import '../../widgets/background.dart';  // Import background.dart
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -63,7 +63,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
               ElevatedButton(
                 onPressed: resetPassword,
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.red,
+                  backgroundColor: Colors.red,
                 ),
                 child: const Text(
                   'Reset Password',
