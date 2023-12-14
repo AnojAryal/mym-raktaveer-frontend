@@ -5,7 +5,10 @@ import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/models/personal_detail_model.dart';
 
 class QuestionPage extends StatefulWidget {
-  const QuestionPage({super.key, required this.personalDetailModel});
+  const QuestionPage({
+    super.key,
+    required this.personalDetailModel,
+  });
 
   final PersonalDetailModel personalDetailModel;
 
@@ -31,48 +34,11 @@ class _QuestionPageState extends State<QuestionPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  height: 40.0, // Adjust the height as needed
-                  // Add child components (e.g., image, back button) here
-                ),
+                _buildAppBar(),
                 const SizedBox(height: 14.0),
-                const Text(
-                  'Blood Donation Journey',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 14.0),
-                Container(
-                  padding: const EdgeInsets.all(12.0),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFF7DA),
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: RichText(
-                    text: const TextSpan(
-                      text: 'Note: ',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 12.0,
-                      ),
-                      children: [
-                        TextSpan(
-                          text:
-                              'You can leave the box empty if you haven\'t donated blood recently.',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 12.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                _buildNoteContainer(),
                 const SizedBox(height: 20.0),
-                buildDateInput(
+                _buildDateInput(
                   label: 'Last Blood Donation Date',
                   onSelectDate: (date) {
                     setState(() {
@@ -82,7 +48,7 @@ class _QuestionPageState extends State<QuestionPage> {
                   selectedDate: _selectedDonationDate,
                 ),
                 const SizedBox(height: 20.0),
-                buildDateInput(
+                _buildDateInput(
                   label: 'Last Blood Received Date',
                   onSelectDate: (date) {
                     setState(() {
@@ -92,55 +58,7 @@ class _QuestionPageState extends State<QuestionPage> {
                   selectedDate: _selectedReceivedDate,
                 ),
                 const SizedBox(height: 20.0),
-                Container(
-                  padding: const EdgeInsets.all(12.0),
-                  // alignment: Alignment.bottomCenter,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          fixedSize: const Size(100, 40),
-                        ),
-                        child: const Text(
-                          'Previous',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          updateModel();
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BloodDonationJourneyPage(
-                                personalDetailModel: widget.personalDetailModel,
-                              ),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          fixedSize: const Size(100, 40),
-                        ),
-                        child: const Text(
-                          'Next',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _buildNavigationButtons(),
               ],
             ),
           ),
@@ -149,13 +67,43 @@ class _QuestionPageState extends State<QuestionPage> {
     );
   }
 
-  void updateModel() {
-    // Check if _selectedDonationDate is not null before updating the model
-    widget.personalDetailModel.lastDonationDate = _selectedDonationDate;
-    widget.personalDetailModel.lastDonationReceived = _selectedReceivedDate;
+  Widget _buildAppBar() {
+    return Container(
+      height: 40.0,
+      // Add child components (e.g., image, back button) here
+    );
   }
 
-  Widget buildDateInput({
+  Widget _buildNoteContainer() {
+    return Container(
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFFF7DA),
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      child: RichText(
+        text: const TextSpan(
+          text: 'Note: ',
+          style: TextStyle(
+            color: Colors.red,
+            fontSize: 12.0,
+          ),
+          children: [
+            TextSpan(
+              text:
+                  'You can leave the box empty if you haven\'t donated blood recently.',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 12.0,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateInput({
     required String label,
     required Function(DateTime) onSelectDate,
     DateTime? selectedDate,
@@ -198,6 +146,60 @@ class _QuestionPageState extends State<QuestionPage> {
         ),
       ],
     );
+  }
+
+  Widget _buildNavigationButtons() {
+    return Container(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _buildNavigationButton(
+            text: 'Previous',
+            onPressed: () => Navigator.pop(context),
+          ),
+          _buildNavigationButton(
+            text: 'Next',
+            onPressed: () {
+              updateModel();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BloodDonationJourneyPage(
+                    personalDetailModel: widget.personalDetailModel,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavigationButton({
+    required String text,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.red,
+        fixedSize: const Size(100, 40),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+        ),
+      ),
+    );
+  }
+
+  void updateModel() {
+    widget.personalDetailModel.lastDonationDate = _selectedDonationDate;
+    widget.personalDetailModel.lastDonationReceived = _selectedReceivedDate;
   }
 
   Future<void> _selectDate(

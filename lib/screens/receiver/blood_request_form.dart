@@ -49,68 +49,26 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Back Button
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () {
-                  // Handle back button press, you can use Navigator.pop(context) to go back
-                },
-              ),
-            ),
-          ),
-          // Blood Request Form Title
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 16.0),
-              child: Text(
-                'Blood Request Form',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          // Form Components with Scrolling
+          _buildBackButton(),
+          _buildBloodRequestFormTitle(),
           Expanded(
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  buildTextField('Patient Name'),
-                  buildRow(['Age', 'Sex']),
-                  buildTextFieldWithIcon('Hospital Name', Icons.local_hospital),
-                  buildTextFieldWithIcon('Location', Icons.location_on),
-                  buildRow(['Room No.', 'OPD No.']),
-                  buildBloodGroupDropdown('Blood Group (ABO)'),
-                  buildBloodGroupRhDropdown('Blood Group (RH)'),
-                  buildTextFieldWithFilePicker('Document Upload'),
-                  buildTextField('Description'),
-                  buildUrgencyLevelDropdown(),
-                  buildDateTimePicker('Date and Time'),
-                  buildNumericTextField('Quantity'),
-
+                  _buildTextField('Patient Name'),
+                  _buildRow(['Age', 'Sex']),
+                  _buildTextFieldWithIcon('Hospital Name', Icons.local_hospital),
+                  _buildTextFieldWithIcon('Location', Icons.location_on),
+                  _buildRow(['Room No.', 'OPD No.']),
+                  _buildBloodGroupDropdown('Blood Group (ABO)'),
+                  _buildBloodGroupRhDropdown('Blood Group (RH)'),
+                  _buildTextFieldWithFilePicker('Document Upload'),
+                  _buildTextField('Description'),
+                  _buildUrgencyLevelDropdown(),
+                  _buildDateTimePicker('Date and Time'),
+                  _buildNumericTextField('Quantity'),
                   const SizedBox(height: 16.0),
-
-                  // Red Sign-Up Button with White Text
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(150, 45),
-                          backgroundColor: Colors.red,
-                        ),
-                        child: const Text(
-                          'Sign Up',
-                          style: TextStyle(
-                            color: Colors.white, // Set the text color to white
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildSignUpButton(),
                 ],
               ),
             ),
@@ -120,76 +78,106 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
     );
   }
 
-  Widget buildTextField(String label) {
+  Widget _buildBackButton() {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      padding: const EdgeInsets.all(16.0),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // Handle back button press
+          },
         ),
       ),
     );
   }
 
-  Widget buildTextFieldWithIcon(String label, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: TextField(
-        decoration: InputDecoration(
-          labelText: label,
-          prefixIcon: Icon(icon),
-          border: const OutlineInputBorder(),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+  Widget _buildBloodRequestFormTitle() {
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 16.0),
+        child: Text(
+          'Blood Request Form',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
     );
   }
 
-  Widget buildTextFieldWithFilePicker(String label) {
+  Widget _buildTextField(String label) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        decoration: _getTextFieldDecoration(label),
+      ),
+    );
+  }
+
+  InputDecoration _getTextFieldDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      border: const OutlineInputBorder(),
+      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+    );
+  }
+
+  Widget _buildTextFieldWithIcon(String label, IconData icon) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextField(
+        decoration: _getTextFieldWithIconDecoration(label, icon),
+      ),
+    );
+  }
+
+  InputDecoration _getTextFieldWithIconDecoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(icon),
+      border: const OutlineInputBorder(),
+      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+    );
+  }
+
+  Widget _buildTextFieldWithFilePicker(String label) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
-        onTap: () async {
-          FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-          if (result != null) {
-            // Handle the file path as needed
-          }
-        },
+        onTap: _pickFile,
         child: InputDecorator(
-          decoration: InputDecoration(
-            labelText: label,
-            border: const OutlineInputBorder(),
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-          ),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text('Choose a file'),
-              Icon(Icons.attach_file),
-            ],
-          ),
+          decoration: _getTextFieldDecoration(label),
+          child: _buildFilePickerRow(),
         ),
       ),
     );
   }
 
-  Widget buildUrgencyLevelDropdown() {
+  Widget _buildFilePickerRow() {
+    return const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('Choose a file'),
+        Icon(Icons.attach_file),
+      ],
+    );
+  }
+
+  Future<void> _pickFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      // Handle the file path as needed
+    }
+  }
+
+  Widget _buildUrgencyLevelDropdown() {
     List<String> urgencyLevels = ['Low', 'Medium', 'High'];
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: DropdownButtonFormField(
-        decoration: const InputDecoration(
-          labelText: 'Urgency Level',
-          border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        ),
+        decoration: _getTextFieldDecoration('Urgency Level'),
         value: urgencyLevels[0],
         items: urgencyLevels.map((level) {
           return DropdownMenuItem(
@@ -204,31 +192,26 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
     );
   }
 
-  Widget buildRow(List<String> labels) {
+  Widget _buildRow(List<String> labels) {
     return Padding(
       padding: const EdgeInsets.all(1.0),
       child: Row(
         children: labels
             .map((label) => Expanded(
-                  child: buildTextField(label),
+                  child: _buildTextField(label),
                 ))
             .toList(),
       ),
     );
   }
 
-  Widget buildBloodGroupDropdown(String label) {
+  Widget _buildBloodGroupDropdown(String label) {
     List<String> bloodGroups = ['A', 'B', 'AB', 'O'];
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: DropdownButtonFormField(
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        ),
+        decoration: _getTextFieldDecoration(label),
         value: bloodGroups[0],
         items: bloodGroups.map((group) {
           return DropdownMenuItem(
@@ -243,18 +226,13 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
     );
   }
 
-  Widget buildBloodGroupRhDropdown(String label) {
+  Widget _buildBloodGroupRhDropdown(String label) {
     List<String> bloodGroupRh = ['Positive (+ve)', 'Negative (-ve)'];
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: DropdownButtonFormField(
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-        ),
+        decoration: _getTextFieldDecoration(label),
         value: bloodGroupRh[0],
         items: bloodGroupRh.map((group) {
           return DropdownMenuItem(
@@ -269,7 +247,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
     );
   }
 
-  Widget buildDateTimePicker(String label) {
+  Widget _buildDateTimePicker(String label) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
@@ -278,29 +256,28 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
           await _selectTime();
         },
         child: InputDecorator(
-          decoration: InputDecoration(
-            labelText: label,
-            border: const OutlineInputBorder(),
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                selectedDate != null && selectedTime != null
-                    ? 'Selected: ${DateFormat.yMd().add_jm().format(DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day, selectedTime!.hour, selectedTime!.minute))}'
-                    : 'Select Date and Time',
-              ),
-              const Icon(Icons.calendar_today),
-            ],
-          ),
+          decoration: _getTextFieldDecoration(label),
+          child: _buildDateTimeRow(),
         ),
       ),
     );
   }
 
-  Widget buildNumericTextField(String label) {
+  Widget _buildDateTimeRow() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          selectedDate != null && selectedTime != null
+              ? 'Selected: ${DateFormat.yMd().add_jm().format(DateTime(selectedDate!.year, selectedDate!.month, selectedDate!.day, selectedTime!.hour, selectedTime!.minute))}'
+              : 'Select Date and Time',
+        ),
+        const Icon(Icons.calendar_today),
+      ],
+    );
+  }
+
+  Widget _buildNumericTextField(String label) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
@@ -308,11 +285,27 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
         inputFormatters: <TextInputFormatter>[
           FilteringTextInputFormatter.digitsOnly,
         ],
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+        decoration: _getTextFieldDecoration(label),
+      ),
+    );
+  }
+
+  Widget _buildSignUpButton() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(150, 45),
+            backgroundColor: Colors.red,
+          ),
+          child: const Text(
+            'Sign Up',
+            style: TextStyle(
+              color: Colors.white,
+            ),
+          ),
         ),
       ),
     );

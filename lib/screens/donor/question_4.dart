@@ -50,7 +50,7 @@ class _Question4PageState extends State<Question4Page> {
                       Navigator.popUntil(context, (route) => route.isFirst);
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
+                        MaterialPageRoute(builder: (context) =>const HomePage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(

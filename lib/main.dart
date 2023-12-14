@@ -56,6 +56,8 @@ class MainPage extends StatelessWidget {
 }
 
 // import 'package:flutter/material.dart';
+// import 'package:mym_raktaveer_frontend/screens/admin/donation_request.dart';
+// import 'package:mym_raktaveer_frontend/screens/receiver/blood_request_form.dart';
 // import 'package:mym_raktaveer_frontend/widgets/user_choice.dart';
 
 // void main() {
@@ -74,7 +76,7 @@ class MainPage extends StatelessWidget {
 //         primarySwatch: Colors.blue,
 //         visualDensity: VisualDensity.adaptivePlatformDensity,
 //       ),
-//       home:const UserChoice(),
+//       home:const BloodRequestForm(),
 //     );
 //   }
 // }
