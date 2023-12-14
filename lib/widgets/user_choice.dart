@@ -31,9 +31,7 @@ class _UserChoiceState extends State<UserChoice> {
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
-                  margin: const EdgeInsets.symmetric(
-                      horizontal:
-                          15), // Adjust the margin for smaller container
+                  margin: const EdgeInsets.symmetric(horizontal: 15),
                   child: const Column(
                     children: [
                       Text(
@@ -49,7 +47,7 @@ class _UserChoiceState extends State<UserChoice> {
                         'Receiver can skip the details process for an emergency situation.',
                         style: TextStyle(
                           color: Colors.black87,
-                          fontSize: 14, // Adjust the font size for smaller text
+                          fontSize: 14,
                         ),
                       ),
                     ],
@@ -66,7 +64,7 @@ class _UserChoiceState extends State<UserChoice> {
                     Navigator.popUntil(context, (route) => route.isFirst);
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+                      MaterialPageRoute(builder: (context) => const HomePage()),
                     );
                     // Add functionality for the Receiver button
                   },
@@ -93,7 +91,8 @@ class _UserChoiceState extends State<UserChoice> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const UserChoicePage()),
+                        builder: (context) => const UserChoicePage(),
+                      ),
                     );
                     // Add functionality for the Donor button
                   },
