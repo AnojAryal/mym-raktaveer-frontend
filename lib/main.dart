@@ -56,24 +56,25 @@ class MainPage extends StatelessWidget {
 }
 
 // import 'package:flutter/material.dart';
-// // import 'package:mym_raktaveer_frontend/Donor_Registration/question_3.dart';
-// // import 'package:mym_raktaveer_frontend/Donor_Registration/Question1.dart';
-// import 'package:mym_raktaveer_frontend/user_choice.dart';
+// import 'package:mym_raktaveer_frontend/widgets/user_choice.dart';
 
 // void main() {
-//   runApp(MyApp());
+//   runApp(const MyApp());
 // }
 
 // class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+
 //   @override
 //   Widget build(BuildContext context) {
+
 //     return MaterialApp(
 //       title: 'Your App Title',
 //       theme: ThemeData(
 //         primarySwatch: Colors.blue,
 //         visualDensity: VisualDensity.adaptivePlatformDensity,
 //       ),
-//       home: const UserChoice(),
+//       home:const UserChoice(),
 //     );
 //   }
 // }

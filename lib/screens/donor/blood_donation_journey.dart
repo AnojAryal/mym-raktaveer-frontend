@@ -1,17 +1,14 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:mym_raktaveer_frontend/widgets/progress_bar.dart';
-import 'package:mym_raktaveer_frontend/screens/donor/question_4.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
+import 'package:mym_raktaveer_frontend/widgets/progress_bar.dart';
+import 'package:mym_raktaveer_frontend/services/blood_donation_service.dart';
 import 'package:mym_raktaveer_frontend/models/personal_detail_model.dart';
-import 'package:http/http.dart' as http;
-import 'package:firebase_auth/firebase_auth.dart';
 
 class BloodDonationJourneyPage extends StatefulWidget {
-  const BloodDonationJourneyPage(
-      {super.key, required this.personalDetailModel});
+const BloodDonationJourneyPage({
+  super. key,
+  required this.personalDetailModel,
+}) ;
 
   final PersonalDetailModel personalDetailModel;
 
@@ -21,6 +18,7 @@ class BloodDonationJourneyPage extends StatefulWidget {
 }
 
 class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
+  final BloodDonationService _bloodDonationService = BloodDonationService();
   final List<String> conditions = [
     'High Blood Pressure',
     'Kidney Related Diseases',
@@ -39,7 +37,6 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
     'Lungs Diseases',
     'Recently Vaccinated',
   ];
-
   List<bool> isCheckedList = List.generate(16, (index) => false);
 
   @override
@@ -178,14 +175,7 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
                         ),
                         ElevatedButton(
                           onPressed: () {
-                            updateModel();
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const Question4Page(),
-                              ),
-                            );
+                            _updateModelAndNavigate();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
@@ -211,78 +201,9 @@ class _BloodDonationJourneyPageState extends State<BloodDonationJourneyPage> {
     );
   }
 
-  void updateModel() {
-    // Update the PersonalDetailModel with selected health conditions
-
-    widget.personalDetailModel.healthConditions = Map.fromEntries(
-      conditions
-          .asMap()
-          .entries
-          .where((entry) => isCheckedList[entry.key])
-          .map((entry) => MapEntry(camelCaseToSnakeCase(entry.value), true)),
-    );
-
-    final userUid = FirebaseAuth.instance.currentUser?.uid;
-
-    sendPersonalDataToApi(userUid);
-
-    // Print all collected data
-  }
-
-  String camelCaseToSnakeCase(String input) {
-    return input
-        .replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
-          return '${match.group(1)}_${match.group(2)!.toLowerCase()}';
-        })
-        .replaceAll(' ', '_')
-        .toLowerCase();
-  }
-
-  Future<void> sendPersonalDataToApi(String? userUid) async {
-    String? baseUrl = dotenv.env['BASE_URL'];
-
-    String? apiUrl = '$baseUrl/api/personal-details';
-
-    final personalData = {
-      'blood_group_abo': widget.personalDetailModel.bloodGroupAbo,
-      'blood_group_rh': widget.personalDetailModel.bloodGroupRh,
-      'user_id': userUid,
-      if (widget.personalDetailModel.lastDonationDate != null)
-        'last_donation_date': widget.personalDetailModel.lastDonationDate,
-      if (widget.personalDetailModel.lastDonationReceived != null)
-        'last_donation_received':
-            widget.personalDetailModel.lastDonationReceived,
-      ...?widget.personalDetailModel.healthConditions,
-    };
-
-    try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(personalData),
-      );
-
-      if (response.statusCode == 201) {
-        print('User created successfully');
-        print('Response: ${response.body}');
-      } else {
-        print(
-            'Failed to create user. Status code: ${response.statusCode} data : $personalData');
-        print('Response: ${response.body}');
-      }
-    } catch (error) {
-      print('Error creating user: $error');
-      print(personalData);
-    }
+  void _updateModelAndNavigate() {
+    _bloodDonationService.updateModelAndNavigate(
+        widget.personalDetailModel, isCheckedList, context);
   }
 }
 
-extension IterableExtension<T> on Iterable<T> {
-  Iterable<R> mapIndexed<R>(R Function(int index, T element) f) sync* {
-    var index = 0;
-    for (var element in this) {
-      yield f(index, element);
-      index++;
-    }
-  }
-}
