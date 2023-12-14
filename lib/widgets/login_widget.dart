@@ -81,7 +81,7 @@ class _LoginWidgetState extends State<LoginWidget> {
           ElevatedButton(
               onPressed: signIn,
               style: ElevatedButton.styleFrom(
-                primary: Colors.red,
+                backgroundColor: Colors.red,
               ),
               child: const Text(
                 'Login',

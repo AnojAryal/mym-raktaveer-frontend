@@ -13,9 +13,9 @@ enum Gender { Male, Female, Others }
 
 class SignUpWidget extends StatefulWidget {
   const SignUpWidget({
-    Key? key,
+    super. key,
     required this.onClickedSignIn,
-  }) : super(key: key);
+  }) ;
 
   final VoidCallback? onClickedSignIn;
 

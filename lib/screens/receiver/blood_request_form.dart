@@ -5,8 +5,10 @@ import 'package:flutter/services.dart';
 import '../../widgets/background.dart';
 
 class BloodRequestForm extends StatefulWidget {
+  const BloodRequestForm({super.key});
+
   @override
-  _BloodRequestFormState createState() => _BloodRequestFormState();
+  State<BloodRequestForm> createState() => _BloodRequestFormState();
 }
 
 class _BloodRequestFormState extends State<BloodRequestForm> {
