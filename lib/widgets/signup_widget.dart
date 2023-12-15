@@ -1,4 +1,4 @@
-// ignore_for_file: constant_identifier_names
+// ignore_for_file: constant_identifier_names, unnecessary_null_comparison, avoid_print
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
