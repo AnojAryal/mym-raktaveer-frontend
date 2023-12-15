@@ -3,11 +3,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:http/http.dart' as http;
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
 import 'package:mym_raktaveer_frontend/widgets/user_choice.dart';
 import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
+import 'package:mym_raktaveer_frontend/services/api_service.dart'; // Import ApiService
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({super. key});
@@ -78,7 +78,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         // Only fetch data if it hasn't been fetched before
         return FutureBuilder(
           future: fetchData(
-              'https://6650-27-34-90-92.ngrok-free.app/api/personal-details/${user.uid}'),
+              'api/personal-details/${user.uid}'), // Use relative path
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const CircularProgressIndicator();
@@ -147,12 +147,16 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   }
 
   Future<Map<String, dynamic>> fetchData(String apiUrl) async {
-    final response = await http.get(Uri.parse(apiUrl));
+    try {
+      final response = await ApiService().getData(apiUrl); // Use ApiService to fetch data
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to load data');
+      if (response != null) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (error) {
+      throw Exception('Error loading data: $error');
     }
   }
 

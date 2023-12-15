@@ -24,4 +24,6 @@ class ApiService {
       throw Exception('Error posting data: $error');
     }
   }
+
+  getData(String apiUrl) {}
 }
