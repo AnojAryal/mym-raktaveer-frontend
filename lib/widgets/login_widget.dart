@@ -156,7 +156,7 @@ class _LoginWidgetState extends State<LoginWidget> {
     } finally {
       // ignore: use_build_context_synchronously
       navigatorKey.currentState!
-          .popUntil((route) => route.isFirst); // Close the loading indicator
+          .popUntil((route) => route.isFirst); 
     }
   }
 }

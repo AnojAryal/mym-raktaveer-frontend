@@ -10,7 +10,7 @@ import 'package:mym_raktaveer_frontend/widgets/user_choice.dart';
 import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
 
 class VerifyEmailPage extends StatefulWidget {
-  const VerifyEmailPage({Key? key}) : super(key: key);
+  const VerifyEmailPage({super. key});
 
   @override
   State<VerifyEmailPage> createState() => _VerifyEmailPageState();
@@ -33,7 +33,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       sendVerificationEmail();
 
       // Use Timer instead of Timer.periodic to avoid multiple instances
-      timer = Timer(Duration(seconds: 3), checkEmailVerified);
+      timer = Timer(const Duration(seconds: 3), checkEmailVerified);
     }
   }
 
@@ -52,7 +52,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       timer?.cancel(); // Cancel existing timer, if any
 
       timer = Timer.periodic(
-        Duration(seconds: 1),
+        const Duration(seconds: 1),
         (Timer timer) {
           setState(() {
             if (countdown > 0) {
@@ -91,7 +91,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
                   responseData?['data']?['blood_detail'] != null) {
                 // Set didFetchData to true after successful data fetch
                 didFetchData = true;
-                return HomePage();
+                return const HomePage();
               } else {
                 // Set didFetchData to true even if conditions are not met
                 didFetchData = true;

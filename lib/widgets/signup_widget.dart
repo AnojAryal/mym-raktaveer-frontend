@@ -1,13 +1,12 @@
-import 'dart:convert';
+// ignore_for_file: constant_identifier_names
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:mym_raktaveer_frontend/main.dart';
 import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
-import 'package:http/http.dart' as http;
+import 'package:mym_raktaveer_frontend/services/api_service.dart';
+import '../main.dart';
+import '../services/firebase_auth_service.dart';
 
 enum Gender { Male, Female, Others }
 
@@ -103,7 +102,9 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                       value: selectedGender,
                       onChanged: (value) {
                         // Update the selected gender when changed
-                        selectedGender = value;
+                        setState(() {
+                          selectedGender = value;
+                        });
                       },
                       items: const [
                         DropdownMenuItem(
@@ -169,9 +170,10 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                           },
                         ),
                       ),
-                      validator: (value) => value != null && value.length < 6
-                          ? 'Password is too short'
-                          : null,
+                      validator: (value) =>
+                          value != null && value.length < 6
+                              ? 'Password is too short'
+                              : null,
                       obscureText: !isPasswordVisible,
                     ),
                     const SizedBox(height: 16.0),
@@ -195,7 +197,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                         ),
                       ),
                       validator: (value) {
-                        if (value != null && value != passwordController.text) {
+                        if (value != null &&
+                            value != passwordController.text) {
                           return 'Passwords do not match';
                         }
                         return null;
@@ -224,17 +227,15 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                                 'I accept ',
                                 style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 12.0, // Set your desired font size
+                                  fontSize: 12.0,
                                 ),
                               ),
                               const Expanded(
                                 child: Text(
                                   'Terms and Conditions & Privacy Policy',
                                   style: TextStyle(
-                                    color: Colors
-                                        .red, // Set your desired red color
-                                    fontSize:
-                                        12.0, // Set your desired font size
+                                    color: Colors.red,
+                                    fontSize: 12.0,
                                   ),
                                 ),
                               ),
@@ -246,16 +247,13 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                           ElevatedButton(
                             onPressed: signUp,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Colors.red, // Set your desired red color
-                              minimumSize: const Size(double.infinity,
-                                  48), // Set the minimum width and height
+                              backgroundColor: Colors.red,
+                              minimumSize: const Size(double.infinity, 48),
                             ),
                             child: const Text(
                               'Sign Up',
                               style: TextStyle(
-                                color:
-                                    Colors.white, // Set the text color to white
+                                color: Colors.white,
                               ),
                             ),
                           ),
@@ -267,7 +265,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
                           RichText(
                             text: TextSpan(
                               style: const TextStyle(
-                                  color: Color.fromARGB(255, 56, 55, 55)),
+                                color: Color.fromARGB(255, 56, 55, 55),
+                              ),
                               text: 'Already have an account? ',
                               children: [
                                 TextSpan(
@@ -309,32 +308,37 @@ class _SignUpWidgetState extends State<SignUpWidget> {
         ),
       );
       try {
-        final authResult =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
+        final authResult = await FirebaseAuthService.signUp(
+          emailController.text.trim(),
+          passwordController.text.trim(),
         );
 
-        final userUid = authResult.user?.uid;
-        await sendUserDataToApi(userUid!);
-      } on FirebaseAuthException catch (e) {
-        Utils.showSnackBar(e.message);
+        if (authResult != null) {
+          await sendUserDataToApi(authResult.user?.uid);
+        } else {
+          Utils.showSnackBar('User creation failed');
+        }
+      } on Exception catch (e) {
+        Utils.showSnackBar(e.toString());
       } finally {
         navigatorKey.currentState!
-            .popUntil((route) => route.isFirst); // Close the loading indicator
+            .popUntil((route) => route.isFirst); 
       }
     }
   }
 
-  Future<void> sendUserDataToApi(String userUid) async {
-    String? baseUrl = dotenv.env['BASE_URL'];
+  Future<void> sendUserDataToApi(String? userUid) async {
+    if (userUid == null) {
+      Utils.showSnackBar('User UID is null');
+      return;
+    }
 
-    String? apiUrl = '$baseUrl/api/users';
+    final apiUrl = '${ApiService().baseUrl}/api/users';
 
     final userData = {
       'mobile_number': mobileNumberController.text.trim(),
       'full_name': fullnameController.text.trim(),
-      'gender': selectedGender.toString().split('.').last, // Fix the typo here
+      'gender': selectedGender.toString().split('.').last,
       'age': ageController.text.trim(),
       'email': emailController.text.trim(),
       'firebase_uid': userUid,
@@ -342,25 +346,17 @@ class _SignUpWidgetState extends State<SignUpWidget> {
     };
 
     try {
-      final response = await http.post(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(userData),
-      );
+      final response = await ApiService().postData(apiUrl, userData);
 
-      if (response.statusCode == 201) {
+      if (response != null) {
         print('User created successfully');
-        print('Response: ${response.body}');
+        print('Response: $response');
       } else {
-        print('Failed to create user. Status code: ${response.statusCode}');
-        print('Response: ${response.body}');
+        print('Failed to create user. Response is null.');
       }
     } catch (error) {
       print('Error creating user: $error');
       print(userData);
-      final isValid = formKey.currentState!.validate();
-
-      if (!isValid) return;
     }
   }
 }

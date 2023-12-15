@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
 import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
-import '../../widgets/background.dart';  // Import background.dart
+import '../../widgets/background.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -68,7 +68,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> {
                 child: const Text(
                   'Reset Password',
                   style: TextStyle(
-                    color: Colors.white,  // Set the text color to white
+                    color: Colors.white, 
                   ),
                 ),
               ),
