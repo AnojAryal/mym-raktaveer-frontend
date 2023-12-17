@@ -1,14 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
 class FirebaseAuthService {
+  static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
   static Future<UserCredential?> signUp(String email, String password) async {
     try {
-      return await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      return await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-    } on FirebaseAuthException catch (e) {
-      throw Exception('Failed to create user: ${e.message}');
+    } catch (e) {
+      // You might want to handle specific FirebaseAuthException cases differently
+      rethrow; // Rethrow to allow calling code to handle the exception
     }
   }
+
+  // Consider adding more methods here, like signIn, signOut, etc.
 }

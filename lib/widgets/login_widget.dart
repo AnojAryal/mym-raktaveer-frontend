@@ -8,10 +8,10 @@ import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
 class LoginWidget extends StatefulWidget {
   const LoginWidget({
     super.key,
-    required this.onclickedSignUp,
+    required this.onClickedSignUp,
   });
 
-  final VoidCallback? onclickedSignUp;
+  final VoidCallback? onClickedSignUp;
 
   @override
   State<LoginWidget> createState() => _LoginWidgetState();
@@ -118,9 +118,9 @@ class _LoginWidgetState extends State<LoginWidget> {
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       // Check if the callback is not null before invoking it
-                      if (widget.onclickedSignUp != null) {
+                      if (widget.onClickedSignUp != null) {
                         // Pass the current context to the callback
-                        widget.onclickedSignUp!();
+                        widget.onClickedSignUp!();
                       }
                     },
                   text: "Sign Up",
@@ -155,8 +155,7 @@ class _LoginWidgetState extends State<LoginWidget> {
       Utils.showSnackBar(e.message);
     } finally {
       // ignore: use_build_context_synchronously
-      navigatorKey.currentState!
-          .popUntil((route) => route.isFirst); 
+      navigatorKey.currentState!.popUntil((route) => route.isFirst);
     }
   }
 }

@@ -7,7 +7,7 @@ class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
 
   @override
-  State<AuthPage> createState() => _AuthPageState();
+  _AuthPageState createState() => _AuthPageState();
 }
 
 class _AuthPageState extends State<AuthPage> {
@@ -15,16 +15,16 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Background(
-      child: isLogin
-          ? LoginWidget(
-              onclickedSignUp: toggle,
-            )
-          : SignUpWidget(
-              onClickedSignIn: toggle,
-            ),
-    );
+    return Background(child: _buildAuthenticationWidget());
   }
 
-  void toggle() => setState(() => isLogin = !isLogin);
+  Widget _buildAuthenticationWidget() {
+    return isLogin
+        ? LoginWidget(onClickedSignUp: toggleAuthenticationMode)
+        : SignUpWidget(onClickedSignIn: toggleAuthenticationMode);
+  }
+
+  void toggleAuthenticationMode() {
+    setState(() => isLogin = !isLogin);
+  }
 }
