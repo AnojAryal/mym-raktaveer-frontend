@@ -4,6 +4,8 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mym_raktaveer_frontend/Providers/auth_state_provider.dart';
 import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
 import '../main.dart';
@@ -11,18 +13,16 @@ import '../services/firebase_auth_service.dart';
 
 enum Gender { Male, Female, Others }
 
-bool isLocalDbOperationPending = false;
-
-class SignUpWidget extends StatefulWidget {
+class SignUpWidget extends ConsumerStatefulWidget {
   final VoidCallback? onClickedSignIn;
 
   const SignUpWidget({super.key, this.onClickedSignIn});
 
   @override
-  State<SignUpWidget> createState() => _SignUpWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _SignUpWidgetState();
 }
 
-class _SignUpWidgetState extends State<SignUpWidget> {
+class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
   final formKey = GlobalKey<FormState>();
   final fullnameController = TextEditingController();
   final emailController = TextEditingController();
@@ -289,6 +289,8 @@ class _SignUpWidgetState extends State<SignUpWidget> {
   }
 
   Future<void> signUp() async {
+    final isLocalDbOperationPending =
+        ref.read(isLocalDbOperationPendingProvider.notifier);
     if (!isFormValid()) return;
     showLoadingDialog();
 
@@ -299,25 +301,25 @@ class _SignUpWidgetState extends State<SignUpWidget> {
       );
 
       if (authResult?.user != null) {
-        isLocalDbOperationPending =
-            true; // Indicate that DB operation is in progress
+        isLocalDbOperationPending.state = true;
         bool dbResult = await sendUserDataToApi(authResult!.user!);
-        isLocalDbOperationPending = false;
 
         // DB operation done
 
         if (!dbResult) {
           // Rollback Firebase registration if local DB operation fails
           await deleteUser(authResult.user!);
+          isLocalDbOperationPending.state = false;
+
           Utils.showSnackBar('Registration failed in local database');
         } else {
-          // Proceed with navigation if needed, or it will be handled by auth state listener
+          isLocalDbOperationPending.state = false;
         }
       } else {
         Utils.showSnackBar('Firebase registration failed');
       }
     } catch (e) {
-      isLocalDbOperationPending =
+      isLocalDbOperationPending.state =
           false; // Ensure flag is reset in case of exception
       Utils.showSnackBar(e.toString());
     } finally {

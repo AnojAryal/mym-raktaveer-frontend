@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mym_raktaveer_frontend/widgets/signup_widget.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mym_raktaveer_frontend/Providers/auth_state_provider.dart';
 
 import 'models/firebase_auth/firebase_options.dart';
 import 'models/firebase_auth/auth_page.dart';
@@ -15,7 +15,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load();
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -39,28 +39,24 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MainPage extends StatelessWidget {
+class MainPage extends ConsumerWidget {
+  // Changed to ConsumerWidget
   const MainPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final authState = ref.watch(authStateProvider);
+    final isLocalDbOperationPending =
+        ref.watch(isLocalDbOperationPendingProvider);
+
     return Scaffold(
-      body: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) => _buildPageBasedOnSnapshot(snapshot),
+      body: authState.when(
+        data: (user) => user != null && !isLocalDbOperationPending
+            ? const VerifyEmailPage()
+            : const AuthPage(),
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text("Error: ${e.toString()}")),
       ),
     );
-  }
-
-  Widget _buildPageBasedOnSnapshot(AsyncSnapshot<User?> snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return const Center(child: CircularProgressIndicator());
-    } else if (snapshot.hasError) {
-      return const Center(child: Text("Something went wrong"));
-    } else if (snapshot.hasData && !isLocalDbOperationPending) {
-      return const VerifyEmailPage();
-    } else {
-      return const AuthPage();
-    }
   }
 }
