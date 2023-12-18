@@ -1,27 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:mym_raktaveer_frontend/widgets/progress_bar.dart';
-import 'package:mym_raktaveer_frontend/screens/donor/blood_donation_journey.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mym_raktaveer_frontend/Providers/blood_donation_provider.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
-import 'package:mym_raktaveer_frontend/models/personal_detail_model.dart';
+import 'package:mym_raktaveer_frontend/widgets/progress_bar.dart';
 
-class QuestionPage extends StatefulWidget {
-  const QuestionPage({
-    super.key,
-    required this.personalDetailModel,
-  });
-
-  final PersonalDetailModel personalDetailModel;
+class BloodDonationRelatedQuestion extends ConsumerWidget {
+  const BloodDonationRelatedQuestion({super.key});
 
   @override
-  State<QuestionPage> createState() => _QuestionPageState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final personalDetail = ref.watch(personalDetailProvider);
 
-class _QuestionPageState extends State<QuestionPage> {
-  DateTime? _selectedDonationDate;
-  DateTime? _selectedReceivedDate;
-
-  @override
-  Widget build(BuildContext context) {
     return Background(
       child: Stack(
         children: [
@@ -39,26 +28,30 @@ class _QuestionPageState extends State<QuestionPage> {
                 _buildNoteContainer(),
                 const SizedBox(height: 20.0),
                 _buildDateInput(
+                  context: context,
                   label: 'Last Blood Donation Date',
                   onSelectDate: (date) {
-                    setState(() {
-                      _selectedDonationDate = date;
-                    });
+                    ref
+                        .read(personalDetailProvider.notifier)
+                        .updateDonationDetails(
+                            date, personalDetail.lastDonationReceived);
                   },
-                  selectedDate: _selectedDonationDate,
+                  selectedDate: personalDetail.lastDonationDate,
                 ),
                 const SizedBox(height: 20.0),
                 _buildDateInput(
+                  context: context,
                   label: 'Last Blood Received Date',
                   onSelectDate: (date) {
-                    setState(() {
-                      _selectedReceivedDate = date;
-                    });
+                    ref
+                        .read(personalDetailProvider.notifier)
+                        .updateDonationDetails(
+                            personalDetail.lastDonationDate, date);
                   },
-                  selectedDate: _selectedReceivedDate,
+                  selectedDate: personalDetail.lastDonationReceived,
                 ),
                 const SizedBox(height: 20.0),
-                _buildNavigationButtons(),
+                _buildNavigationButtons(context),
               ],
             ),
           ),
@@ -92,10 +85,7 @@ class _QuestionPageState extends State<QuestionPage> {
             TextSpan(
               text:
                   'You can leave the box empty if you haven\'t donated blood recently.',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 12.0,
-              ),
+              style: TextStyle(color: Colors.black, fontSize: 12.0),
             ),
           ],
         ),
@@ -104,6 +94,7 @@ class _QuestionPageState extends State<QuestionPage> {
   }
 
   Widget _buildDateInput({
+    required BuildContext context,
     required String label,
     required Function(DateTime) onSelectDate,
     DateTime? selectedDate,
@@ -114,10 +105,9 @@ class _QuestionPageState extends State<QuestionPage> {
         Text(
           label,
           style: const TextStyle(
-            color: Colors.black,
-            fontSize: 14.0,
-            fontWeight: FontWeight.normal,
-          ),
+              color: Colors.black,
+              fontSize: 14.0,
+              fontWeight: FontWeight.normal),
         ),
         const SizedBox(height: 8.0),
         InkWell(
@@ -148,58 +138,22 @@ class _QuestionPageState extends State<QuestionPage> {
     );
   }
 
-  Widget _buildNavigationButtons() {
-    return Container(
-      padding: const EdgeInsets.all(12.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _buildNavigationButton(
-            text: 'Previous',
-            onPressed: () => Navigator.pop(context),
-          ),
-          _buildNavigationButton(
-            text: 'Next',
-            onPressed: () {
-              updateModel();
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => BloodDonationJourneyPage(
-                    personalDetailModel: widget.personalDetailModel,
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavigationButton({
-    required String text,
-    required VoidCallback onPressed,
-  }) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.red,
-        fixedSize: const Size(100, 40),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 12,
+  Widget _buildNavigationButtons(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ElevatedButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Previous'),
         ),
-      ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/healthCondition');
+          },
+          child: const Text('Next'),
+        ),
+      ],
     );
-  }
-
-  void updateModel() {
-    widget.personalDetailModel.lastDonationDate = _selectedDonationDate;
-    widget.personalDetailModel.lastDonationReceived = _selectedReceivedDate;
   }
 
   Future<void> _selectDate(

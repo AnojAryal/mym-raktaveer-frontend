@@ -25,10 +25,20 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
   @override
   void initState() {
     super.initState();
+    checkAndSendEmailVerification();
+  }
+
+  // Combined logic for initial email verification check and sending email
+  void checkAndSendEmailVerification() async {
     final user = ref.read(authStateProvider).asData?.value;
-    if (user != null && !user.emailVerified) {
-      sendVerificationEmail(user);
-      startTimers();
+    if (user != null) {
+      if (!user.emailVerified) {
+        await sendVerificationEmail(user);
+        startTimers();
+      } else {
+        // If the user's email is already verified, update the state immediately
+        ref.read(emailVerifiedProvider.notifier).state = true;
+      }
     }
   }
 
@@ -74,6 +84,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
         resendTimer?.cancel();
         verificationCheckTimer?.cancel();
       });
+      // Update the state to reflect email verification
       ref.read(emailVerifiedProvider.notifier).state = true;
     }
   }
@@ -81,6 +92,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
   @override
   Widget build(BuildContext context) {
     final isEmailVerified = ref.watch(emailVerifiedProvider);
+    // Using a conditional to decide which widget to display
     return isEmailVerified
         ? buildVerifiedUser(context)
         : buildUnverifiedUser(context);
@@ -98,6 +110,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
+          // Ensure the conditions are correctly evaluating the data
           return snapshot.data?['data']['health_condition'] != null &&
                   snapshot.data?['data']['blood_detail'] != null
               ? const HomePage()

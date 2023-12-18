@@ -1,16 +1,33 @@
-import 'package:mym_raktaveer_frontend/screens/donor/question_1.dart';
-import 'package:mym_raktaveer_frontend/widgets/background.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mym_raktaveer_frontend/screens/donor/blood_type_question.dart';
+import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
 
-class UserChoice extends StatefulWidget {
+class UserChoice extends StatelessWidget {
   const UserChoice({super.key});
 
-  @override
-  State<UserChoice> createState() => _UserChoiceState();
-}
+  void _navigateToHomePage(BuildContext context) {
+    Navigator.popUntil(context, (route) => route.isFirst);
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
+    );
+  }
 
-class _UserChoiceState extends State<UserChoice> {
+  void _navigateToUserChoicePage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const BloodTypeQuestion(),
+      ),
+    );
+  }
+
+  void _signOut(BuildContext context) {
+    FirebaseAuth.instance.signOut();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Background(
@@ -24,7 +41,6 @@ class _UserChoiceState extends State<UserChoice> {
             color: Colors
                 .transparent, // Set the background color or make it transparent
           ),
-
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -32,19 +48,19 @@ class _UserChoiceState extends State<UserChoice> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   margin: const EdgeInsets.symmetric(horizontal: 15),
-                  child: const Column(
+                  child: Column(
                     children: [
                       Text(
-                        'How You Like To Register As?',
+                        'How Would You Like To Register?',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       Text(
-                        'Receiver can skip the details process for an emergency situation.',
+                        'Receivers can skip the details process for emergencies.',
                         style: TextStyle(
                           color: Colors.black87,
                           fontSize: 14,
@@ -60,22 +76,15 @@ class _UserChoiceState extends State<UserChoice> {
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
                   ),
-                  onPressed: () {
-                    Navigator.popUntil(context, (route) => route.isFirst);
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const HomePage()),
-                    );
-                    // Add functionality for the Receiver button
-                  },
+                  onPressed: () => _navigateToHomePage(context),
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Receiver'),
-                        Icon(Icons.arrow_right, color: Colors.white),
+                        const Text('Receiver'),
+                        const Icon(Icons.arrow_right, color: Colors.white),
                       ],
                     ),
                   ),
@@ -87,24 +96,26 @@ class _UserChoiceState extends State<UserChoice> {
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UserChoicePage(),
-                      ),
-                    );
-                    // Add functionality for the Donor button
-                  },
+                  onPressed: () => _navigateToUserChoicePage(context),
                   child: Container(
                     padding: const EdgeInsets.all(10),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('Donor'),
-                        Icon(Icons.arrow_right, color: Colors.white),
+                        const Text('Donor'),
+                        const Icon(Icons.arrow_right, color: Colors.white),
                       ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () => _signOut(context),
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: Colors.red,
                     ),
                   ),
                 ),

@@ -3,14 +3,14 @@ import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
 
-class Question4Page extends StatefulWidget {
-  const Question4Page({super.key});
+class FinalQuestion extends StatefulWidget {
+  const FinalQuestion({super.key});
 
   @override
-  State<Question4Page> createState() => _Question4PageState();
+  State<FinalQuestion> createState() => _FinalQuestionState();
 }
 
-class _Question4PageState extends State<Question4Page> {
+class _FinalQuestionState extends State<FinalQuestion> {
   @override
   Widget build(BuildContext context) {
     return Background(
@@ -50,7 +50,8 @@ class _Question4PageState extends State<Question4Page> {
                       Navigator.popUntil(context, (route) => route.isFirst);
                       Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) =>const HomePage()),
+                        MaterialPageRoute(
+                            builder: (context) => const HomePage()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
