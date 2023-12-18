@@ -1,63 +1,64 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mym_raktaveer_frontend/Providers/auth_state_provider.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
 import 'package:mym_raktaveer_frontend/widgets/user_choice.dart';
 import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
 
-class VerifyEmailPage extends StatefulWidget {
+class VerifyEmailPage extends ConsumerStatefulWidget {
   const VerifyEmailPage({super.key});
 
   @override
-  State<VerifyEmailPage> createState() => _VerifyEmailPageState();
+  ConsumerState<VerifyEmailPage> createState() => _VerifyEmailPageState();
 }
 
-class _VerifyEmailPageState extends State<VerifyEmailPage> {
-  bool isEmailVerified = false;
+class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
   Timer? resendTimer;
   Timer? verificationCheckTimer;
   int countdown = 60;
-  final user = FirebaseAuth.instance.currentUser!;
-  bool didFetchData = false;
 
   @override
   void initState() {
     super.initState();
-    isEmailVerified = user.emailVerified;
-    if (!isEmailVerified) {
-      sendVerificationEmail();
-      resendTimer =
-          Timer.periodic(const Duration(seconds: 1), resendTimerCallback);
-      verificationCheckTimer =
-          Timer.periodic(const Duration(seconds: 5), verificationCheckCallback);
+    final user = ref.read(authStateProvider).asData?.value;
+    if (user != null && !user.emailVerified) {
+      sendVerificationEmail(user);
+      startTimers();
     }
   }
 
-  @override
-  void dispose() {
-    resendTimer?.cancel();
-    verificationCheckTimer?.cancel();
-    super.dispose();
+  void startTimers() {
+    resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (countdown > 0) {
+        setState(() => countdown--);
+      } else {
+        timer.cancel();
+      }
+    });
+
+    verificationCheckTimer =
+        Timer.periodic(const Duration(seconds: 5), (timer) async {
+      await checkEmailVerified();
+    });
   }
 
-  void resendTimerCallback(Timer timer) {
-    if (countdown > 0) {
-      setState(() => countdown--);
-    } else {
-      timer.cancel();
-    }
-  }
-
-  void verificationCheckCallback(Timer timer) async {
-    await checkEmailVerified();
-  }
-
-  Future<void> sendVerificationEmail() async {
+  Future<void> sendVerificationEmail(User? user) async {
     try {
+      resendTimer?.cancel();
       setState(() => countdown = 60);
-      await user.sendEmailVerification();
+      resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        if (countdown > 0) {
+          setState(() => countdown--);
+        } else {
+          timer.cancel();
+        }
+      });
+      await user?.sendEmailVerification();
       Utils.showSnackBar("Email Successfully Sent");
     } catch (e) {
       Utils.showSnackBar("Failed to Send Email: ${e.toString()}");
@@ -65,27 +66,30 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   }
 
   Future<void> checkEmailVerified() async {
-    await user.reload();
-    bool isVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    final user = FirebaseAuth.instance.currentUser;
+    await user?.reload();
+    bool isVerified = user?.emailVerified ?? false;
     if (isVerified) {
       setState(() {
-        isEmailVerified = true;
+        resendTimer?.cancel();
+        verificationCheckTimer?.cancel();
       });
-      resendTimer?.cancel();
-      verificationCheckTimer?.cancel();
+      ref.read(emailVerifiedProvider.notifier).state = true;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return isEmailVerified ? buildVerifiedUser() : buildUnverifiedUser();
+    final isEmailVerified = ref.watch(emailVerifiedProvider);
+    return isEmailVerified
+        ? buildVerifiedUser(context)
+        : buildUnverifiedUser(context);
   }
 
-  Widget buildVerifiedUser() {
-    return didFetchData ? const SizedBox.shrink() : buildUserDataLoader();
-  }
+  Widget buildVerifiedUser(BuildContext context) {
+    final user = ref.read(authStateProvider).asData?.value;
+    if (user == null) return const SizedBox.shrink();
 
-  Widget buildUserDataLoader() {
     return FutureBuilder(
       future: fetchData('api/personal-details/${user.uid}'),
       builder: (context, snapshot) {
@@ -94,7 +98,6 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-          didFetchData = true;
           return snapshot.data?['data']['health_condition'] != null &&
                   snapshot.data?['data']['blood_detail'] != null
               ? const HomePage()
@@ -104,7 +107,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     );
   }
 
-  Widget buildUnverifiedUser() {
+  Widget buildUnverifiedUser(BuildContext context) {
     return Background(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -127,7 +130,10 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
 
   Widget buildResendEmailButton() {
     return ElevatedButton(
-      onPressed: countdown > 0 ? null : sendVerificationEmail,
+      onPressed: countdown > 0
+          ? null
+          : () =>
+              sendVerificationEmail(ref.read(authStateProvider).asData!.value),
       child: Text(
         countdown > 0
             ? 'Resend Verification Email in: $countdown seconds'
@@ -153,5 +159,12 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
     } catch (error) {
       throw Exception('Error loading data: $error');
     }
+  }
+
+  @override
+  void dispose() {
+    resendTimer?.cancel();
+    verificationCheckTimer?.cancel();
+    super.dispose();
   }
 }

@@ -6,3 +6,6 @@ final authStateProvider = StreamProvider<User?>((ref) {
 });
 
 final isLocalDbOperationPendingProvider = StateProvider<bool>((ref) => false);
+
+final emailVerifiedProvider = StateProvider<bool>((ref) => false);
+final fetchDataProvider = StateProvider<bool>((ref) => false);
