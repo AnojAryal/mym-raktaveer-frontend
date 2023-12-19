@@ -23,6 +23,7 @@ class BloodTypeQuestion extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildAppTitle(),
+              const SizedBox(height: 8.0),
               _buildBloodTypeSelection(
                   context, ref, personalDetail.bloodGroupAbo),
               const SizedBox(height: 8.0),
@@ -82,6 +83,10 @@ class BloodTypeQuestion extends ConsumerWidget {
             ),
           ),
         ),
+        const SizedBox(height: 8.0),
+        const SizedBox(
+          height: 16.0,
+        ),
         Padding(
           padding: const EdgeInsets.only(left: 22.0),
           child: Row(
@@ -95,6 +100,7 @@ class BloodTypeQuestion extends ConsumerWidget {
             ],
           ),
         ),
+        const SizedBox(height: 8.0),
         Padding(
           padding: const EdgeInsets.only(left: 22.0),
           child: Row(
@@ -154,6 +160,9 @@ class BloodTypeQuestion extends ConsumerWidget {
               fontSize: 14,
             ),
           ),
+        ),
+        const SizedBox(
+          height: 16.0,
         ),
         Padding(
           padding: const EdgeInsets.only(left: 22.0),
