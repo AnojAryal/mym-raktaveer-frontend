@@ -24,5 +24,6 @@ class PersonalDetailNotifier extends StateNotifier<PersonalDetailModel> {
 
   void updateHealthConditions(Map<String, bool> conditions) {
     state = state.copyWith(healthConditions: conditions);
+    print(state.healthConditions);
   }
 }

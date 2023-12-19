@@ -91,7 +91,6 @@ class HealthConditionQuestion extends ConsumerWidget {
             title: Text(condition),
             value: healthConditions?[condition] ?? false,
             onChanged: (bool? newValue) {
-              // Updated logic to handle checkbox change
               Map<String, bool> updatedConditions = {...healthConditions ?? {}};
               updatedConditions[condition] = newValue ?? false;
               ref
@@ -122,6 +121,7 @@ class HealthConditionQuestion extends ConsumerWidget {
 
   void _handleSubmit(BuildContext context, WidgetRef ref) async {
     final personalDetail = ref.read(personalDetailProvider);
+    print(personalDetail.healthConditions);
     final BloodDonationService service = BloodDonationService();
     var response = await service.sendPersonalDataToApi(personalDetail);
 

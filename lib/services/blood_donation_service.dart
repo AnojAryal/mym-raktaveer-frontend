@@ -37,6 +37,19 @@ class BloodDonationService {
 
   Map<String, dynamic> _createPersonalDataMap(
       String? userUid, PersonalDetailModel personalDetailModel) {
+    String snakeCaseKey(String input) {
+      return input
+          .replaceAllMapped(RegExp(r'([a-z])([A-Z])'), (match) {
+            return '${match.group(1)}_${match.group(2)!.toLowerCase()}';
+          })
+          .replaceAll(' ', '_')
+          .toLowerCase();
+    }
+
+    Map<String, dynamic> snakeCaseHealthConditions = Map.fromEntries(
+        personalDetailModel.healthConditions!.entries
+            .map((entry) => MapEntry(snakeCaseKey(entry.key), entry.value)));
+
     return {
       'blood_group_abo': personalDetailModel.bloodGroupAbo,
       'blood_group_rh': personalDetailModel.bloodGroupRh,
@@ -47,7 +60,7 @@ class BloodDonationService {
       if (personalDetailModel.lastDonationReceived != null)
         'last_donation_received':
             personalDetailModel.lastDonationReceived!.toIso8601String(),
-      ...?personalDetailModel.healthConditions,
+      ...snakeCaseHealthConditions,
     };
   }
 

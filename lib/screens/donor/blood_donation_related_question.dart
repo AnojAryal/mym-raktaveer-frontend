@@ -148,7 +148,7 @@ class BloodDonationRelatedQuestion extends ConsumerWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/healthCondition');
+            Navigator.pushNamed(context, '/health-condition');
           },
           child: const Text('Next'),
         ),

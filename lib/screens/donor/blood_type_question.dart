@@ -212,7 +212,7 @@ class BloodTypeQuestion extends ConsumerWidget {
         ),
         ElevatedButton(
           onPressed: () {
-            Navigator.pushNamed(context, '/donationDetails');
+            Navigator.pushNamed(context, '/donation-details');
           },
           child: const Text('Next'),
         ),
