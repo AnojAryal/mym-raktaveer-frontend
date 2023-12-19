@@ -47,12 +47,7 @@ class _FinalQuestionState extends State<FinalQuestion> {
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.popUntil(context, (route) => route.isFirst);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const HomePage()),
-                      );
+                      Navigator.pushNamed(context, '/home-page');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
