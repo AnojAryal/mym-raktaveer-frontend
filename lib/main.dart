@@ -7,6 +7,7 @@ import 'package:mym_raktaveer_frontend/screens/donor/blood_donation_related_ques
 import 'package:mym_raktaveer_frontend/screens/donor/blood_type_question.dart';
 import 'package:mym_raktaveer_frontend/screens/donor/final_question_screen.dart';
 import 'package:mym_raktaveer_frontend/screens/donor/health_condition_question.dart';
+import 'package:mym_raktaveer_frontend/screens/receiver/blood_request_form.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
 
 import 'models/firebase_auth/firebase_options.dart';
@@ -41,6 +42,7 @@ class MyApp extends StatelessWidget {
         '/donation-details': (context) => const BloodDonationRelatedQuestion(),
         '/health-condition': (context) => const HealthConditionQuestion(),
         '/final-question': (context) => const FinalQuestion(),
+        '/blood-request-form': (context) => const BloodRequestForm(),
 
         // Define other routes as needed
       },

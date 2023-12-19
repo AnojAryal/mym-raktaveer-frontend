@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 class BloodRequestModel {
   String patientName;
   String age;
@@ -6,6 +8,8 @@ class BloodRequestModel {
   String location;
   String roomNo;
   String opdNo;
+  final String bloodGroupAbo;
+  final String bloodGroupRh;
   String description;
   String urgencyLevel;
   String dateAndTime;
@@ -19,6 +23,8 @@ class BloodRequestModel {
     required this.location,
     required this.roomNo,
     required this.opdNo,
+    required this.bloodGroupAbo,
+    required this.bloodGroupRh,
     required this.description,
     required this.urgencyLevel,
     required this.dateAndTime,
@@ -26,17 +32,23 @@ class BloodRequestModel {
   });
 
   Map<String, dynamic> toJson() {
+    final currentUser = FirebaseAuth.instance.currentUser;
+    final requestedBy = currentUser != null ? currentUser.uid : 'unknown';
+
     return {
-      'patientName': patientName,
+      'requested_by': requestedBy,
+      'patient_name': patientName,
       'age': age,
       'sex': sex,
-      'hospitalName': hospitalName,
-      'location': location,
-      'roomNo': roomNo,
-      'opdNo': opdNo,
+      'hospital_name': hospitalName,
+      'location_id': location,
+      'room_no': roomNo,
+      'opd_bed_no': opdNo,
+      'blood_group_abo': bloodGroupAbo,
+      'blood_group_rh': bloodGroupRh,
       'description': description,
-      'urgencyLevel': urgencyLevel,
-      'dateAndTime': dateAndTime,
+      'urgency_level': urgencyLevel,
+      'preferred_datetime': dateAndTime,
       'quantity': quantity,
     };
   }
