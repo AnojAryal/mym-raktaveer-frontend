@@ -20,12 +20,12 @@ class VerifyEmailPage extends ConsumerStatefulWidget {
 class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
   Timer? resendTimer;
   Timer? verificationCheckTimer;
-  int countdown = 60;
+  int countdown = 0;
 
   @override
   void initState() {
     super.initState();
-    checkAndSendEmailVerification();
+    Future.microtask(() => checkAndSendEmailVerification());
   }
 
   // Combined logic for initial email verification check and sending email
@@ -34,7 +34,6 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
     if (user != null) {
       if (!user.emailVerified) {
         await sendVerificationEmail(user);
-        startTimers();
       } else {
         ref.read(emailVerifiedProvider.notifier).state = true;
       }
@@ -60,13 +59,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
     try {
       resendTimer?.cancel();
       setState(() => countdown = 60);
-      resendTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-        if (countdown > 0) {
-          setState(() => countdown--);
-        } else {
-          timer.cancel();
-        }
-      });
+      startTimers();
       await user?.sendEmailVerification();
       Utils.showSnackBar("Email Successfully Sent");
     } catch (e) {
