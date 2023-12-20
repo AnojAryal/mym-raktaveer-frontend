@@ -20,28 +20,31 @@ class _MapChoiceState extends State<MapChoice> {
     List<Placemark> placemarks = await placemarkFromCoordinates(
       latlng.latitude,
       latlng.longitude,
-      localeIdentifier: "en_US", // Specify the locale for better address formatting
+      localeIdentifier: "en_US",
     );
 
     if (placemarks.isNotEmpty) {
       Placemark placemark = placemarks.first;
-      String address = " ${placemark.street ?? ""} ${placemark.subLocality ?? ""}, ${placemark.locality ?? ""}, ${placemark.administrativeArea ?? ""}";
+      String address =
+          " ${placemark.street ?? ""} ${placemark.subLocality ?? ""}, ${placemark.locality ?? ""}, ${placemark.administrativeArea ?? ""}";
 
-      setState(() {
-        selectedLocation = latlng;
-        selectedAddress = address;
-        markers = [
-          Marker(
-            width: 40.0,
-            height: 40.0,
-            point: latlng,
-            builder: (context) => const Icon(
-              Icons.location_pin,
-              color: Colors.red,
+      setState(
+        () {
+          selectedLocation = latlng;
+          selectedAddress = address;
+          markers = [
+            Marker(
+              width: 40.0,
+              height: 40.0,
+              point: latlng,
+              builder: (context) => const Icon(
+                Icons.location_pin,
+                color: Colors.red,
+              ),
             ),
-          ),
-        ];
-      });
+          ];
+        },
+      );
     }
   }
 

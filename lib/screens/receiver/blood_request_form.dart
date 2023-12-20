@@ -1,16 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import '../../models/blood_request_model.dart';
 import '../../services/api_service.dart';
 import '../../services/blood_request_service.dart';
 import '../../widgets/background.dart';
 import '../../widgets/map.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 
 class BloodRequestForm extends StatefulWidget {
-  const BloodRequestForm({Key? key}) : super(key: key);
+  const BloodRequestForm({super. key});
 
   @override
   State<BloodRequestForm> createState() => _BloodRequestFormState();
@@ -27,6 +29,9 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
 
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
+
+  File? selectedFile;
+  final ImagePicker _picker = ImagePicker();
 
   String _selectedBloodGroupAbo = 'A'; // Default value
   String _selectedBloodGroupRh = 'Positive (+ve)'; // Default value
@@ -184,87 +189,94 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
   }
 
   Widget _buildTextFieldWithFilePicker(String label) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: InputDecorator(
-        decoration: _getTextFieldDecoration(label),
-        child: _buildFilePickerRow(),
+    return Container(
+      margin: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+      padding: const EdgeInsets.all(2),
+      decoration: BoxDecoration(
+          border: Border.all(color: Colors.black54),
+          borderRadius: const BorderRadius.all(Radius.circular(6))),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Medical Document",
+            style: TextStyle(color: Colors.black54),
+          ),
+          const SizedBox(
+            height: 4,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: _pickImage,
+                child: const Text('Choose File'),
+              ),
+              const SizedBox(
+                width: 12,
+              ),
+              ElevatedButton(
+                onPressed: _takePicture,
+                child: const Text('Take Picture'),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 2,
+          ),
+          if (selectedFile != null)
+            Stack(
+              alignment: Alignment.topRight,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      height: 200,
+                      child: Image.file(
+                        selectedFile!,
+                        fit: BoxFit.fitHeight,
+                      ),
+                    ),
+
+                    const SizedBox(
+                      width: 12,
+                    ),
+
+                    // Close Icon Button
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.red),
+                      onPressed: () {
+                        setState(() {
+                          selectedFile = null;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+        ],
       ),
     );
   }
 
-  Widget _buildFilePickerRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        ElevatedButton(
-          onPressed: _pickFile,
-          child: const Text('Choose File'),
-        ),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: Text(
-              'Selected File: ${_filePathController.text}',
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Future<void> _pickFile() async {
-    print('pressed!!!!!!');
-    bool hasPermission = await _requestPermission(Permission.storage);
-    if (hasPermission) {
-      FilePickerResult? result = await FilePicker.platform.pickFiles();
-      if (result != null) {
-        setState(() {
-          _filePathController.text = result.files.single.path ?? 'No file selected';
-        });
-      } else {
-        // User canceled the picker
-      }
-    } else {
-      // Handle the scenario when permission is not granted
-      _showPermissionDeniedMessage();
-      print('File permission is required to pick files');
+  Future<void> _pickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() {
+        selectedFile = File(image.path);
+      });
     }
   }
 
-  void _showPermissionDeniedMessage() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Permission Denied'),
-          content:const  Text('File permission is required to pick files.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Optionally, you can request permission again
-                _pickFile();
-              },
-              child: Text('Try Again'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<bool> _requestPermission(Permission permission) async {
-    if (await permission.isGranted) {
-      return true;
-    } else {
-      var result = await permission.request();
-      if (result == PermissionStatus.granted) {
-        return true;
-      } else {
-        return false;
-      }
+  Future<void> _takePicture() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+    if (image != null) {
+      setState(() {
+        selectedFile = File(image.path);
+      });
     }
   }
 
