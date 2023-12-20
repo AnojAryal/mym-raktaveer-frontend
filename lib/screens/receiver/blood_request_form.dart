@@ -2,23 +2,24 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:mym_raktaveer_frontend/Providers/locationProvider.dart';
 import '../../models/blood_request_model.dart';
 import '../../services/api_service.dart';
 import '../../services/blood_request_service.dart';
 import '../../widgets/background.dart';
 import '../../widgets/map.dart';
 
-
-class BloodRequestForm extends StatefulWidget {
-  const BloodRequestForm({super. key});
+class BloodRequestForm extends ConsumerStatefulWidget {
+  const BloodRequestForm({super.key});
 
   @override
-  State<BloodRequestForm> createState() => _BloodRequestFormState();
+  ConsumerState<BloodRequestForm> createState() => _BloodRequestFormState();
 }
 
-class _BloodRequestFormState extends State<BloodRequestForm> {
+class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   late ApiService _apiService;
   late BloodRequestService _bloodRequestService;
 
@@ -77,6 +78,12 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
 
   @override
   Widget build(BuildContext context) {
+    final locationData = ref.watch(locationDataProvider);
+
+    if (locationData != null) {
+      _locationController.text = locationData.geoLocation ?? '';
+    }
+
     return Background(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,6 +173,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         controller: controller,
+        readOnly: true,
         decoration: _getTextFieldWithIconDecoration(label, icon),
         onTap: isLocationField
             ? () {
