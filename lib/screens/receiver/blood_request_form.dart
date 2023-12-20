@@ -10,7 +10,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class BloodRequestForm extends StatefulWidget {
-  const BloodRequestForm({super.key});
+  const BloodRequestForm({Key? key}) : super(key: key);
 
   @override
   State<BloodRequestForm> createState() => _BloodRequestFormState();
@@ -40,6 +40,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _urgencyLevelController = TextEditingController();
+  final TextEditingController _filePathController = TextEditingController();
 
   Future<void> _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -185,10 +186,10 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
   Widget _buildTextFieldWithFilePicker(String label) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-        child: InputDecorator(
-          decoration: _getTextFieldDecoration(label),
-          child: _buildFilePickerRow(),
-        ),
+      child: InputDecorator(
+        decoration: _getTextFieldDecoration(label),
+        child: _buildFilePickerRow(),
+      ),
     );
   }
 
@@ -197,9 +198,18 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         ElevatedButton(
-          onPressed:_pickFile,
+          onPressed: _pickFile,
           child: const Text('Choose File'),
-        )
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              'Selected File: ${_filePathController.text}',
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -210,14 +220,39 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
     if (hasPermission) {
       FilePickerResult? result = await FilePicker.platform.pickFiles();
       if (result != null) {
-        // Use the file
-        // File file = File(result.files.single.path);
+        setState(() {
+          _filePathController.text = result.files.single.path ?? 'No file selected';
+        });
       } else {
         // User canceled the picker
       }
     } else {
       // Handle the scenario when permission is not granted
+      _showPermissionDeniedMessage();
+      print('File permission is required to pick files');
     }
+  }
+
+  void _showPermissionDeniedMessage() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Permission Denied'),
+          content:const  Text('File permission is required to pick files.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                // Optionally, you can request permission again
+                _pickFile();
+              },
+              child: Text('Try Again'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<bool> _requestPermission(Permission permission) async {
@@ -404,6 +439,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
       urgencyLevel: _urgencyLevelController.text,
       dateAndTime: _getSelectedDateTime(),
       quantity: _quantityController.text,
+      filePath: _filePathController.text,
     );
 
     await _bloodRequestService.sendDataToBackend(requestData);

@@ -10,6 +10,7 @@ class BloodRequestModel {
   String opdNo;
   final String bloodGroupAbo;
   final String bloodGroupRh;
+  final String filePath; 
   String description;
   String urgencyLevel;
   String dateAndTime;
@@ -25,6 +26,7 @@ class BloodRequestModel {
     required this.opdNo,
     required this.bloodGroupAbo,
     required this.bloodGroupRh,
+    this.filePath ='',
     required this.description,
     required this.urgencyLevel,
     required this.dateAndTime,
@@ -46,6 +48,7 @@ class BloodRequestModel {
       'opd_bed_no': opdNo,
       'blood_group_abo': bloodGroupAbo,
       'blood_group_rh': bloodGroupRh,
+      'document_path':filePath,
       'description': description,
       'urgency_level': urgencyLevel,
       'preferred_datetime': dateAndTime,

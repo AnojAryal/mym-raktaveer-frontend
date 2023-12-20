@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
+import 'package:geocoding/geocoding.dart';
 
 class MapChoice extends StatefulWidget {
-  const MapChoice({super. key}) ;
+  const MapChoice({super.key});
 
   @override
   State<MapChoice> createState() => _MapChoiceState();
@@ -13,22 +14,35 @@ class MapChoice extends StatefulWidget {
 class _MapChoiceState extends State<MapChoice> {
   List<Marker> markers = [];
   LatLng? selectedLocation;
+  String? selectedAddress;
 
-  void _handleTap(LatLng latlng) {
-    setState(() {
-      selectedLocation = latlng;
-      markers = [
-        Marker(
-          width: 40.0,
-          height: 40.0,
-          point: latlng,
-          builder: (context) => const Icon(
-            Icons.location_pin,
-            color: Colors.red,
+  void _handleTap(LatLng latlng) async {
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+      latlng.latitude,
+      latlng.longitude,
+      localeIdentifier: "en_US", // Specify the locale for better address formatting
+    );
+
+    if (placemarks.isNotEmpty) {
+      Placemark placemark = placemarks.first;
+      String address = " ${placemark.street ?? ""} ${placemark.subLocality ?? ""}, ${placemark.locality ?? ""}, ${placemark.administrativeArea ?? ""}";
+
+      setState(() {
+        selectedLocation = latlng;
+        selectedAddress = address;
+        markers = [
+          Marker(
+            width: 40.0,
+            height: 40.0,
+            point: latlng,
+            builder: (context) => const Icon(
+              Icons.location_pin,
+              color: Colors.red,
+            ),
           ),
-        ),
-      ];
-    });
+        ];
+      });
+    }
   }
 
   @override
@@ -51,8 +65,8 @@ class _MapChoiceState extends State<MapChoice> {
           children: [
             FlutterMap(
               options: MapOptions(
-                center: selectedLocation ?? LatLng(28.3949, 84.1240),
-                zoom: 7.0,
+                center: selectedLocation ?? LatLng(27.7172, 85.3240),
+                zoom: 10.0,
                 onTap: (_, latlng) => _handleTap(latlng),
               ),
               children: [
@@ -73,8 +87,8 @@ class _MapChoiceState extends State<MapChoice> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Selected Location: ${selectedLocation!.latitude}, ${selectedLocation!.longitude}',
-                      style: const TextStyle(fontSize: 10.7),
+                      'Selected Location: ${selectedAddress ?? ""}',
+                      style: const TextStyle(fontSize: 9),
                     ),
                   ),
                 ),
