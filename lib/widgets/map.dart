@@ -77,6 +77,7 @@ class _MapChoiceState extends ConsumerState<MapChoice> {
               options: MapOptions(
                 center: selectedLocation ?? LatLng(27.7172, 85.3240),
                 zoom: 10.0,
+                maxZoom: 18.0,
                 onTap: (_, latlng) => _handleTap(latlng),
               ),
               children: [
@@ -90,9 +91,7 @@ class _MapChoiceState extends ConsumerState<MapChoice> {
               ],
             ),
             if (selectedLocation != null)
-              Positioned(
-                top: kToolbarHeight + 16.0,
-                left: 16.0,
+              Container(
                 child: Card(
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
