@@ -45,7 +45,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _urgencyLevelController = TextEditingController();
-  final TextEditingController _filePathController = TextEditingController();
+ 
 
   Future<void> _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -451,12 +451,10 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
       urgencyLevel: _urgencyLevelController.text,
       dateAndTime: _getSelectedDateTime(),
       quantity: _quantityController.text,
-      filePath: _filePathController.text,
+      filePath: selectedFile!.path
     );
 
     await _bloodRequestService.sendDataToBackend(requestData);
-
-    print('Requested data: ${requestData.toJson()}');
   }
 
   String _getSelectedDateTime() {
