@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:geocoding/geocoding.dart';
 
 class MapChoice extends StatefulWidget {
@@ -50,26 +49,27 @@ class _MapChoiceState extends State<MapChoice> {
 
   @override
   Widget build(BuildContext context) {
-    return Background(
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          title: const Text('Select Location'),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: const Text('Select Location'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
         ),
-        body: Stack(
+      ),
+      body: SafeArea(
+        child: Stack(
           children: [
             FlutterMap(
               options: MapOptions(
                 center: selectedLocation ?? LatLng(27.7172, 85.3240),
                 zoom: 10.0,
+                maxZoom: 18.0,
                 onTap: (_, latlng) => _handleTap(latlng),
               ),
               children: [

@@ -48,7 +48,7 @@ class BloodRequestModel {
       'opd_bed_no': opdNo,
       'blood_group_abo': bloodGroupAbo,
       'blood_group_rh': bloodGroupRh,
-      'document_path':filePath,
+      'document':filePath,
       'description': description,
       'urgency_level': urgencyLevel,
       'preferred_datetime': dateAndTime,
