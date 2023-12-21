@@ -32,7 +32,6 @@ class BloodRequestService {
 
       // Convert requestData to Map and add each field separately
 
-      print(requestData);
       final requestDataMap = requestData.toJson();
       requestDataMap.forEach((key, value) {
         request.fields[key] = value.toString();
@@ -40,10 +39,12 @@ class BloodRequestService {
 
       final streamedResponse = await client.send(request);
       final response = await http.Response.fromStream(streamedResponse);
+      print(requestData.toJson());
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         print('Request sent successfully');
       } else if (response.statusCode == 302) {
+        print(response.reasonPhrase);
         final redirectUrl = response.headers['location'];
         print('Redirecting to: $redirectUrl');
       } else {

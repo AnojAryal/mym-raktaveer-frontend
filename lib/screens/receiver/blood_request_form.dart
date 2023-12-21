@@ -427,7 +427,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         padding: const EdgeInsets.all(8),
         child: ElevatedButton(
           onPressed: () {
-            _sendDataToBackend;
+            _sendDataToBackend();
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(150, 45),
@@ -449,41 +449,40 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       if (selectedFile == null) {
         return;
       }
-
-      Uint8List imageBytes =
-          Uint8List.fromList(await selectedFile!.readAsBytes());
-
-      BloodRequestModel requestData = BloodRequestModel(
-        patientName: _patientNameController.text,
-        age: _ageController.text,
-        sex: _sexController.text,
-        hospitalName: _hospitalNameController.text,
-        location: _locationController.text,
-        roomNo: _roomNoController.text,
-        opdNo: _opdNoController.text,
-        bloodGroupAbo: _selectedBloodGroupAbo,
-        bloodGroupRh: _selectedBloodGroupRh,
-        description: _descriptionController.text,
-        urgencyLevel: _urgencyLevelController.text,
-        dateAndTime: _getSelectedDateTime(),
-        quantity: _quantityController.text,
-        filePath: selectedFile!.path,
-      );
+      print("clicked");
 
       final locationData =
           ref.watch(locationDataProvider); // Get location data using Riverpod
 
-      String? locationId = await _sendLocationData(locationData);
-      if (locationId == null) {
-        // Handle failure in sending location data
-        return;
+      if (locationData != null && locationData.coordinates != null) {
+        String? locationId = await _sendLocationData(locationData);
+
+        print(locationId);
+        if (locationId != null) {
+          // Handle failure in sending location data
+          BloodRequestModel requestData = BloodRequestModel(
+            patientName: _patientNameController.text,
+            age: _ageController.text,
+            sex: _sexController.text,
+            hospitalName: _hospitalNameController.text,
+            location: locationId,
+            roomNo: _roomNoController.text,
+            opdNo: _opdNoController.text,
+            bloodGroupAbo: _selectedBloodGroupAbo,
+            bloodGroupRh: _selectedBloodGroupRh,
+            description: _descriptionController.text,
+            urgencyLevel: _urgencyLevelController.text,
+            dateAndTime: _getSelectedDateTime(),
+            quantity: _quantityController.text,
+            filePath: selectedFile!.path,
+          );
+
+          Uint8List imageBytes =
+              Uint8List.fromList(await selectedFile!.readAsBytes());
+
+          await _sendBloodRequestData(requestData, imageBytes);
+        }
       }
-
-      // Attach locationId to requestData
-      requestData.location = locationId;
-
-      // Step 2: Send complete blood request data
-      await _sendBloodRequestData(requestData, imageBytes);
     } catch (error) {
       print("Error sending data and image to backend: $error");
     }
@@ -519,6 +518,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         imageBytes,
         // location: requestData.location, // Pass location to the service
       );
+
+      print(requestData);
       // Handle successful submission (e.g., show success message)
     } catch (e) {
       // Handle error in sending blood request data
@@ -528,13 +529,15 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
 
   String _getSelectedDateTime() {
     if (selectedDate != null && selectedTime != null) {
-      return DateFormat.yMd().add_jm().format(DateTime(
-            selectedDate!.year,
-            selectedDate!.month,
-            selectedDate!.day,
-            selectedTime!.hour,
-            selectedTime!.minute,
-          ));
+      final dateTime = DateTime(
+        selectedDate!.year,
+        selectedDate!.month,
+        selectedDate!.day,
+        selectedTime!.hour,
+        selectedTime!.minute,
+      );
+
+      return dateTime.toUtc().toIso8601String();
     } else {
       return '';
     }
