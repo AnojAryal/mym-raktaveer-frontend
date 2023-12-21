@@ -1,24 +1,26 @@
+// ignore_for_file: avoid_print
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:mym_raktaveer_frontend/Providers/locationProvider.dart';
 import '../../models/blood_request_model.dart';
 import '../../services/api_service.dart';
 import '../../services/blood_request_service.dart';
 import '../../widgets/background.dart';
 import '../../widgets/map.dart';
 
-
-class BloodRequestForm extends StatefulWidget {
-  const BloodRequestForm({super. key});
+class BloodRequestForm extends ConsumerStatefulWidget {
+  const BloodRequestForm({super.key});
 
   @override
-  State<BloodRequestForm> createState() => _BloodRequestFormState();
+  ConsumerState<BloodRequestForm> createState() => _BloodRequestFormState();
 }
 
-class _BloodRequestFormState extends State<BloodRequestForm> {
+class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   late ApiService _apiService;
   late BloodRequestService _bloodRequestService;
 
@@ -33,8 +35,8 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
   File? selectedFile;
   final ImagePicker _picker = ImagePicker();
 
-  String _selectedBloodGroupAbo = 'A'; // Default value
-  String _selectedBloodGroupRh = 'Positive (+ve)'; // Default value
+  String _selectedBloodGroupAbo = 'A';
+  String _selectedBloodGroupRh = 'Positive (+ve)';
   final TextEditingController _patientNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _sexController = TextEditingController();
@@ -45,7 +47,6 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _urgencyLevelController = TextEditingController();
- 
 
   Future<void> _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -77,11 +78,17 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
 
   @override
   Widget build(BuildContext context) {
+    final locationData = ref.watch(locationDataProvider);
+
+    if (locationData != null) {
+      _locationController.text = locationData.geoLocation ?? '';
+    }
+
     return Background(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildBackButton(),
+          _buildBackButton(ref),
           _buildBloodRequestFormTitle(),
           Expanded(
             child: SingleChildScrollView(
@@ -115,7 +122,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
     );
   }
 
-  Widget _buildBackButton() {
+  Widget _buildBackButton(WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Align(
@@ -123,6 +130,7 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
         child: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
+            ref.read(locationDataProvider.notifier).state;
             Navigator.pop(context);
           },
         ),
@@ -166,13 +174,11 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         controller: controller,
+        readOnly: true,
         decoration: _getTextFieldWithIconDecoration(label, icon),
         onTap: isLocationField
             ? () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MapChoice()),
-                );
+                Navigator.pushNamed(context, '/map-page');
               }
             : null,
       ),
@@ -385,11 +391,12 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
           selectedDate != null && selectedTime != null
               ? 'Selected: ${DateFormat.yMd().add_jm().format(
                     DateTime(
-                        selectedDate!.year,
-                        selectedDate!.month,
-                        selectedDate!.day,
-                        selectedTime!.hour,
-                        selectedTime!.minute),
+                      selectedDate!.year,
+                      selectedDate!.month,
+                      selectedDate!.day,
+                      selectedTime!.hour,
+                      selectedTime!.minute,
+                    ),
                   )}'
               : 'Select Date and Time',
         ),
@@ -437,24 +444,35 @@ class _BloodRequestFormState extends State<BloodRequestForm> {
   }
 
   Future<void> _sendDataToBackend() async {
-    BloodRequestModel requestData = BloodRequestModel(
-      patientName: _patientNameController.text,
-      age: _ageController.text,
-      sex: _sexController.text,
-      hospitalName: _hospitalNameController.text,
-      location: _locationController.text,
-      roomNo: _roomNoController.text,
-      opdNo: _opdNoController.text,
-      bloodGroupAbo: _selectedBloodGroupAbo,
-      bloodGroupRh: _selectedBloodGroupRh,
-      description: _descriptionController.text,
-      urgencyLevel: _urgencyLevelController.text,
-      dateAndTime: _getSelectedDateTime(),
-      quantity: _quantityController.text,
-      filePath: selectedFile!.path
-    );
+    try {
+      if (selectedFile == null) {
+        return;
+      }
 
-    await _bloodRequestService.sendDataToBackend(requestData);
+      Uint8List imageBytes =
+          Uint8List.fromList(await selectedFile!.readAsBytes());
+
+      BloodRequestModel requestData = BloodRequestModel(
+        patientName: _patientNameController.text,
+        age: _ageController.text,
+        sex: _sexController.text,
+        hospitalName: _hospitalNameController.text,
+        location: _locationController.text,
+        roomNo: _roomNoController.text,
+        opdNo: _opdNoController.text,
+        bloodGroupAbo: _selectedBloodGroupAbo,
+        bloodGroupRh: _selectedBloodGroupRh,
+        description: _descriptionController.text,
+        urgencyLevel: _urgencyLevelController.text,
+        dateAndTime: _getSelectedDateTime(),
+        quantity: _quantityController.text,
+        filePath: selectedFile!.path,
+      );
+      await _bloodRequestService.sendDataAndImageToBackend(
+          requestData, imageBytes);
+    } catch (error) {
+      print("Error sending data and image to backend: $error");
+    }
   }
 
   String _getSelectedDateTime() {

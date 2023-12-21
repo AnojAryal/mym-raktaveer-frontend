@@ -9,6 +9,7 @@ import 'package:mym_raktaveer_frontend/screens/donor/final_question_screen.dart'
 import 'package:mym_raktaveer_frontend/screens/donor/health_condition_question.dart';
 import 'package:mym_raktaveer_frontend/screens/receiver/blood_request_form.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
+import 'package:mym_raktaveer_frontend/widgets/map.dart';
 import 'package:mym_raktaveer_frontend/widgets/profile.dart';
 
 import 'models/firebase_auth/firebase_options.dart';
@@ -44,7 +45,10 @@ class MyApp extends StatelessWidget {
         '/health-condition': (context) => const HealthConditionQuestion(),
         '/final-question': (context) => const FinalQuestion(),
         '/blood-request-form': (context) => const BloodRequestForm(),
-        '/profile-page': (context) => const Profile(),
+        '/map-page': (context) => const MapChoice(),
+        '/profile-page': (context) => Profile(),
+
+        // Define other routes as needed
       },
     );
   }

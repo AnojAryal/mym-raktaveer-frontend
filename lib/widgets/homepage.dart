@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   String? bloodGroup = '';
   int? donationCount = 0;
   bool? status;
+  late final Map<String, dynamic> data;
 
   @override
   void initState() {
@@ -39,7 +40,9 @@ class _HomePageState extends State<HomePage> {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body)['data'];
+        setState(() {
+          data = json.decode(response.body)['data'];
+        });
 
         String? bloodGroupAbo = data['blood_detail']?['blood_group_abo'];
         String? bloodGroupRh = data['blood_detail']?['blood_group_rh'];
@@ -377,32 +380,32 @@ class _HomePageState extends State<HomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Profile Icon
-                      // CircleAvatar(
-                      //   backgroundColor: Colors.white,
-                      //   child: IconButton(
-                      //     icon: const Icon(Icons.person),
-                      //     color: const Color(0xFFFD1A00),
-                      //     onPressed: () {
-                      //       Navigator.pushNamed(context, '/profile-page');
-                      //     },
-                      //   ),
-                      // ),
-                      ElevatedButton(
+                      CircleAvatar(
+                        backgroundColor: Colors.white,
+                        child: IconButton(
+                          icon: const Icon(Icons.person),
                           onPressed: () {
-                            Navigator.pushNamed(context, '/profile-page');
+                            Navigator.pushNamed(
+                              context,
+                              '/profile-page',
+                              arguments: data,
+                            );
                           },
-                          child: const Text('Profile')),
-
+                        ),
+                      ),
                       // Middle Text
                       const Text(
                         'MYM Raktaveer',
                         style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
                       // Notification Icon
-                      const Icon(
-                        Icons.notifications,
-                        color: Colors.white,
-                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: const Icon(
+                          Icons.notifications,
+                          color: Colors.white,
+                        ),
+                      )
                     ],
                   ),
                 ),

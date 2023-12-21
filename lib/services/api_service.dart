@@ -33,6 +33,7 @@ class ApiService {
     print(baseUrl);
     final String fullUrl = "$baseUrl/$apiUrl";
     print(fullUrl);
+    print("here");
 
     try {
       final response = await http.get(Uri.parse(fullUrl));
