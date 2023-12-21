@@ -1,20 +1,21 @@
 // ignore_for_file: avoid_print
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:mym_raktaveer_frontend/Providers/locationProvider.dart';
+import '../../Providers/locationProvider.dart';
 import '../../models/blood_request_model.dart';
 import '../../services/api_service.dart';
 import '../../services/blood_request_service.dart';
+import '../../services/location_service.dart';
 import '../../widgets/background.dart';
-import '../../widgets/map.dart';
 
 class BloodRequestForm extends ConsumerStatefulWidget {
-  const BloodRequestForm({super.key});
+  const BloodRequestForm({
+    super.key,
+  });
 
   @override
   ConsumerState<BloodRequestForm> createState() => _BloodRequestFormState();
@@ -426,7 +427,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         padding: const EdgeInsets.all(8),
         child: ElevatedButton(
           onPressed: () {
-            _sendDataToBackend();
+            _sendDataToBackend;
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(150, 45),
@@ -468,10 +469,60 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         quantity: _quantityController.text,
         filePath: selectedFile!.path,
       );
-      await _bloodRequestService.sendDataAndImageToBackend(
-          requestData, imageBytes);
+
+      final locationData =
+          ref.watch(locationDataProvider); // Get location data using Riverpod
+
+      String? locationId = await _sendLocationData(locationData);
+      if (locationId == null) {
+        // Handle failure in sending location data
+        return;
+      }
+
+      // Attach locationId to requestData
+      requestData.location = locationId;
+
+      // Step 2: Send complete blood request data
+      await _sendBloodRequestData(requestData, imageBytes);
     } catch (error) {
       print("Error sending data and image to backend: $error");
+    }
+  }
+
+  Future<String?> _sendLocationData(LocationData? locationData) async {
+    try {
+      if (locationData == null) {
+        // Handle the case where locationData is null
+        return null;
+      }
+      LocationService service = LocationService(_apiService);
+
+      return await service.sendLocationData(
+        locationData.coordinates!,
+        locationData.geoLocation!,
+      );
+
+      // );
+    } catch (e) {
+      // Handle error in sending location data
+      return null;
+    }
+  }
+
+  Future<void> _sendBloodRequestData(
+    BloodRequestModel requestData,
+    Uint8List imageBytes,
+  ) async {
+    try {
+      await _bloodRequestService.sendDataAndImageToBackend(
+        requestData,
+        imageBytes,
+        // location: requestData.location, // Pass location to the service
+      );
+      // Handle successful submission (e.g., show success message)
+    } catch (e) {
+      // Handle error in sending blood request data
+      print("Error sending blood request data: $e");
     }
   }
 

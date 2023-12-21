@@ -1,32 +1,29 @@
-// ignore_for_file: avoid_print, file_names
+// ignore_for_file: file_names
 
-import 'package:http/http.dart' as http;
-import 'api_service.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:mym_raktaveer_frontend/services/api_service.dart';
 
 class LocationService {
-  final String baseUrl;
+  final ApiService _apiService;
 
-  LocationService(ApiService apiService) : baseUrl = apiService.baseUrl ?? '';
+  LocationService(this._apiService);
 
-  Future<void> sendHeadRequestToLocationCreate() async {
-    final client = http.Client();
-
+  Future<String?> sendLocationData(LatLng coordinates, String geoLocation) async {
     try {
-      final response = await client.head(
-        Uri.parse('$baseUrl/location/create'),
-      );
+      final response = await _apiService.postData('/location/create', {
+        'x_coordinate': coordinates.latitude,
+        'y_coordinate': coordinates.longitude,
+        'geo_location': geoLocation,
+      });
 
-      if (response.statusCode == 200) {
-        print('Head request to /location/create successful');
+      if (response != null && response['id'] != null) {
+        print(response);
+        return response['id'];
       } else {
-        print(
-            'Failed to send HEAD request. Status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        return null;
       }
-    } catch (error) {
-      print('Error sending HEAD request: $error');
-    } finally {
-      client.close();
+    } catch (e) {
+      return null;
     }
   }
 }

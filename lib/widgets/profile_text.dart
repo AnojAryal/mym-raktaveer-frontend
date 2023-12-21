@@ -1,12 +1,14 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 
 class CustomRichText extends StatelessWidget {
   final String label;
   final String value;
 
-  const CustomRichText({required this.label, required this.value});
+  const CustomRichText({
+    super.key,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {

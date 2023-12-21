@@ -37,7 +37,7 @@ class Profile extends StatelessWidget {
     if (healthCondition != null) {
       conditions = healthCondition.keys.toList();
       isCheckedList = conditions.map((key) {
-        final value = healthCondition![key];
+        final value = healthCondition[key];
         if (value is bool) {
           return value;
         } else if (value is String) {

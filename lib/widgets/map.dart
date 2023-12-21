@@ -91,14 +91,12 @@ class _MapChoiceState extends ConsumerState<MapChoice> {
               ],
             ),
             if (selectedLocation != null)
-              Container(
-                child: Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Selected Location: ${selectedAddress ?? ""}',
-                      style: const TextStyle(fontSize: 9),
-                    ),
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Selected Location: ${selectedAddress ?? ""}',
+                    style: const TextStyle(fontSize: 9),
                   ),
                 ),
               ),

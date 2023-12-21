@@ -10,7 +10,6 @@ import 'package:mym_raktaveer_frontend/screens/donor/health_condition_question.d
 import 'package:mym_raktaveer_frontend/screens/receiver/blood_request_form.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
 import 'package:mym_raktaveer_frontend/widgets/map.dart';
-import 'package:mym_raktaveer_frontend/widgets/profile.dart';
 
 import 'models/firebase_auth/firebase_options.dart';
 import 'models/firebase_auth/auth_page.dart';
@@ -29,7 +28,7 @@ void main() async {
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super. key}) ;
 
   @override
   Widget build(BuildContext context) {
@@ -45,23 +44,18 @@ class MyApp extends StatelessWidget {
         '/health-condition': (context) => const HealthConditionQuestion(),
         '/final-question': (context) => const FinalQuestion(),
         '/blood-request-form': (context) => const BloodRequestForm(),
-        '/map-page': (context) => const MapChoice(),
-        '/profile-page': (context) => Profile(),
-
-        // Define other routes as needed
+        '/map-page': (context)=>const MapChoice(),
       },
     );
   }
 
   Route<dynamic> _generateRoute(RouteSettings settings) {
-    // Define named routes and corresponding pages here
     return MaterialPageRoute(builder: (context) => const MainPage());
   }
 }
 
 class MainPage extends ConsumerWidget {
-  // Changed to ConsumerWidget
-  const MainPage({super.key});
+  const MainPage({ super.key}) ;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
