@@ -9,7 +9,8 @@ class BloodRequestService {
   final String baseUrl;
 
   // Inject ApiService into BloodRequestService
-  BloodRequestService(ApiService apiService) : baseUrl = apiService.baseUrl ?? '';
+  BloodRequestService(ApiService apiService)
+      : baseUrl = apiService.baseUrl ?? '';
 
   Future<void> sendDataAndImageToBackend(
       BloodRequestModel requestData, Uint8List imageBytes) async {
@@ -30,6 +31,8 @@ class BloodRequestService {
       );
 
       // Convert requestData to Map and add each field separately
+
+      print(requestData);
       final requestDataMap = requestData.toJson();
       requestDataMap.forEach((key, value) {
         request.fields[key] = value.toString();
@@ -43,7 +46,6 @@ class BloodRequestService {
       } else if (response.statusCode == 302) {
         final redirectUrl = response.headers['location'];
         print('Redirecting to: $redirectUrl');
-    
       } else {
         print('Failed to send request. Status code: ${response.statusCode}');
         print('Response body: ${response.body}');

@@ -88,7 +88,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildBackButton(),
+          _buildBackButton(ref),
           _buildBloodRequestFormTitle(),
           Expanded(
             child: SingleChildScrollView(
@@ -122,7 +122,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
-  Widget _buildBackButton() {
+  Widget _buildBackButton(WidgetRef ref) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Align(
@@ -130,6 +130,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         child: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
+            ref.read(locationDataProvider.notifier).state;
             Navigator.pop(context);
           },
         ),

@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   String? bloodGroup = '';
   int? donationCount = 0;
   bool? status;
+  late final Map<String, dynamic> data;
 
   @override
   void initState() {
@@ -39,7 +40,9 @@ class _HomePageState extends State<HomePage> {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body)['data'];
+        setState(() {
+          data = json.decode(response.body)['data'];
+        });
 
         String? bloodGroupAbo = data['blood_detail']?['blood_group_abo'];
         String? bloodGroupRh = data['blood_detail']?['blood_group_rh'];
@@ -335,11 +338,9 @@ class _HomePageState extends State<HomePage> {
                           child: const Text('Donate Now'),
                         ),
                         ElevatedButton(
-                         
-                         onPressed: () {
-                      Navigator.pushNamed(context, '/blood-request-form');
-                      },
-
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/blood-request-form');
+                          },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
                                 const Color(0xFFFD1A00), // Background color
@@ -373,29 +374,38 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(16.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Profile Icon
                       CircleAvatar(
                         backgroundColor: Colors.white,
-                        child: Icon(
-                          Icons.person,
-                          color: Color(0xFFFD1A00),
+                        child: IconButton(
+                          icon: const Icon(Icons.person),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/profile-page',
+                              arguments: data,
+                            );
+                          },
                         ),
                       ),
                       // Middle Text
-                      Text(
+                      const Text(
                         'MYM Raktaveer',
                         style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
                       // Notification Icon
-                      Icon(
-                        Icons.notifications,
-                        color: Colors.white,
-                      ),
+                      InkWell(
+                        onTap: () {},
+                        child: const Icon(
+                          Icons.notifications,
+                          color: Colors.white,
+                        ),
+                      )
                     ],
                   ),
                 ),
