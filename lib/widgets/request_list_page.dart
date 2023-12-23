@@ -35,7 +35,7 @@ class _RequestListPageState extends State<RequestListPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Padding(
-                padding: EdgeInsets.all(8.0),
+                padding: EdgeInsets.only(top: 16, left: 16, bottom: 8),
                 child: Text(
                   'Request List',
                   style: TextStyle(
@@ -44,7 +44,8 @@ class _RequestListPageState extends State<RequestListPage> {
                   ),
                 ),
               ),
-              Expanded(
+              SizedBox(
+                height: 250,
                 child: ListView.builder(
                   itemCount: data.length,
                   itemBuilder: (context, index) {
@@ -65,23 +66,48 @@ class _RequestListPageState extends State<RequestListPage> {
 
   Widget buildRequestCard(int id, String bloodGroup, String urgencyLevel) {
     return Container(
-    margin: const EdgeInsets.all(8),
-    width: 200,
-    child: Card(
+      margin: const EdgeInsets.all(8),
+      width: 200,
+      decoration: BoxDecoration(
+        color: Colors.white, // White background
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
       child: ListTile(
         title: Text('ID: $id'),
         subtitle: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Blood Group: $bloodGroup'),
+            Row(
+              children: [
+                const Text(
+                  'Blood Group: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text('$bloodGroup')
+              ],
+            ),
             const SizedBox(width: 16),
-            Text('Urgency Level: $urgencyLevel'),
+            Row(
+              children: [
+                const Text(
+                  'Urgency Level: ',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text("$urgencyLevel")
+              ],
+            ),
           ],
         ),
-          onTap: () {
-            // Handle card tap
-          },
-        ),
+        onTap: () {
+          // Handle card tap
+        },
       ),
     );
   }
