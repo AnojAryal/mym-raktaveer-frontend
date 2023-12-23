@@ -1,0 +1,22 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mym_raktaveer_frontend/models/user_data.dart';
+
+final userDataProvider =
+    StateNotifierProvider<UserDataNotifier, UserData?>((ref) {
+  return UserDataNotifier();
+});
+
+class UserDataNotifier extends StateNotifier<UserData?> {
+  UserDataNotifier() : super(null);
+
+  void setUserData(String? uid, String? accessToken) {
+    state = UserData(
+      uid: uid,
+      acessToken: accessToken,
+    );
+  }
+
+  void clearUserData() {
+    state = null;
+  }
+}

@@ -28,7 +28,7 @@ void main() async {
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
-  const MyApp({super. key}) ;
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
         '/health-condition': (context) => const HealthConditionQuestion(),
         '/final-question': (context) => const FinalQuestion(),
         '/blood-request-form': (context) => const BloodRequestForm(),
-        '/map-page': (context)=>const MapChoice(),
+        '/map-page': (context) => const MapChoice(),
       },
     );
   }
@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MainPage extends ConsumerWidget {
-  const MainPage({ super.key}) ;
+  const MainPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

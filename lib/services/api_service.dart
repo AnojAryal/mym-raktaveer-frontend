@@ -30,10 +30,7 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>?> getData(String apiUrl) async {
-    print(baseUrl);
     final String fullUrl = "$baseUrl/$apiUrl";
-    print(fullUrl);
-    print("here");
 
     try {
       final response = await http.get(Uri.parse(fullUrl));

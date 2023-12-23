@@ -519,7 +519,6 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         // location: requestData.location, // Pass location to the service
       );
 
-      print(requestData);
       // Handle successful submission (e.g., show success message)
     } catch (e) {
       // Handle error in sending blood request data
