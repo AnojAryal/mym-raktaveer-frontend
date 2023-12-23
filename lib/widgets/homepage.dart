@@ -383,7 +383,9 @@ class _HomePageState extends State<HomePage> {
                       CircleAvatar(
                         backgroundColor: Colors.white,
                         child: IconButton(
+                          padding: const EdgeInsets.only(bottom: 0),
                           icon: const Icon(Icons.person),
+                          color: const Color(0xFFFD1A00),
                           onPressed: () {
                             Navigator.pushNamed(
                               context,
@@ -393,6 +395,7 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                       ),
+
                       // Middle Text
                       const Text(
                         'MYM Raktaveer',

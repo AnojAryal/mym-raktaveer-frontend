@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/profile_text.dart';
@@ -53,17 +54,52 @@ class Profile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Back Button
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Align(
+                    alignment: Alignment.topLeft,
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 115,
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.admin_panel_settings,
+                    color: Color(0xFFFD1A00),
+                    size: 30,
+                  ),
                   onPressed: () {
-                    Navigator.pop(context);
+                    Navigator.pushNamed(
+                      context,
+                      '/admin-dashboard',
+                    );
                   },
                 ),
-              ),
+                ElevatedButton(
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        const Color(0xFFFD1A00), // Background color
+                    foregroundColor: Colors.white, // Text color
+                    minimumSize: const Size(100, 25), // Button width and height
+                  ),
+                  child: const Text(
+                    'Sign Out',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+              ],
             ),
             // Profile Picture, Name, and Email
             Padding(
@@ -183,7 +219,7 @@ class Profile extends StatelessWidget {
                     // Blood Group
                     CustomRichText(label: "Blood Group", value: bloodGroup),
                     const SizedBox(
-                      height: 4,
+                      height: 8,
                     ),
                     // Request Quantity and Urgency Level side by side
                     Column(
@@ -200,7 +236,7 @@ class Profile extends StatelessWidget {
                         ),
 
                         const SizedBox(
-                          height: 4,
+                          height: 8,
                         ),
 
                         // Add spacing between the text
