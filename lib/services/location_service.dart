@@ -8,17 +8,22 @@ class LocationService {
 
   LocationService(this._apiService);
 
-  Future<String?> sendLocationData(LatLng coordinates, String geoLocation) async {
+
+  String baseUrl = ApiService().baseUrl ?? 'default_base_url';
+
+  Future<String?> sendLocationData(
+      LatLng coordinates, String geoLocation) async {
     try {
-      final response = await _apiService.postData('/location/create', {
-        'x_coordinate': coordinates.latitude,
-        'y_coordinate': coordinates.longitude,
+      final response =
+          await _apiService.postData('$baseUrl/api/locations/create', {
+        'x_coordinates': coordinates.latitude,
+        'y_coordinates': coordinates.longitude,
         'geo_location': geoLocation,
       });
 
-      if (response != null && response['id'] != null) {
-        print(response);
-        return response['id'];
+      if (response != null && response['location']['id'] != null) {
+        String locationId = response['location']['id'].toString();
+        return locationId;
       } else {
         return null;
       }

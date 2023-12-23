@@ -12,6 +12,7 @@ import '../../services/blood_request_service.dart';
 import '../../services/location_service.dart';
 import '../../widgets/background.dart';
 
+
 class BloodRequestForm extends ConsumerStatefulWidget {
   const BloodRequestForm({
     super.key,
@@ -427,7 +428,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         padding: const EdgeInsets.all(8),
         child: ElevatedButton(
           onPressed: () {
-            _sendDataToBackend;
+            _sendDataToBackend();
+            print('hi:$_sendDataToBackend()');
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(150, 45),
@@ -471,7 +473,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       );
 
       final locationData =
-          ref.watch(locationDataProvider); // Get location data using Riverpod
+          ref.watch(locationDataProvider);
 
       String? locationId = await _sendLocationData(locationData);
       if (locationId == null) {
