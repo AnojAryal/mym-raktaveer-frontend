@@ -38,6 +38,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
 
   String _selectedBloodGroupAbo = 'A';
   String _selectedBloodGroupRh = 'Positive (+ve)';
+  String _selectedUrgencyLevel = 'Low';
   final TextEditingController _patientNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _sexController = TextEditingController();
@@ -47,7 +48,6 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   final TextEditingController _opdNoController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
-  final TextEditingController _urgencyLevelController = TextEditingController();
 
   Future<void> _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -294,7 +294,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       padding: const EdgeInsets.all(8.0),
       child: DropdownButtonFormField(
         decoration: _getTextFieldDecoration('Urgency Level'),
-        value: urgencyLevels[0],
+        value: _selectedUrgencyLevel,
         items: urgencyLevels.map((level) {
           return DropdownMenuItem(
             value: level,
@@ -302,22 +302,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
           );
         }).toList(),
         onChanged: (value) {
-          _urgencyLevelController.text = value.toString();
+          _selectedUrgencyLevel = value.toString();
         },
-      ),
-    );
-  }
-
-  Widget _buildRow(
-      List<String> labels, List<TextEditingController> controllers) {
-    return Padding(
-      padding: const EdgeInsets.all(1.0),
-      child: Row(
-        children: List.generate(labels.length, (index) {
-          return Expanded(
-            child: _buildTextField(labels[index], controllers[index]),
-          );
-        }),
       ),
     );
   }
@@ -341,6 +327,20 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
             _selectedBloodGroupAbo = value.toString();
           });
         },
+      ),
+    );
+  }
+
+  Widget _buildRow(
+      List<String> labels, List<TextEditingController> controllers) {
+    return Padding(
+      padding: const EdgeInsets.all(1.0),
+      child: Row(
+        children: List.generate(labels.length, (index) {
+          return Expanded(
+            child: _buildTextField(labels[index], controllers[index]),
+          );
+        }),
       ),
     );
   }
@@ -471,7 +471,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
             bloodGroupAbo: _selectedBloodGroupAbo,
             bloodGroupRh: _selectedBloodGroupRh,
             description: _descriptionController.text,
-            urgencyLevel: _urgencyLevelController.text,
+            urgencyLevel: _selectedUrgencyLevel,
             dateAndTime: _getSelectedDateTime(),
             quantity: _quantityController.text,
             filePath: selectedFile!.path,
