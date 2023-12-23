@@ -9,7 +9,7 @@ class LocationService {
 
   LocationService(this._apiService);
 
-  String baseUrl = dotenv.env['BASE_URL'] ?? 'default_base_url';
+  String baseUrl = ApiService().baseUrl ?? 'default_base_url';
 
   Future<String?> sendLocationData(
       LatLng coordinates, String geoLocation) async {

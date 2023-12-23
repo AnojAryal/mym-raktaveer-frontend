@@ -3,7 +3,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/Providers/locationProvider.dart';
-import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:geocoding/geocoding.dart';
 
 class MapChoice extends ConsumerStatefulWidget {
@@ -39,8 +38,9 @@ class _MapChoiceState extends ConsumerState<MapChoice> {
         ref.read(locationDataProvider.notifier).state =
             LocationData(coordinates: latlng, geoLocation: selectedAddress);
       }
+    // ignore: empty_catches
     } catch (e) {
-      // Handle geocoding error
+
     }
   }
 
@@ -59,36 +59,39 @@ class _MapChoiceState extends ConsumerState<MapChoice> {
 
   @override
   Widget build(BuildContext context) {
-    return Background(
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          title: const Text('Select Location'),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        title: const Text('Select Location'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.of(context).pop(),
         ),
-        body: Stack(
+      ),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            FlutterMap(
-              options: MapOptions(
-                center: selectedLocation ?? LatLng(27.7172, 85.3240),
-                zoom: 10.0,
-                maxZoom: 18.0,
-                onTap: (_, latlng) => _handleTap(latlng),
-              ),
-              children: [
-                TileLayer(
-                  urlTemplate:
-                      'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                  subdomains: const ['a', 'b', 'c'],
-                  userAgentPackageName: 'com.example.app',
+            Expanded(
+              child: FlutterMap(
+                options: MapOptions(
+                  center: selectedLocation ?? LatLng(27.7172, 85.3240),
+                  zoom: 10.0,
+                  maxZoom: 18.0,
+                  onTap: (_, latlng) => _handleTap(latlng),
                 ),
-                MarkerLayer(markers: markers),
-              ],
+                children: [
+                  TileLayer(
+                    urlTemplate:
+                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    subdomains: const ['a', 'b', 'c'],
+                    userAgentPackageName: 'com.example.app',
+                  ),
+                  MarkerLayer(markers: markers),
+                ],
+              ),
             ),
             if (selectedLocation != null)
               Card(
@@ -100,13 +103,9 @@ class _MapChoiceState extends ConsumerState<MapChoice> {
                   ),
                 ),
               ),
-            Positioned(
-              bottom: 20,
-              right: 20,
-              child: ElevatedButton(
-                onPressed: () => _updateLocation(context, ref),
-                child: const Text("Select Location"),
-              ),
+            ElevatedButton(
+              onPressed: () => _updateLocation(context, ref),
+              child: const Text("Select Location"),
             ),
           ],
         ),
@@ -120,7 +119,7 @@ class _MapChoiceState extends ConsumerState<MapChoice> {
           coordinates: selectedLocation, geoLocation: selectedAddress);
       Navigator.of(context).pop();
     } else {
-      // Optionally handle the case where no location is selected
+
     }
   }
 }
