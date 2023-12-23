@@ -1,6 +1,5 @@
 // ignore_for_file: file_names
 
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
 
