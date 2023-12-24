@@ -1,114 +1,85 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+import '../services/blood_request_service.dart';
 
 class RequestListPage extends StatefulWidget {
-  const RequestListPage({super.key});
-
   @override
-  State<RequestListPage> createState() => _RequestListPageState();
+  _RequestListPageState createState() => _RequestListPageState();
 }
 
 class _RequestListPageState extends State<RequestListPage> {
-  final String backendUrl = 'your_php_backend_url';
+  List<String> bloodGroupDataList = []; // List to hold blood group data
 
-  Future<List<Map<String, dynamic>>> fetchData() async {
-    await Future.delayed(const Duration(seconds: 2));
-    return [
-      {'id': 1, 'bloodGroup': 'O+', 'urgencyLevel': 'Urgent'},
-      {'id': 2, 'bloodGroup': 'AB-', 'urgencyLevel': 'Normal'},
-      {'id': 3, 'bloodGroup': 'A+', 'urgencyLevel': 'Critical'},
-    ];
+  @override
+  void initState() {
+    super.initState();
+    // Fetch blood group data when the widget is initialized
+    fetchBloodGroupData();
+  }
+
+  Future<void> fetchBloodGroupData() async {
+    print('Blood Group Data List Length: ${bloodGroupDataList.length}');
+    // Instantiate BloodRequestService
+    final bloodRequestService = BloodRequestService(ApiService());
+
+    // Fetch a list of blood group data from the backend
+    final resultList = await bloodRequestService.fetchBloodRequests();
+
+    setState(() {
+      bloodGroupDataList = resultList ?? [];
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: fetchData(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          List<Map<String, dynamic>> data = snapshot.data ?? [];
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.only(top: 16, left: 16, bottom: 8),
-                child: Text(
-                  'Request List',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            'Request Details',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: bloodGroupDataList.length,
+            itemBuilder: (context, index) {
+              final bloodGroupData = bloodGroupDataList[index];
+              final bloodGroupDetails = bloodGroupData.split(' ');
+
+              return Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const Text(
+                        'Blood Group:',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        bloodGroupDetails[0],
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        'Blood Group:',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        bloodGroupDetails[1],
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 250,
-                child: ListView.builder(
-                  itemCount: data.length,
-                  itemBuilder: (context, index) {
-                    return buildRequestCard(
-                      data[index]['id'],
-                      data[index]['bloodGroup'],
-                      data[index]['urgencyLevel'],
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        }
-      },
-    );
-  }
-
-  Widget buildRequestCard(int id, String bloodGroup, String urgencyLevel) {
-    return Container(
-      margin: const EdgeInsets.all(8),
-      width: 200,
-      decoration: BoxDecoration(
-        color: Colors.white, // White background
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
+              );
+            },
           ),
-        ],
-      ),
-      child: ListTile(
-        title: Text('ID: $id'),
-        subtitle: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                const Text(
-                  'Blood Group: ',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text('$bloodGroup')
-              ],
-            ),
-            const SizedBox(width: 16),
-            Row(
-              children: [
-                const Text(
-                  'Urgency Level: ',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text("$urgencyLevel")
-              ],
-            ),
-          ],
         ),
-        onTap: () {
-          // Handle card tap
-        },
-      ),
+      ],
     );
   }
 }
