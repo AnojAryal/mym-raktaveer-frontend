@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mym_raktaveer_frontend/models/firebase_auth/forgot_password.dart';
+import 'package:mym_raktaveer_frontend/Providers/firebase_auth_provider/forgot_password.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
-import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
+import 'package:mym_raktaveer_frontend/Providers/firebase_auth_provider/utils.dart';
 
 class LoginWidget extends StatefulWidget {
   const LoginWidget({
