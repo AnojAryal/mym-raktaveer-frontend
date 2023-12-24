@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "906031249555",
+    "project_id": "mym-raktaveer-90ff3",
+    "storage_bucket": "mym-raktaveer-90ff3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:906031249555:android:701f2968ed7f63297bb566",
+        "android_client_info": {
+          "package_name": "com.example.mym_raktaveer_frontend"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbu6HinC23lmFfyBiZAChU3f6uk8ZXSYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
