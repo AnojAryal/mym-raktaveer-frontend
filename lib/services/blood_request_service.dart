@@ -1,4 +1,5 @@
 // ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -11,8 +12,7 @@ class BloodRequestService {
   static const String bloodRequestEndpoint = '/api/blood-donation-request';
 
   // Inject ApiService into BloodRequestService
-  BloodRequestService(ApiService apiService)
-      : baseUrl = apiService.baseUrl ?? '';
+  BloodRequestService(ApiService apiService) : baseUrl = apiService.baseUrl ?? '';
 
   String get bloodRequestUrl => '$baseUrl$bloodRequestEndpoint';
 
@@ -61,46 +61,39 @@ class BloodRequestService {
     }
   }
 
-//getting the requested data
-Future<List<String>?> fetchBloodRequests() async {
-  final client = http.Client();
+  Future<List<BloodRequestModel>?> fetchBloodRequests() async {
+    final client = http.Client();
 
-  try {
-    final response = await client.get(
-      Uri.parse(bloodRequestUrl),
-    );
+    try {
+      final response = await client.get(
+        Uri.parse(bloodRequestUrl),
+      );
 
-    if (response.statusCode == 200) {
-      final dynamic responseData = json.decode(response.body);
+      if (response.statusCode == 200) {
+        final dynamic responseData = json.decode(response.body);
 
-      if (responseData.containsKey('data') && responseData['data'] is List) {
-        // Access the "data" key and ensure it is a List
-        final List<dynamic> responseDataList = responseData['data'];
+        if (responseData.containsKey('data') && responseData['data'] is List) {
+          final List<dynamic> responseDataList = responseData['data'];
 
-        final List<String> bloodGroupList = responseDataList.map((responseDataItem) {
-          final String bloodGroupAbo = responseDataItem['blood_group_abo'];
-          final String bloodGroupRh = responseDataItem['blood_group_rh'];
-          final String urgencyLevel = responseDataItem['urgency_level'];
-          final String quantity = responseDataItem['quantity'];
-
-          return '$bloodGroupAbo $bloodGroupRh - Urgency: $urgencyLevel, Quantity: $quantity';
-        }).toList();
-
-        return bloodGroupList;
+          return responseDataList.map<BloodRequestModel>((responseDataItem) {
+            return BloodRequestModel.fromJson(responseDataItem);
+          }).toList();
+        } else {
+          print(
+              'Unexpected response format. "data" key is not present or does not contain a List.');
+          return null;
+        }
       } else {
-        print('Unexpected response format. "data" key is not present or does not contain a List.');
+        print(
+            'Failed to fetch blood group data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
         return null;
       }
-    } else {
-      print('Failed to fetch blood group data. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+    } catch (error) {
+      print('Error fetching blood group data: $error');
       return null;
+    } finally {
+      client.close();
     }
-  } catch (error) {
-    print('Error fetching blood group data: $error');
-    return null;
-  } finally {
-    client.close();
   }
-}
 }
