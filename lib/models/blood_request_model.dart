@@ -55,4 +55,23 @@ class BloodRequestModel {
       'quantity': quantity,
     };
   }
+
+  factory BloodRequestModel.fromJson(Map<String, dynamic> json) {
+    return BloodRequestModel(
+      patientName: json['patient_name'] as String,
+      age: json['age'].toString(),
+      sex: json['sex'] as String,
+      hospitalName: json['hospital_name'] as String,
+      location: json['location_id']?.toString(),
+      roomNo: json['room_no'] as String,
+      opdNo: json['opd_bed_no'] as String,
+      bloodGroupAbo: json['blood_group_abo'] as String,
+      bloodGroupRh: json['blood_group_rh'] as String,
+      filePath: json['document_path'] as String? ?? '',
+      description: json['description'] as String,
+      urgencyLevel: json['urgency_level'] as String,
+      dateAndTime: json['preferred_datetime'] as String,
+      quantity: json['quantity'].toString(),
+    );
+  }
 }
