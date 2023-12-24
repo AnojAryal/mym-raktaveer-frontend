@@ -13,10 +13,10 @@ import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
 import 'package:mym_raktaveer_frontend/widgets/map.dart';
 import 'package:mym_raktaveer_frontend/widgets/profile.dart';
 
-import 'models/firebase_auth/firebase_options.dart';
-import 'models/firebase_auth/auth_page.dart';
-import 'models/firebase_auth/verify_email.dart';
-import 'models/firebase_auth/utils.dart';
+import 'Providers/firebase_auth_provider/firebase_options.dart';
+import 'Providers/firebase_auth_provider/auth_page.dart';
+import 'Providers/firebase_auth_provider/verify_email.dart';
+import 'Providers/firebase_auth_provider/utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
