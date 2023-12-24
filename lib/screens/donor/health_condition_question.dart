@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/Providers/blood_donation_provider.dart';
@@ -18,18 +16,18 @@ class HealthConditionQuestion extends ConsumerWidget {
     return Background(
       child: Stack(
         children: [
-          const MyProgressBar(currentPage: 3, totalPages: 4),
+          const MyProgressBar(
+            currentPage: 3,
+            totalPages: 4,
+          ),
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Health Conditions',
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+                _buildAppTitle(),
                 const SizedBox(height: 16.0),
                 _buildNoteContainer(),
-                const SizedBox(height: 16.0),
                 _buildHealthConditionsList(
                     ref, personalDetail.healthConditions),
                 const SizedBox(height: 16.0),
@@ -39,6 +37,34 @@ class HealthConditionQuestion extends ConsumerWidget {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAppTitle() {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 55.0),
+        Center(
+          child: Text(
+            'Mym Raktaveer',
+            style: TextStyle(
+              color: Color(0xFFFD1A00),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        SizedBox(height: 20.0),
+        Text(
+          'Health Conditions',
+          style: TextStyle(
+            color: Color(0xFF242323),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 
@@ -85,20 +111,48 @@ class HealthConditionQuestion extends ConsumerWidget {
   Widget _buildHealthConditionsList(
       WidgetRef ref, Map<String, bool>? healthConditions) {
     return Expanded(
-      child: ListView.builder(
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // Two items per row
+          childAspectRatio: 3.6, // Adjust the aspect ratio for proper sizing
+        ),
         itemCount: HealthConditionsModel.conditions.length,
         itemBuilder: (context, index) {
           String condition = HealthConditionsModel.conditions[index];
-          return CheckboxListTile(
-            title: Text(condition),
-            value: healthConditions?[condition] ?? false,
-            onChanged: (bool? newValue) {
-              Map<String, bool> updatedConditions = {...healthConditions ?? {}};
-              updatedConditions[condition] = newValue ?? false;
-              ref
-                  .read(personalDetailProvider.notifier)
-                  .updateHealthConditions(updatedConditions);
-            },
+          return ListTile(
+            title: Row(
+              children: <Widget>[
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Checkbox(
+                    value: healthConditions?[condition] ?? false,
+                    onChanged: (bool? newValue) {
+                      Map<String, bool> updatedConditions = {
+                        ...healthConditions ?? {}
+                      };
+                      updatedConditions[condition] = newValue ?? false;
+                      ref
+                          .read(personalDetailProvider.notifier)
+                          .updateHealthConditions(updatedConditions);
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                Expanded(
+                  flex: 20,
+                  child: Text(
+                    condition,
+                    style: const TextStyle(
+                        fontSize: 11, fontWeight: FontWeight.w800),
+                  ),
+                ),
+              ],
+            ),
           );
         },
       ),
@@ -107,15 +161,33 @@ class HealthConditionQuestion extends ConsumerWidget {
 
   Widget _buildNavigationButtons(BuildContext context, WidgetRef ref) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         ElevatedButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Previous'),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+                const Color(0xFFFD1A00)), // FD1A00 color
+            fixedSize: MaterialStateProperty.all<Size>(
+                const Size(120.0, 40.0)), // Width and height
+          ),
+          child: const Text(
+            'Previous',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
         ElevatedButton(
           onPressed: () => _handleSubmit(context, ref),
-          child: const Text('Submit'),
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(
+                const Color(0xFFFD1A00)), // FD1A00 color
+            fixedSize: MaterialStateProperty.all<Size>(
+                const Size(120.0, 40.0)), // Width and height
+          ),
+          child: const Text(
+            'Submit',
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       ],
     );
