@@ -28,8 +28,10 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
   Future<void> fetchBloodRequestData() async {
     final bloodRequestService = BloodRequestService(ApiService());
 
+    String param = "sort_by=preferred_datetime&sort_order=desc";
+
     // Fetch a list of blood request data from the backend
-    final resultList = await bloodRequestService.fetchBloodRequests(ref);
+    final resultList = await bloodRequestService.fetchBloodRequests(ref, param);
 
     setState(() {
       bloodRequestList = resultList ?? [];
