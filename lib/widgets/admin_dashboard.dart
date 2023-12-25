@@ -86,7 +86,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               },
             ),
           ),
-          const SizedBox(height: 20), // Add some space between the containers
+          const SizedBox(height: 10),
           Container(
             width: screenWidth * 0.9,
             padding: const EdgeInsets.all(16),
@@ -174,15 +174,42 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
           ),
           const SizedBox(
-            height: 320,
+            height: 10,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Request Details',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pushNamed(
+                    context,
+                    '/request-list',
+                  );
+                },
+                child: const Text('View Details'),
+              ),
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          const SizedBox(
+            height: 290,
             child: RequestListPage(),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 8),
           Align(
             alignment: Alignment.center,
             child: Container(
               width: screenWidth * 0.8,
-              height: screenHeight * 0.08,
+              height: screenHeight * 0.07,
               decoration: BoxDecoration(
                 color: const Color(0xFFFD1A00),
                 borderRadius: BorderRadius.circular(14.0),

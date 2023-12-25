@@ -17,6 +17,7 @@ import 'Providers/firebase_auth_provider/firebase_options.dart';
 import 'Providers/firebase_auth_provider/auth_page.dart';
 import 'Providers/firebase_auth_provider/verify_email.dart';
 import 'Providers/firebase_auth_provider/utils.dart';
+import 'screens/admin/request_details_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,8 +48,9 @@ class MyApp extends StatelessWidget {
         '/final-question': (context) => const FinalQuestion(),
         '/blood-request-form': (context) => const BloodRequestForm(),
         '/map-page': (context) => const MapChoice(),
-        '/profile-page': (context) => Profile(),
+        '/profile-page': (context) => const Profile(),
         '/admin-dashboard': (context) => const AdminDashboard(),
+        '/request-list': (context) => const RequestList(),
       },
     );
   }
