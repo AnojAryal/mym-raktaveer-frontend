@@ -71,17 +71,16 @@ class BloodRequestService {
     }
   }
 
-  Future<List<BloodRequestModel>?> fetchBloodRequests(WidgetRef ref) async {
+  Future<List<BloodRequestModel>?> fetchBloodRequests(
+      WidgetRef ref, param) async {
     final client = http.Client();
-
-    print("clicked");
 
     final userData = ref.watch(userDataProvider);
     String? jwtToken = userData?.accessToken;
 
     try {
       final response = await client.get(
-        Uri.parse(bloodRequestUrl),
+        Uri.parse("$bloodRequestUrl? $param"),
         headers: {
           'Content-Type': 'application/json',
           'Authorization':

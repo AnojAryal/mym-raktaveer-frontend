@@ -1,16 +1,11 @@
 // ignore_for_file: avoid_print
 
-import 'dart:convert';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/Providers/user_data_provider.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
 import 'background.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:http/http.dart' as http;
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
