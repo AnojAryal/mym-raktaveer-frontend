@@ -1,13 +1,15 @@
 // ignore_for_file: avoid_print
 
 import 'dart:convert';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mym_raktaveer_frontend/Providers/user_data_provider.dart';
 
 class ApiService {
   final String? baseUrl = dotenv.env['BASE_URL'];
 
-  Future<Map<String, dynamic>?> postData(
+  Future<Map<String, dynamic>?> postAuthData(
       String apiUrl, Map<String, dynamic> data) async {
     final String fullUrl = apiUrl;
 
@@ -31,11 +33,50 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>?> getData(String apiUrl) async {
+  Future<Map<String, dynamic>?> postData(
+      WidgetRef ref, String apiUrl, Map<String, dynamic> data) async {
+    final String fullUrl = apiUrl;
+
+    final userData = ref.watch(userDataProvider);
+    final jwtToken = userData?.acessToken;
+
+    try {
+      final response = await http.post(
+        Uri.parse(fullUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+        },
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return json.decode(response.body);
+      } else {
+        // Handle different status codes appropriately
+        print('Failed to post data. Status code: ${response.statusCode}');
+        return null; // Consider returning a more descriptive error object
+      }
+    } catch (error) {
+      print('Error posting data: $error');
+      rethrow; // Preserve error details
+    }
+  }
+
+  Future<Map<String, dynamic>?> getData(String apiUrl, WidgetRef ref) async {
     final String fullUrl = "$baseUrl/$apiUrl";
 
     try {
-      final response = await http.get(Uri.parse(fullUrl));
+      final userData = ref.watch(userDataProvider);
+      final jwtToken = userData?.acessToken;
+      final response = await http.get(
+        Uri.parse(fullUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer $jwtToken', // Include the JWT token in the 'Authorization' header
+        },
+      );
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {

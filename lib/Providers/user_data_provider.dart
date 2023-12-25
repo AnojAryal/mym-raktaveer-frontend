@@ -10,6 +10,7 @@ class UserDataNotifier extends StateNotifier<UserData?> {
   UserDataNotifier() : super(null);
 
   void setUserData(String? uid, String? accessToken) {
+    print(uid);
     state = UserData(
       uid: uid,
       acessToken: accessToken,
