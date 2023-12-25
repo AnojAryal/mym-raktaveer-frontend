@@ -5,61 +5,66 @@ import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mym_raktaveer_frontend/Providers/user_data_provider.dart';
+import 'package:mym_raktaveer_frontend/services/api_service.dart';
 import 'background.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   final CarouselController _carouselController = CarouselController();
 
   String? bloodGroup = '';
   int? donationCount = 0;
   bool? status;
-  late final Map<String, dynamic> data;
+  late final Map<String, dynamic>? data;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchData(); // Your function
+    });
   }
 
   Future<void> fetchData() async {
-    String? baseUrl = dotenv.env['BASE_URL'];
-    final userUID = FirebaseAuth.instance.currentUser?.uid;
-    String? apiUrl = '$baseUrl/api/personal-details/$userUID';
+    final userData = ref.watch(userDataProvider);
+    final userUid = userData?.uid;
+    String? apiUrl = 'api/personal-details/$userUid';
 
     try {
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-      );
+      final apiService = ApiService(); // Instantiate the ApiService
+      final apiData = await apiService.getData(apiUrl, ref);
+      setState(() {
+        data = apiData;
+      });
 
-      if (response.statusCode == 200) {
-        setState(() {
-          data = json.decode(response.body)['data'];
-        });
-
-        String? bloodGroupAbo = data['blood_detail']?['blood_group_abo'];
-        String? bloodGroupRh = data['blood_detail']?['blood_group_rh'];
+      if (data != null) {
+        String? bloodGroupAbo =
+            apiData?['data']['blood_detail']?['blood_group_abo'];
+        String? bloodGroupRh =
+            apiData?['data']['blood_detail']?['blood_group_rh'];
 
         setState(() {
           bloodGroup = (bloodGroupAbo != null && bloodGroupRh != null)
               ? bloodGroupAbo + bloodGroupRh
               : 'N/A';
 
-          donationCount = data['blood_detail']?['donation_count'] ?? 0;
-          status = data['blood_detail']?['status'] ?? false;
+          donationCount =
+              apiData?['data']['blood_detail']?['donation_count'] ?? 0;
+          status = apiData?['data']['blood_detail']?['status'] ?? false;
         });
       } else {
-        print('Not Found: ${response.statusCode}');
-        print('Response: ${response.body}');
+        print('Not Found');
+        print('Response');
       }
     } catch (error) {
       print('Error fetching data : $error');
@@ -392,7 +397,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.pushNamed(
                               context,
                               '/profile-page',
-                              arguments: data,
+                              arguments: data?['data'],
                             );
                           },
                         ),

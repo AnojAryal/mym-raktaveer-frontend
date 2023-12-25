@@ -22,9 +22,10 @@ class BloodDonationRelatedQuestion extends ConsumerWidget {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildAppBar(),
-                const SizedBox(height: 14.0),
+                _buildAppTitle(),
+                const SizedBox(height: 20.0),
                 _buildNoteContainer(),
                 const SizedBox(height: 20.0),
                 _buildDateInput(
@@ -60,10 +61,31 @@ class BloodDonationRelatedQuestion extends ConsumerWidget {
     );
   }
 
-  Widget _buildAppBar() {
-    return Container(
-      height: 40.0,
-      // Add child components (e.g., image, back button) here
+  Widget _buildAppTitle() {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 55.0),
+        Center(
+          child: Text(
+            'Mym Raktaveer',
+            style: TextStyle(
+              color: Color(0xFFFD1A00),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        SizedBox(height: 20.0),
+        Text(
+          'Blood Donation journey',
+          style: TextStyle(
+            color: Color(0xFF242323),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
     );
   }
 
@@ -139,20 +161,40 @@ class BloodDonationRelatedQuestion extends ConsumerWidget {
   }
 
   Widget _buildNavigationButtons(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        ElevatedButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Previous'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/health-condition');
-          },
-          child: const Text('Next'),
-        ),
-      ],
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color(0xFFFD1A00)), // FD1A00 color
+              fixedSize: MaterialStateProperty.all<Size>(
+                  const Size(120.0, 40.0)), // Width and height
+            ),
+            child: const Text(
+              'Previous',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/health-condition');
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color(0xFFFD1A00)), // FD1A00 color
+              fixedSize: MaterialStateProperty.all<Size>(
+                  const Size(120.0, 40.0)), // Width and height
+            ),
+            child: const Text(
+              'Next',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

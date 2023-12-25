@@ -93,7 +93,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
     if (user == null) return const SizedBox.shrink();
 
     return FutureBuilder(
-      future: fetchData('api/personal-details/${user.uid}'),
+      future: fetchData('api/personal-details/${user.uid}', ref),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator();
@@ -151,9 +151,9 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
     );
   }
 
-  Future<Map<String, dynamic>?> fetchData(String apiUrl) async {
+  Future<Map<String, dynamic>?> fetchData(String apiUrl, WidgetRef ref) async {
     try {
-      final response = await ApiService().getData(apiUrl);
+      final response = await ApiService().getData(apiUrl, ref);
       if (response == null) {
         throw Exception('Failed to fetch data from the API');
       }

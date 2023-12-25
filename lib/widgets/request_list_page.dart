@@ -1,31 +1,35 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/models/blood_request_model.dart';
 import '../services/api_service.dart';
 import '../services/blood_request_service.dart';
 
-class RequestListPage extends StatefulWidget {
+class RequestListPage extends ConsumerStatefulWidget {
   const RequestListPage({super.key});
 
   @override
   _RequestListPageState createState() => _RequestListPageState();
 }
 
-class _RequestListPageState extends State<RequestListPage> {
+class _RequestListPageState extends ConsumerState<RequestListPage> {
   List<BloodRequestModel> bloodRequestList = [];
 
   @override
   void initState() {
     super.initState();
-    fetchBloodRequestData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchBloodRequestData();
+      // Your function
+    });
   }
 
   Future<void> fetchBloodRequestData() async {
     final bloodRequestService = BloodRequestService(ApiService());
 
     // Fetch a list of blood request data from the backend
-    final resultList = await bloodRequestService.fetchBloodRequests();
+    final resultList = await bloodRequestService.fetchBloodRequests(ref);
 
     setState(() {
       bloodRequestList = resultList ?? [];

@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:mym_raktaveer_frontend/Providers/user_data_provider.dart';
 import 'package:mym_raktaveer_frontend/models/personal_detail_model.dart';
 
 class BloodDonationService {
@@ -12,18 +14,23 @@ class BloodDonationService {
       : httpClient = client ?? http.Client();
 
   Future<ApiResponse> sendPersonalDataToApi(
-      PersonalDetailModel personalDetailModel) async {
+      PersonalDetailModel personalDetailModel, WidgetRef ref) async {
+    final userToken = ref.watch(userDataProvider);
     String baseUrl = dotenv.env['BASE_URL'] ?? 'default_base_url';
     String apiUrl = '$baseUrl/api/personal-details';
 
-    final userUid = FirebaseAuth.instance.currentUser?.uid;
+    final userUid = userToken?.uid;
+    final jwtToken = userToken?.accessToken;
 
     final personalData = _createPersonalDataMap(userUid, personalDetailModel);
 
     try {
       final response = await httpClient.post(
         Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+        },
         body: jsonEncode(personalData),
       );
 
