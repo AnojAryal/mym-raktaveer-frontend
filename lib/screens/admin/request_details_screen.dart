@@ -19,7 +19,7 @@ class _RequestListState extends State<RequestList> {
           IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              // Add your back button logic here
+              Navigator.pop(context);
             },
           ),
           const SizedBox(height: 16.0),
@@ -69,7 +69,14 @@ class _RequestListState extends State<RequestList> {
             ),
           ),
           const SizedBox(height: 20,),
-          Expanded(
+          const Text(
+            'Request Details',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Expanded(
             child: RequestListPage(),
           ),
         ],
