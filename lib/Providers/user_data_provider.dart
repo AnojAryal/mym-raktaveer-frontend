@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mym_raktaveer_frontend/models/user_data.dart';
+import 'package:mym_raktaveer_frontend/models/user_data_model.dart';
 
 final userDataProvider =
     StateNotifierProvider<UserDataNotifier, UserData?>((ref) {

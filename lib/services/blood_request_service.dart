@@ -1,4 +1,6 @@
 // ignore_for_file: avoid_print
+
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -10,10 +12,13 @@ import '../models/blood_request_model.dart';
 
 class BloodRequestService {
   final String baseUrl;
+  static const String bloodRequestEndpoint = '/api/blood-donation-request';
 
   // Inject ApiService into BloodRequestService
   BloodRequestService(ApiService apiService)
       : baseUrl = apiService.baseUrl ?? '';
+
+  String get bloodRequestUrl => '$baseUrl$bloodRequestEndpoint';
 
   Future<void> sendDataAndImageToBackend(BloodRequestModel requestData,
       Uint8List imageBytes, WidgetRef ref) async {
@@ -22,12 +27,11 @@ class BloodRequestService {
     print(userData);
     final client = http.Client();
     String? jwtToken = userData?.acessToken;
-    print(jwtToken);
 
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('$baseUrl/api/blood-donation-request'),
+        Uri.parse(bloodRequestUrl),
       );
 
       request.headers['Authorization'] = 'Bearer $jwtToken';
@@ -41,7 +45,6 @@ class BloodRequestService {
       );
 
       // Convert requestData to Map and add each field separately
-
       final requestDataMap = requestData.toJson();
       requestDataMap.forEach((key, value) {
         request.fields[key] = value.toString();
@@ -63,6 +66,52 @@ class BloodRequestService {
       }
     } catch (error) {
       print('Error sending request: $error');
+    } finally {
+      client.close();
+    }
+  }
+
+  Future<List<BloodRequestModel>?> fetchBloodRequests(WidgetRef ref) async {
+    final client = http.Client();
+
+    print("clicked");
+
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.acessToken;
+
+    try {
+      final response = await client.get(
+        Uri.parse(bloodRequestUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer $jwtToken', // Include the JWT token in the 'Authorization' header
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic responseData = json.decode(response.body);
+
+        if (responseData.containsKey('data') && responseData['data'] is List) {
+          final List<dynamic> responseDataList = responseData['data'];
+
+          return responseDataList.map<BloodRequestModel>((responseDataItem) {
+            return BloodRequestModel.fromJson(responseDataItem);
+          }).toList();
+        } else {
+          print(
+              'Unexpected response format. "data" key is not present or does not contain a List.');
+          return null;
+        }
+      } else {
+        print(
+            'Failed to fetch blood group data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        return null;
+      }
+    } catch (error) {
+      print('Error fetching blood group data: $error');
+      return null;
     } finally {
       client.close();
     }

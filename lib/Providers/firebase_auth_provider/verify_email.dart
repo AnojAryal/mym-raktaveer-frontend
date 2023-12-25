@@ -7,7 +7,7 @@ import 'package:mym_raktaveer_frontend/Providers/auth_state_provider.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
 import 'package:mym_raktaveer_frontend/widgets/user_choice.dart';
-import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
+import 'package:mym_raktaveer_frontend/Providers/firebase_auth_provider/utils.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
 
 class VerifyEmailPage extends ConsumerStatefulWidget {

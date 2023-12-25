@@ -2,7 +2,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
-import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
+import 'package:mym_raktaveer_frontend/Providers/firebase_auth_provider/utils.dart';
 import '../../widgets/background.dart';
 
 class ForgotPasswordPage extends StatefulWidget {

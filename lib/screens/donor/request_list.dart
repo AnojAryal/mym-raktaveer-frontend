@@ -69,7 +69,7 @@ class _RequestListState extends State<RequestList> {
             ),
           ),
           const SizedBox(height: 20,),
-          const Expanded(
+          Expanded(
             child: RequestListPage(),
           ),
         ],
