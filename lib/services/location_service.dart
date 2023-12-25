@@ -11,10 +11,10 @@ class LocationService {
   String baseUrl = ApiService().baseUrl ?? 'default_base_url';
 
   Future<String?> sendLocationData(
-      LatLng coordinates, String geoLocation) async {
+      ref, LatLng coordinates, String geoLocation) async {
     try {
       final response =
-          await _apiService.postData('$baseUrl/api/locations/create', {
+          await _apiService.postData(ref, '$baseUrl/api/locations/create', {
         'x_coordinates': coordinates.latitude,
         'y_coordinates': coordinates.longitude,
         'geo_location': geoLocation,

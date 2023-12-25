@@ -298,13 +298,12 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
       UserCredential? authResult = await FirebaseAuthService.signUp(
         emailController.text.trim(),
         passwordController.text.trim(),
+        ref,
       );
 
       if (authResult?.user != null) {
         isLocalDbOperationPending.state = true;
         bool dbResult = await sendUserDataToApi(authResult!.user!);
-
-        // DB operation done
 
         if (!dbResult) {
           // Rollback Firebase registration if local DB operation fails
@@ -341,7 +340,7 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
     final userData = getUserData(user);
 
     try {
-      final response = await ApiService().postData(apiUrl, userData);
+      final response = await ApiService().postAuthData(apiUrl, userData);
       return response != null &&
           (response['message'] == 'User created successfully');
     } catch (error) {

@@ -3,7 +3,9 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:mym_raktaveer_frontend/Providers/user_data_provider.dart';
 import 'api_service.dart';
 import '../models/blood_request_model.dart';
 
@@ -12,19 +14,26 @@ class BloodRequestService {
   static const String bloodRequestEndpoint = '/api/blood-donation-request';
 
   // Inject ApiService into BloodRequestService
-  BloodRequestService(ApiService apiService) : baseUrl = apiService.baseUrl ?? '';
+  BloodRequestService(ApiService apiService)
+      : baseUrl = apiService.baseUrl ?? '';
 
   String get bloodRequestUrl => '$baseUrl$bloodRequestEndpoint';
 
-  Future<void> sendDataAndImageToBackend(
-      BloodRequestModel requestData, Uint8List imageBytes) async {
+  Future<void> sendDataAndImageToBackend(BloodRequestModel requestData,
+      Uint8List imageBytes, WidgetRef ref) async {
+    final userData = ref.watch(userDataProvider);
+
+    print(userData);
     final client = http.Client();
+    String? jwtToken = userData?.accessToken;
 
     try {
       final request = http.MultipartRequest(
         'POST',
         Uri.parse(bloodRequestUrl),
       );
+
+      request.headers['Authorization'] = 'Bearer $jwtToken';
 
       request.files.add(
         http.MultipartFile.fromBytes(
@@ -61,12 +70,21 @@ class BloodRequestService {
     }
   }
 
-  Future<List<BloodRequestModel>?> fetchBloodRequests() async {
+  Future<List<BloodRequestModel>?> fetchBloodRequests(
+      WidgetRef ref, param) async {
     final client = http.Client();
+
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.accessToken;
 
     try {
       final response = await client.get(
-        Uri.parse(bloodRequestUrl),
+        Uri.parse("$bloodRequestUrl? $param"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer $jwtToken', // Include the JWT token in the 'Authorization' header
+        },
       );
 
       if (response.statusCode == 200) {

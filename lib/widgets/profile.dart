@@ -3,11 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/profile_text.dart';
 
-// ignore: must_be_immutable
 class Profile extends StatelessWidget {
-  double containerWidth = 400.0;
-
-  Profile({super.key});
+  const Profile({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,12 +45,15 @@ class Profile extends StatelessWidget {
       }).toList();
     }
 
+    double containerWidth = MediaQuery.of(context).size.width * 0.9;
+    bool isSmallScreen = MediaQuery.of(context).size.width < 600;
+
     return Background(
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Back Button
+            // Back Button and Admin Button
             Row(
               children: [
                 Padding(
@@ -68,9 +68,7 @@ class Profile extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(
-                  width: 115,
-                ),
+                const SizedBox(width: 115),
                 IconButton(
                   icon: const Icon(
                     Icons.admin_panel_settings,
@@ -89,10 +87,9 @@ class Profile extends StatelessWidget {
                     FirebaseAuth.instance.signOut();
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        const Color(0xFFFD1A00), // Background color
-                    foregroundColor: Colors.white, // Text color
-                    minimumSize: const Size(100, 25), // Button width and height
+                    backgroundColor: const Color(0xFFFD1A00),
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(100, 25),
                   ),
                   child: const Text(
                     'Sign Out',
@@ -103,7 +100,7 @@ class Profile extends StatelessWidget {
             ),
             // Profile Picture, Name, and Email
             Padding(
-              padding: const EdgeInsets.only(left: 30.0, right: 16.0, top: 0.0),
+              padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 0.0),
               child: Row(
                 children: [
                   // Profile Picture
@@ -113,9 +110,7 @@ class Profile extends StatelessWidget {
                     // Replace the next line with the actual image URL once it's available
                     // backgroundImage: AssetImage('assets/profile_placeholder.png'),
                   ),
-                  const SizedBox(
-                    width: 16,
-                  ), // Add spacing between the profile picture and text
+                  const SizedBox(width: 16),
                   // User Information
                   Expanded(
                     child: Column(
@@ -125,8 +120,10 @@ class Profile extends StatelessWidget {
                           fit: BoxFit.scaleDown,
                           child: Text(
                             fullName,
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w500),
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 14 : 16,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -134,8 +131,10 @@ class Profile extends StatelessWidget {
                           fit: BoxFit.scaleDown,
                           child: Text(
                             email,
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.w300),
+                            style: TextStyle(
+                              fontSize: isSmallScreen ? 14 : 16,
+                              fontWeight: FontWeight.w300,
+                            ),
                           ),
                         ),
                       ],
@@ -154,39 +153,45 @@ class Profile extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Contact',
+                      Text('Contact',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500)),
+                              fontSize: isSmallScreen ? 12 : 16,
+                              fontWeight: FontWeight.w500)),
                       const SizedBox(height: 4),
                       Text(mobileNumber,
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w300)),
+                          style: TextStyle(
+                              fontSize: isSmallScreen ? 12 : 16,
+                              fontWeight: FontWeight.w300)),
                     ],
                   ),
                   // Age
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Gender',
+                      Text('Gender',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500)),
+                              fontSize: isSmallScreen ? 12 : 16,
+                              fontWeight: FontWeight.w500)),
                       const SizedBox(height: 4),
                       Text(gender,
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w300)),
+                          style: TextStyle(
+                              fontSize: isSmallScreen ? 12 : 16,
+                              fontWeight: FontWeight.w300)),
                     ],
                   ),
                   // Gender
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Age',
+                      Text('Age',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w500)),
+                              fontSize: isSmallScreen ? 12 : 16,
+                              fontWeight: FontWeight.w500)),
                       const SizedBox(height: 4),
                       Text('$age',
-                          style: const TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w300)),
+                          style: TextStyle(
+                              fontSize: isSmallScreen ? 12 : 16,
+                              fontWeight: FontWeight.w300)),
                     ],
                   ),
                 ],
@@ -213,42 +218,20 @@ class Profile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    //.w500 text for Blood Details
-
                     const SizedBox(height: 8),
                     // Blood Group
                     CustomRichText(label: "Blood Group", value: bloodGroup),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    // Request Quantity and Urgency Level side by side
+                    const SizedBox(height: 8),
+                    // Donation Count and Donated Quantity
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Request Quantity
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomRichText(
-                                label: "Donation Count",
-                                value: "$donationCount"),
-                          ],
-                        ),
-
-                        const SizedBox(
-                          height: 8,
-                        ),
-
-                        // Add spacing between the text
-                        // Urgency Level
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomRichText(
-                                label: "Donated Quantity",
-                                value: "$donatedQuantity"),
-                          ],
-                        ),
+                        CustomRichText(
+                            label: "Donation Count", value: "$donationCount"),
+                        const SizedBox(height: 8),
+                        CustomRichText(
+                            label: "Donated Quantity",
+                            value: "$donatedQuantity"),
                       ],
                     ),
                   ],
@@ -264,11 +247,12 @@ class Profile extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Add content for the second container here
-                      const Text(
+                      // Health Conditions
+                      Text(
                         'Health Conditions',
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
+                            fontSize: isSmallScreen ? 16 : 18,
+                            fontWeight: FontWeight.w500),
                       ),
                       const SizedBox(height: 14),
                       // Display health conditions based on isCheckedList
@@ -280,16 +264,17 @@ class Profile extends StatelessWidget {
                             children: [
                               Text(
                                 conditions[index],
-                                style: const TextStyle(fontSize: 16),
+                                style: TextStyle(
+                                  fontSize: isSmallScreen ? 14 : 16,
+                                ),
                               ),
                               Container(
-                                width: 70,
-                                height: 22,
+                                width: isSmallScreen ? 60 : 70,
+                                height: isSmallScreen ? 18 : 22,
                                 decoration: BoxDecoration(
                                   color: isCheckedList[index] ?? false
-                                      ? const Color(
-                                          0xFF99FDD2) // Green color for "Yes"
-                                      : Colors.red, // Red color for "No"
+                                      ? const Color(0xFF99FDD2)
+                                      : Colors.red,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 alignment: Alignment.center,
@@ -298,8 +283,9 @@ class Profile extends StatelessWidget {
                                       ? 'Yes'
                                       : isCheckedList[index] == false
                                           ? 'No'
-                                          : 'N/A', // Handle other types gracefully
-                                  style: const TextStyle(
+                                          : 'N/A',
+                                  style: TextStyle(
+                                    fontSize: isSmallScreen ? 12 : 14,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w500,
                                   ),
@@ -307,8 +293,7 @@ class Profile extends StatelessWidget {
                               ),
                             ],
                           ),
-                        )
-                      // Add more widgets as needed
+                        ),
                     ],
                   ),
                 ),

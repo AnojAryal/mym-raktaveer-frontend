@@ -1,12 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/request_list_page.dart';
 import 'package:http/http.dart' as http;
 
 class AdminDashboard extends StatefulWidget {
-  const AdminDashboard({super. key}) ;
+  const AdminDashboard({super.key});
 
   @override
   State<AdminDashboard> createState() => _AdminDashboardState();
@@ -26,17 +25,17 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
 
     return Background(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 20),
-
+          const SizedBox(height: 6),
           Container(
-            width: screenSize.width * 0.9,
-            height: screenSize.height * 0.2,
+            width: screenWidth * 0.9,
+            height: screenHeight * 0.2,
             padding: const EdgeInsets.all(16),
             margin: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
@@ -87,9 +86,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
               },
             ),
           ),
-
+          const SizedBox(height: 20), // Add some space between the containers
           Container(
-            width: screenSize.width * 0.9,
+            width: screenWidth * 0.9,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -103,84 +102,90 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ),
               ],
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 // User Icon
-                Column(
-                  children: [
-                    Icon(
-                      Icons.person,
-                      color: Color(0xFFFD1A00),
-                      size: 40,
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'Users',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.person,
+                        color: const Color(0xFFFD1A00),
+                        size: screenWidth * 0.07,
                       ),
-                    ),
-                  ],
+                      SizedBox(height: screenHeight * 0.01),
+                      Text(
+                        'Users',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: screenWidth * 0.02,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 // Admin Icon
-                Column(
-                  children: [
-                    Icon(
-                      Icons.admin_panel_settings,
-                      color: Color(0xFFFD1A00),
-                      size: 40,
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'Admins',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.admin_panel_settings,
+                        color: const Color(0xFFFD1A00),
+                        size: screenWidth * 0.07,
                       ),
-                    ),
-                  ],
+                      SizedBox(height: screenHeight * 0.01),
+                      Text(
+                        'Admins',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: screenWidth * 0.02,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
 
                 // Active Admins Icon
-                Column(
-                  children: [
-                    Icon(
-                      Icons.supervised_user_circle,
-                      color: Color(0xFFFD1A00),
-                      size: 40,
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'Active Admins',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
+                Expanded(
+                  flex: 1,
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.supervised_user_circle,
+                        color: const Color(0xFFFD1A00),
+                        size: screenWidth * 0.07,
                       ),
-                    ),
-                  ],
+                      SizedBox(height: screenHeight * 0.01),
+                      Text(
+                        'Active Admins',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: screenWidth * 0.02,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 20),
-
-          SizedBox(
-            height: 300,
+          const SizedBox(
+            height: 320,
             child: RequestListPage(),
           ),
           const SizedBox(height: 20),
-
           Align(
             alignment: Alignment.center,
             child: Container(
-              width: screenSize.width * 0.9,
-              height: 60,
+              width: screenWidth * 0.8,
+              height: screenHeight * 0.08,
               decoration: BoxDecoration(
                 color: const Color(0xFFFD1A00),
-                borderRadius: BorderRadius.circular(16.0),
+                borderRadius: BorderRadius.circular(14.0),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.3),
@@ -190,12 +195,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   ),
                 ],
               ),
-              child: const Padding(
-                padding: EdgeInsets.all(16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CircleAvatar(
+                    const CircleAvatar(
                       backgroundColor: Colors.white,
                       child: Icon(
                         Icons.person,
@@ -204,9 +209,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     ),
                     Text(
                       'MYM Raktaveer',
-                      style: TextStyle(fontSize: 20, color: Colors.white),
+                      style: TextStyle(
+                          fontSize: screenWidth * 0.05, color: Colors.white),
                     ),
-                    Icon(
+                    const Icon(
                       Icons.notifications,
                       color: Colors.white,
                     ),
@@ -214,9 +220,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ),
               ),
             ),
-          ),
-          const SizedBox(
-            height: 10,
           ),
         ],
       ),
