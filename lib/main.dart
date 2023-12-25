@@ -7,6 +7,7 @@ import 'package:mym_raktaveer_frontend/screens/donor/blood_donation_related_ques
 import 'package:mym_raktaveer_frontend/screens/donor/blood_type_question.dart';
 import 'package:mym_raktaveer_frontend/screens/donor/final_question_screen.dart';
 import 'package:mym_raktaveer_frontend/screens/donor/health_condition_question.dart';
+import 'package:mym_raktaveer_frontend/screens/donor/request_list.dart';
 import 'package:mym_raktaveer_frontend/screens/receiver/blood_request_form.dart';
 import 'package:mym_raktaveer_frontend/widgets/admin_dashboard.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
         '/map-page': (context) => const MapChoice(),
         '/profile-page': (context) => Profile(),
         '/admin-dashboard': (context) => const AdminDashboard(),
+        '/blood-request-list': (context) => const RequestList(),
       },
     );
   }

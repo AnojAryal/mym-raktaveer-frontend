@@ -1,5 +1,3 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/models/blood_request_model.dart';
@@ -7,7 +5,9 @@ import '../services/api_service.dart';
 import '../services/blood_request_service.dart';
 
 class RequestListPage extends ConsumerStatefulWidget {
-  const RequestListPage({super.key});
+  final String searchQuery; // Add this line
+
+  const RequestListPage({super.key, this.searchQuery = ""}); // Update this line
 
   @override
   _RequestListPageState createState() => _RequestListPageState();
@@ -28,6 +28,11 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
     final bloodRequestService = BloodRequestService(ApiService());
 
     String param = "sort_by=preferred_datetime&sort_order=desc";
+
+    if (widget.searchQuery.isNotEmpty) {
+      param +=
+          "&search=${widget.searchQuery}"; // Append the search query if it exists
+    }
 
     // Fetch a list of blood request data from the backend
     final resultList = await bloodRequestService.fetchBloodRequests(ref, param);
@@ -101,6 +106,14 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void didUpdateWidget(covariant RequestListPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.searchQuery != oldWidget.searchQuery) {
+      fetchBloodRequestData(); // Fetch new data if the search query has changed
+    }
   }
 
   @override
