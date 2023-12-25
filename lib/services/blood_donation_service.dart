@@ -20,7 +20,7 @@ class BloodDonationService {
     String apiUrl = '$baseUrl/api/personal-details';
 
     final userUid = userToken?.uid;
-    final jwtToken = userToken?.acessToken;
+    final jwtToken = userToken?.accessToken;
 
     final personalData = _createPersonalDataMap(userUid, personalDetailModel);
 

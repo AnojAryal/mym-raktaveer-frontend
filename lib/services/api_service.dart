@@ -38,7 +38,7 @@ class ApiService {
     final String fullUrl = apiUrl;
 
     final userData = ref.watch(userDataProvider);
-    final jwtToken = userData?.acessToken;
+    final jwtToken = userData?.accessToken;
 
     try {
       final response = await http.post(
@@ -68,7 +68,7 @@ class ApiService {
 
     try {
       final userData = ref.watch(userDataProvider);
-      final jwtToken = userData?.acessToken;
+      final jwtToken = userData?.accessToken;
       final response = await http.get(
         Uri.parse(fullUrl),
         headers: {

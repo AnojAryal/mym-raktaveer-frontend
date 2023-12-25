@@ -26,7 +26,7 @@ class BloodRequestService {
 
     print(userData);
     final client = http.Client();
-    String? jwtToken = userData?.acessToken;
+    String? jwtToken = userData?.accessToken;
 
     try {
       final request = http.MultipartRequest(
@@ -77,7 +77,7 @@ class BloodRequestService {
     print("clicked");
 
     final userData = ref.watch(userDataProvider);
-    String? jwtToken = userData?.acessToken;
+    String? jwtToken = userData?.accessToken;
 
     try {
       final response = await client.get(
