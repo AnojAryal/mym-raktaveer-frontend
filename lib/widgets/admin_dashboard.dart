@@ -32,12 +32,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 6),
+          const SizedBox(height: 16),
           Container(
-            width: screenWidth * 0.9,
+            width: screenWidth * 0.86,
             height: screenHeight * 0.2,
             padding: const EdgeInsets.all(16),
-            margin: const EdgeInsets.only(bottom: 20),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(16),
@@ -61,7 +60,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   final analyticsData = snapshot.data!;
 
                   return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
                         'Total Users: ${analyticsData['totalUsers']}',
@@ -88,7 +87,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           ),
           const SizedBox(height: 20), // Add some space between the containers
           Container(
-            width: screenWidth * 0.9,
+            width: screenWidth * 0.86,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
@@ -96,14 +95,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.3),
-                  spreadRadius: 2,
+                  spreadRadius: 1,
                   blurRadius: 5,
                   offset: const Offset(0, 3),
                 ),
               ],
             ),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // User Icon
                 Expanded(
@@ -113,14 +112,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       Icon(
                         Icons.person,
                         color: const Color(0xFFFD1A00),
-                        size: screenWidth * 0.07,
+                        size: screenWidth * 0.08,
                       ),
                       SizedBox(height: screenHeight * 0.01),
                       Text(
                         'Users',
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: screenWidth * 0.02,
+                          fontSize: screenWidth * 0.026,
                         ),
                       ),
                     ],
@@ -135,14 +134,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       Icon(
                         Icons.admin_panel_settings,
                         color: const Color(0xFFFD1A00),
-                        size: screenWidth * 0.07,
+                        size: screenWidth * 0.08,
                       ),
                       SizedBox(height: screenHeight * 0.01),
                       Text(
                         'Admins',
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: screenWidth * 0.02,
+                          fontSize: screenWidth * 0.026,
                         ),
                       ),
                     ],
@@ -157,14 +156,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       Icon(
                         Icons.supervised_user_circle,
                         color: const Color(0xFFFD1A00),
-                        size: screenWidth * 0.07,
+                        size: screenWidth * 0.08,
                       ),
                       SizedBox(height: screenHeight * 0.01),
                       Text(
                         'Active Admins',
                         style: TextStyle(
                           color: Colors.black,
-                          fontSize: screenWidth * 0.02,
+                          fontSize: screenWidth * 0.026,
                         ),
                       ),
                     ],
@@ -174,6 +173,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
           ),
           const SizedBox(
+            height: 20,
+          ),
+          const SizedBox(
             height: 320,
             child: RequestListPage(),
           ),
@@ -181,8 +183,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
           Align(
             alignment: Alignment.center,
             child: Container(
-              width: screenWidth * 0.8,
-              height: screenHeight * 0.08,
+              width: screenWidth * 0.82,
+              height: screenHeight * 0.07,
               decoration: BoxDecoration(
                 color: const Color(0xFFFD1A00),
                 borderRadius: BorderRadius.circular(14.0),

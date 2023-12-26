@@ -48,7 +48,7 @@ class MyApp extends StatelessWidget {
         '/final-question': (context) => const FinalQuestion(),
         '/blood-request-form': (context) => const BloodRequestForm(),
         '/map-page': (context) => const MapChoice(),
-        '/profile-page': (context) => Profile(),
+        '/profile-page': (context) => const Profile(),
         '/admin-dashboard': (context) => const AdminDashboard(),
         '/blood-request-list': (context) => const RequestList(),
       },
