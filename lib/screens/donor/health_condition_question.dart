@@ -196,7 +196,7 @@ class HealthConditionQuestion extends ConsumerWidget {
   void _handleSubmit(BuildContext context, WidgetRef ref) async {
     final personalDetail = ref.read(personalDetailProvider);
     final BloodDonationService service = BloodDonationService();
-    var response = await service.sendPersonalDataToApi(personalDetail);
+    var response = await service.sendPersonalDataToApi(personalDetail, ref);
 
     if (response.success) {
       Navigator.of(context).pushNamed("/final-question");

@@ -449,17 +449,13 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       if (selectedFile == null) {
         return;
       }
-      print("clicked");
 
-      final locationData =
-          ref.watch(locationDataProvider); // Get location data using Riverpod
+      final locationData = ref.watch(locationDataProvider);
 
       if (locationData != null && locationData.coordinates != null) {
         String? locationId = await _sendLocationData(locationData);
 
-        print(locationId);
         if (locationId != null) {
-          // Handle failure in sending location data
           BloodRequestModel requestData = BloodRequestModel(
             patientName: _patientNameController.text,
             age: _ageController.text,
@@ -497,6 +493,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       LocationService service = LocationService(_apiService);
 
       return await service.sendLocationData(
+        ref,
         locationData.coordinates!,
         locationData.geoLocation!,
       );
@@ -513,9 +510,11 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     Uint8List imageBytes,
   ) async {
     try {
-      await _bloodRequestService.sendDataAndImageToBackend(
+      _bloodRequestService.sendDataAndImageToBackend(
         requestData,
         imageBytes,
+        ref,
+
         // location: requestData.location, // Pass location to the service
       );
 

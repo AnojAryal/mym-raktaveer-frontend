@@ -1,11 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mym_raktaveer_frontend/models/firebase_auth/forgot_password.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mym_raktaveer_frontend/Providers/firebase_auth_provider/forgot_password.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
-import 'package:mym_raktaveer_frontend/models/firebase_auth/utils.dart';
+import 'package:mym_raktaveer_frontend/services/firebase_auth_service.dart';
 
-class LoginWidget extends StatefulWidget {
+class LoginWidget extends ConsumerStatefulWidget {
   const LoginWidget({
     super.key,
     required this.onClickedSignUp,
@@ -14,10 +14,10 @@ class LoginWidget extends StatefulWidget {
   final VoidCallback? onClickedSignUp;
 
   @override
-  State<LoginWidget> createState() => _LoginWidgetState();
+  ConsumerState<LoginWidget> createState() => _LoginWidgetState();
 }
 
-class _LoginWidgetState extends State<LoginWidget> {
+class _LoginWidgetState extends ConsumerState<LoginWidget> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   bool isPasswordVisible = false; // Added to toggle password visibility
@@ -146,15 +146,14 @@ class _LoginWidgetState extends State<LoginWidget> {
       ),
     );
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailController.text.trim(),
-        password: passwordController.text.trim(),
+      await FirebaseAuthService.signIn(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+        ref,
       );
-    } on FirebaseAuthException catch (e) {
+    } catch (e) {
       // ignore: avoid_print
-      Utils.showSnackBar(e.message);
     } finally {
-      // ignore: use_build_context_synchronously
       navigatorKey.currentState!.popUntil((route) => route.isFirst);
     }
   }
