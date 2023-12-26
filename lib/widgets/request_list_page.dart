@@ -3,15 +3,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/models/blood_request_model.dart';
-
 import '../services/api_service.dart';
 import '../services/blood_request_service.dart';
 import 'blood_request_detail.dart';
 
 class RequestListPage extends ConsumerStatefulWidget {
-  final String searchQuery; 
+  final String searchQuery;
+  final String statusFilter;
+  final String urgencyFilter;
 
-  const RequestListPage({super.key, this.searchQuery = ""});
+  const RequestListPage({super.key, this.searchQuery = "", this.statusFilter = "", this.urgencyFilter="",});
 
   @override
   _RequestListPageState createState() => _RequestListPageState();
@@ -31,13 +32,19 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
   Future<void> fetchBloodRequestData() async {
     final bloodRequestService = BloodRequestService(ApiService());
 
+    // Include the status filter in the API request
     String param = "sort_by=preferred_datetime&sort_order=desc";
 
     if (widget.searchQuery.isNotEmpty) {
-      param +=
-          "&search=${widget.searchQuery}"; // Append the search query if it exists
+      param += "&search=${widget.searchQuery}";
     }
-
+    if(widget.statusFilter.isNotEmpty){
+      param += "&status=${widget.statusFilter}";
+    }
+    if(widget.urgencyFilter.isNotEmpty){
+      param += "&urgency_level=${widget.urgencyFilter}";
+    }
+    
     // Fetch a list of blood request data from the backend
     final resultList = await bloodRequestService.fetchBloodRequests(ref, param);
 
@@ -50,8 +57,8 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) =>
-                BloodRequestDetail(requestId: bloodRequest.id)));
+          builder: (context) => BloodRequestDetail(requestId: bloodRequest.id),
+        ));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -122,8 +129,10 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
   @override
   void didUpdateWidget(covariant RequestListPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.searchQuery != oldWidget.searchQuery) {
-      fetchBloodRequestData(); // Fetch new data if the search query has changed
+    if (widget.searchQuery != oldWidget.searchQuery ||
+        widget.statusFilter != oldWidget.statusFilter ||
+        widget.urgencyFilter != oldWidget.urgencyFilter) {
+      fetchBloodRequestData(); 
     }
   }
 

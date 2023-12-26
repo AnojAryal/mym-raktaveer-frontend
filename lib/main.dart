@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         '/map-page': (context) => const MapChoice(),
         '/profile-page': (context) => const Profile(),
         '/admin-dashboard': (context) => const AdminDashboard(),
-        '/blood-request-list': (context) => const RequestList(),
+        '/blood-request-list': (context) => const AdminRequestList(),
       },
     );
   }
