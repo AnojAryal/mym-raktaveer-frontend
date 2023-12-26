@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
+import 'package:mym_raktaveer_frontend/widgets/filters_widget.dart';
 import 'package:mym_raktaveer_frontend/widgets/request_list_page.dart';
 
 class RequestList extends StatefulWidget {
@@ -76,7 +77,12 @@ class _RequestListState extends State<RequestList> {
                 IconButton(
                   icon: const Icon(Icons.filter_list),
                   onPressed: () {
-                    // Add your filter icon logic here
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const FilterPopup();
+                      },
+                    );
                   },
                 ),
               ],
