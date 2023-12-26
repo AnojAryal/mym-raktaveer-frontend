@@ -1,22 +1,32 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FilterPopup extends ConsumerStatefulWidget {
-  const FilterPopup({super.key});
+  final void Function(String) onStatusFilterApplied;
+  final void Function(String) onUrgencyFilterApplied;
+
+  FilterPopup({
+    super.key,
+    required this.onStatusFilterApplied,
+    required this.onUrgencyFilterApplied,
+  });
+
+  double? minAge;
+  double? maxAge;
+  String selectedBloodType = 'A';
+  String selectedRhesusFactor = 'Positive';
+  String selectedStatus = 'Pending';
+  String selectedUrgency = 'Low';
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   ConsumerState<FilterPopup> createState() => _FilterPopupState();
 }
 
 class _FilterPopupState extends ConsumerState<FilterPopup> {
-  double? minAge;
-  double? maxAge;
-  String selectedBloodType = 'A';
-  String selectedRhesusFactor = 'Positive';
-  String selectedStatus = 'Pending';
-
-  final _formKey = GlobalKey<FormState>();
-
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -32,7 +42,7 @@ class _FilterPopupState extends ConsumerState<FilterPopup> {
         ),
         child: SingleChildScrollView(
           child: Form(
-            key: _formKey,
+            key: widget._formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
@@ -99,7 +109,7 @@ class _FilterPopupState extends ConsumerState<FilterPopup> {
               ),
             ),
             onSaved: (value) {
-              minAge = double.tryParse(value!);
+              widget.minAge = double.tryParse(value!);
             },
           ),
         ),
@@ -115,7 +125,7 @@ class _FilterPopupState extends ConsumerState<FilterPopup> {
               ),
             ),
             onSaved: (value) {
-              maxAge = double.tryParse(value!);
+              widget.maxAge = double.tryParse(value!);
             },
           ),
         ),
@@ -138,10 +148,10 @@ class _FilterPopupState extends ConsumerState<FilterPopup> {
               ),
               const SizedBox(height: 8),
               DropdownButton<String>(
-                value: selectedBloodType,
+                value: widget.selectedBloodType,
                 onChanged: (value) {
                   setState(() {
-                    selectedBloodType = value!;
+                    widget.selectedBloodType = value!;
                   });
                 },
                 items: ['A', 'B', 'AB', 'O'].map((type) {
@@ -157,7 +167,7 @@ class _FilterPopupState extends ConsumerState<FilterPopup> {
         const SizedBox(width: 16),
         Expanded(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const Text(
                 'Rhesus Factor',
@@ -167,10 +177,10 @@ class _FilterPopupState extends ConsumerState<FilterPopup> {
               ),
               const SizedBox(height: 8),
               DropdownButton<String>(
-                value: selectedRhesusFactor,
+                value: widget.selectedRhesusFactor,
                 onChanged: (value) {
                   setState(() {
-                    selectedRhesusFactor = value!;
+                    widget.selectedRhesusFactor = value!;
                   });
                 },
                 items: ['Positive', 'Negative'].map((factor) {
@@ -188,29 +198,65 @@ class _FilterPopupState extends ConsumerState<FilterPopup> {
   }
 
   Widget _buildStatusDropdown() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
       children: [
-        const Text(
-          'Status',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Status',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              DropdownButton<String>(
+                value: widget.selectedStatus,
+                onChanged: (value) {
+                  setState(() {
+                    widget.selectedStatus = value!;
+                  });
+                },
+                items:
+                    ['Pending', 'Completed', 'Accepted'].map((status) {
+                  return DropdownMenuItem<String>(
+                    value: status,
+                    child: Text(status),
+                  );
+                }).toList(),
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 8),
-        DropdownButton<String>(
-          value: selectedStatus,
-          onChanged: (value) {
-            setState(() {
-              selectedStatus = value!;
-            });
-          },
-          items: ['Pending', 'Completed', 'Accepted'].map((status) {
-            return DropdownMenuItem<String>(
-              value: status,
-              child: Text(status),
-            );
-          }).toList(),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Urgency Level',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              DropdownButton<String>(
+                value: widget.selectedUrgency,
+                onChanged: (value) {
+                  setState(() {
+                    widget.selectedUrgency = value!;
+                  });
+                },
+                items: ['Low', 'Medium', 'High'].map((urgency) {
+                  return DropdownMenuItem<String>(
+                    value: urgency,
+                    child: Text(urgency),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -219,8 +265,11 @@ class _FilterPopupState extends ConsumerState<FilterPopup> {
   Widget _buildApplyFiltersButton() {
     return ElevatedButton(
       onPressed: () {
-        if (_formKey.currentState!.validate()) {
-          _formKey.currentState!.save();
+        if (widget._formKey.currentState!.validate()) {
+          widget._formKey.currentState!.save();
+
+          widget.onStatusFilterApplied(widget.selectedStatus);
+          widget.onUrgencyFilterApplied(widget.selectedUrgency);
 
           Navigator.pop(context);
         }
