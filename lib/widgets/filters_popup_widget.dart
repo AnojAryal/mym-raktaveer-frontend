@@ -15,11 +15,10 @@ class FilterPopup extends ConsumerStatefulWidget {
 
   double? minAge;
   double? maxAge;
-  String selectedBloodType = 'A'; 
+  String selectedBloodType = 'A';
   String selectedRhesusFactor = 'Positive';
   String selectedStatus = 'Pending';
   String selectedUrgency = 'Low';
-
 
   final _formKey = GlobalKey<FormState>();
 
@@ -134,136 +133,134 @@ class _FilterPopupState extends ConsumerState<FilterPopup> {
     );
   }
 
-Widget _buildBloodTypeAndRhesusFactorInputs() {
-  return Row(
-    children: [
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Blood Type',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
+  Widget _buildBloodTypeAndRhesusFactorInputs() {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Blood Type',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            DropdownButton<String>(
-              value: widget.selectedBloodType,
-              onChanged: (value) {
-                setState(() {
-                  widget.selectedBloodType = value!;
-                });
-              },
-              items: ['A', 'B', 'AB', 'O'].map((type) {
-                return DropdownMenuItem<String>(
-                  value: type,
-                  child: Text(type),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(width: 16),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              'Rhesus Factor',
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
+              const SizedBox(height: 8),
+              DropdownButton<String>(
+                value: widget.selectedBloodType,
+                onChanged: (value) {
+                  setState(() {
+                    widget.selectedBloodType = value!;
+                  });
+                },
+                items: ['A', 'B', 'AB', 'O'].map((type) {
+                  return DropdownMenuItem<String>(
+                    value: type,
+                    child: Text(type),
+                  );
+                }).toList(),
               ),
-            ),
-            const SizedBox(height: 8),
-            DropdownButton<String>(
-              value: widget.selectedRhesusFactor,
-              onChanged: (value) {
-                setState(() {
-                  widget.selectedRhesusFactor = value!;
-                });
-              },
-              items: ['Positive', 'Negative'].map((factor) {
-                return DropdownMenuItem<String>(
-                  value: factor,
-                  child: Text(factor),
-                );
-              }).toList(),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    ],
-  );
-}
-
-
-Widget _buildStatusDropdown() {
-  return Row(
-    children: [
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Status',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Rhesus Factor',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            DropdownButton<String>(
-              value: widget.selectedStatus,
-              onChanged: (value) {
-                setState(() {
-                  widget.selectedStatus = value!;
-                });
-              },
-              items: ['All','Pending', 'Completed', 'Accepted'].map((status) {
-                return DropdownMenuItem<String>(
-                  value: status,
-                  child: Text(status),
-                );
-              }).toList(),
-            ),
-          ],
-        ),
-      ),
-      const SizedBox(width: 16),
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              'Urgency Level',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
+              const SizedBox(height: 8),
+              DropdownButton<String>(
+                value: widget.selectedRhesusFactor,
+                onChanged: (value) {
+                  setState(() {
+                    widget.selectedRhesusFactor = value!;
+                  });
+                },
+                items: ['Positive', 'Negative'].map((factor) {
+                  return DropdownMenuItem<String>(
+                    value: factor,
+                    child: Text(factor),
+                  );
+                }).toList(),
               ),
-            ),
-            const SizedBox(height: 8),
-            DropdownButton<String>(
-              value: widget.selectedUrgency,
-              onChanged: (value) {
-                setState(() {
-                  widget.selectedUrgency = value!;
-                });
-              },
-              items: ['All','Low', 'Medium', 'High'].map((urgency) {
-                return DropdownMenuItem<String>(
-                  value: urgency,
-                  child: Text(urgency),
-                );
-              }).toList(),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
-
+  Widget _buildStatusDropdown() {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Status',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              DropdownButton<String>(
+                value: widget.selectedStatus,
+                onChanged: (value) {
+                  setState(() {
+                    widget.selectedStatus = value!;
+                  });
+                },
+                items:
+                    ['Pending', 'Completed', 'Accepted'].map((status) {
+                  return DropdownMenuItem<String>(
+                    value: status,
+                    child: Text(status),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Text(
+                'Urgency Level',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              DropdownButton<String>(
+                value: widget.selectedUrgency,
+                onChanged: (value) {
+                  setState(() {
+                    widget.selectedUrgency = value!;
+                  });
+                },
+                items: ['Low', 'Medium', 'High'].map((urgency) {
+                  return DropdownMenuItem<String>(
+                    value: urgency,
+                    child: Text(urgency),
+                  );
+                }).toList(),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _buildApplyFiltersButton() {
     return ElevatedButton(
@@ -271,7 +268,6 @@ Widget _buildStatusDropdown() {
         if (widget._formKey.currentState!.validate()) {
           widget._formKey.currentState!.save();
 
-          
           widget.onStatusFilterApplied(widget.selectedStatus);
           widget.onUrgencyFilterApplied(widget.selectedUrgency);
 

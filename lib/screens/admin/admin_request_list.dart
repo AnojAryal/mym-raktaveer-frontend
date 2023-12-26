@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/request_list_page.dart';
 
-import '../../widgets/filters_widget.dart';
+import '../../widgets/filters_popup_widget.dart';
 
 class AdminRequestList extends StatefulWidget {
   const AdminRequestList({super.key});
