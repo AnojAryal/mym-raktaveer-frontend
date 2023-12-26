@@ -70,6 +70,37 @@ class BloodRequestService {
     }
   }
 
+  Future<BloodRequestModel?> fetchBloodRequestDetail(
+      WidgetRef ref, int? requestId) async {
+    final client = http.Client();
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.accessToken;
+
+    try {
+      final response = await client.get(
+        Uri.parse("$bloodRequestUrl/$requestId"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic responseData = json.decode(response.body);
+        return BloodRequestModel.fromJson(responseData['data']);
+      } else {
+        print(
+            'Failed to fetch blood request details. Status code: ${response.statusCode}');
+        return null;
+      }
+    } catch (error) {
+      print('Error fetching blood request details: $error');
+      return null;
+    } finally {
+      client.close();
+    }
+  }
+
   Future<List<BloodRequestModel>?> fetchBloodRequests(
       WidgetRef ref, param) async {
     final client = http.Client();

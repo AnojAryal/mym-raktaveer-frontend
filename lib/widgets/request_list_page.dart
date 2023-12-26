@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/models/blood_request_model.dart';
+import 'package:mym_raktaveer_frontend/widgets/bloodrequestdetail.dart';
 import '../services/api_service.dart';
 import '../services/blood_request_service.dart';
 
@@ -43,65 +44,72 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
   }
 
   Widget buildBloodRequestCard(BloodRequestModel bloodRequest) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-      child: Card(
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const SizedBox(height: 4),
-              Row(
-                children: <Widget>[
-                  const Text(
-                    'Quantity: ',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) =>
+                BloodRequestDetail(requestId: bloodRequest.id)));
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+        child: Card(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const SizedBox(height: 4),
+                Row(
+                  children: <Widget>[
+                    const Text(
+                      'Quantity: ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  Text(
-                    bloodRequest.quantity,
-                    style: const TextStyle(fontSize: 16, color: Colors.red),
-                  ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  const Text(
-                    'Blood Group: ',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                    Text(
+                      bloodRequest.quantity,
+                      style: const TextStyle(fontSize: 16, color: Colors.red),
                     ),
-                  ),
-                  Text(
-                    '${bloodRequest.bloodGroupAbo} ${bloodRequest.bloodGroupRh}',
-                    style: const TextStyle(fontSize: 16, color: Colors.red),
-                  ),
-                ],
-              ),
-              Row(
-                children: <Widget>[
-                  const Text(
-                    'Urgency Level: ',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    const Text(
+                      'Blood Group: ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  Text(
-                    bloodRequest.urgencyLevel,
-                    style: const TextStyle(fontSize: 16, color: Colors.red),
-                  ),
-                ],
-              ),
-            ],
+                    Text(
+                      '${bloodRequest.bloodGroupAbo} ${bloodRequest.bloodGroupRh}',
+                      style: const TextStyle(fontSize: 16, color: Colors.red),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: <Widget>[
+                    const Text(
+                      'Urgency Level: ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Text(
+                      bloodRequest.urgencyLevel,
+                      style: const TextStyle(fontSize: 16, color: Colors.red),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
