@@ -36,7 +36,7 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
         future: _fetchRequestDetails(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return _buildLoadingWidget();
+            return const CircularProgressIndicator();
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else if (!snapshot.hasData) {
@@ -52,6 +52,9 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
 
   Widget _buildContent(BuildContext context, BloodRequestModel bloodRequest) {
     String bloodGroup = bloodRequest.bloodGroupAbo + bloodRequest.bloodGroupRh;
+    double containerWidth = MediaQuery.of(context).size.width * 0.9;
+    bool isSmallScreen = MediaQuery.of(context).size.width < 600;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,9 +375,14 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                             TextStyle(fontSize: 16, color: Color(0xFFFD1A00)),
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        bloodRequest.dateAndTime,
-                        style: const TextStyle(fontSize: 16),
+                      FittedBox(
+                        fit: BoxFit.fill,
+                        child: Text(
+                          bloodRequest.dateAndTime,
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 12 : 10,
+                          ),
+                        ),
                       ),
                     ],
                   ),

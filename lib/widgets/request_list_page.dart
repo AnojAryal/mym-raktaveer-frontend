@@ -12,7 +12,12 @@ class RequestListPage extends ConsumerStatefulWidget {
   final String statusFilter;
   final String urgencyFilter;
 
-  const RequestListPage({super.key, this.searchQuery = "", this.statusFilter = "", this.urgencyFilter="",});
+  const RequestListPage({
+    super.key,
+    this.searchQuery = "",
+    this.statusFilter = "",
+    this.urgencyFilter = "",
+  });
 
   @override
   _RequestListPageState createState() => _RequestListPageState();
@@ -38,13 +43,13 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
     if (widget.searchQuery.isNotEmpty) {
       param += "&search=${widget.searchQuery}";
     }
-    if(widget.statusFilter.isNotEmpty){
+    if (widget.statusFilter.isNotEmpty) {
       param += "&status=${widget.statusFilter}";
     }
-    if(widget.urgencyFilter.isNotEmpty){
+    if (widget.urgencyFilter.isNotEmpty) {
       param += "&urgency_level=${widget.urgencyFilter}";
     }
-    
+
     // Fetch a list of blood request data from the backend
     final resultList = await bloodRequestService.fetchBloodRequests(ref, param);
 
@@ -65,7 +70,7 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
         child: Card(
           color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -132,7 +137,7 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
     if (widget.searchQuery != oldWidget.searchQuery ||
         widget.statusFilter != oldWidget.statusFilter ||
         widget.urgencyFilter != oldWidget.urgencyFilter) {
-      fetchBloodRequestData(); 
+      fetchBloodRequestData();
     }
   }
 
@@ -143,6 +148,26 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    'Request Details',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                IconButton(
+                  padding: const EdgeInsets.only(right: 20),
+                  icon: const Icon(Icons.open_in_new),
+                  color: const Color(0xFFFD1A00),
+                  onPressed: () {
+                    // Add your navigation or action logic here when the button is pressed
+                  },
+                ),
+              ],
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: bloodRequestList.length,

@@ -54,21 +54,17 @@ class Profile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Back Button and Admin Button
-            Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                    ),
-                  ),
+            AppBar(
+              leading: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                 ),
-                const SizedBox(width: 115),
+              ),
+              actions: [
                 IconButton(
                   icon: const Icon(
                     Icons.admin_panel_settings,
@@ -82,22 +78,28 @@ class Profile extends StatelessWidget {
                     );
                   },
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    FirebaseAuth.instance.signOut();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFD1A00),
-                    foregroundColor: Colors.white,
-                    minimumSize: const Size(100, 25),
-                  ),
-                  child: const Text(
-                    'Sign Out',
-                    style: TextStyle(fontSize: 14),
+                const SizedBox(width: 8.0), // Add some spacing between icons
+                Padding(
+                  padding: const EdgeInsets.only(
+                      right: 20.0), // Adjust right padding
+                  child: ElevatedButton(
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFD1A00),
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(100, 25),
+                    ),
+                    child: const Text(
+                      'Sign Out',
+                      style: TextStyle(fontSize: 14),
+                    ),
                   ),
                 ),
               ],
             ),
+
             // Profile Picture, Name, and Email
             Padding(
               padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 0.0),
