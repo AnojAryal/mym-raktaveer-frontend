@@ -129,7 +129,9 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       child: Align(
         alignment: Alignment.topLeft,
         child: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back_ios_rounded,
+          ),
           onPressed: () {
             ref.read(locationDataProvider.notifier).state;
             Navigator.pop(context);
