@@ -7,17 +7,17 @@ import 'package:mym_raktaveer_frontend/screens/donor/blood_donation_related_ques
 import 'package:mym_raktaveer_frontend/screens/donor/blood_type_question.dart';
 import 'package:mym_raktaveer_frontend/screens/donor/final_question_screen.dart';
 import 'package:mym_raktaveer_frontend/screens/donor/health_condition_question.dart';
-import 'package:mym_raktaveer_frontend/screens/admin/request_list.dart';
+import 'package:mym_raktaveer_frontend/screens/admin/admin_request_list.dart';
 import 'package:mym_raktaveer_frontend/screens/receiver/blood_request_form.dart';
 import 'package:mym_raktaveer_frontend/screens/admin/admin_dashboard.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
 import 'package:mym_raktaveer_frontend/widgets/map.dart';
 import 'package:mym_raktaveer_frontend/widgets/profile.dart';
 
-import 'Providers/firebase_auth_provider/firebase_options.dart';
-import 'Providers/firebase_auth_provider/auth_page.dart';
-import 'Providers/firebase_auth_provider/verify_email.dart';
-import 'Providers/firebase_auth_provider/utils.dart';
+import 'widgets/firebase/firebase_options.dart';
+import 'widgets/firebase/auth_page.dart';
+import 'widgets/firebase/verify_email.dart';
+import 'widgets/firebase/utils.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
         '/map-page': (context) => const MapChoice(),
         '/profile-page': (context) => const Profile(),
         '/admin-dashboard': (context) => const AdminDashboard(),
-        '/blood-request-list': (context) => const RequestList(),
+        '/blood-request-list': (context) => const AdminRequestList(),
       },
     );
   }
