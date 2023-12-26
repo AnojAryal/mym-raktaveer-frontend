@@ -12,7 +12,12 @@ class RequestListPage extends ConsumerStatefulWidget {
   final String statusFilter;
   final String urgencyFilter;
 
-  const RequestListPage({super.key, this.searchQuery = "", this.statusFilter = "", this.urgencyFilter="",});
+  const RequestListPage({
+    super.key,
+    this.searchQuery = "",
+    this.statusFilter = "",
+    this.urgencyFilter = "",
+  });
 
   @override
   _RequestListPageState createState() => _RequestListPageState();
@@ -38,13 +43,13 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
     if (widget.searchQuery.isNotEmpty) {
       param += "&search=${widget.searchQuery}";
     }
-    if(widget.statusFilter.isNotEmpty){
+    if (widget.statusFilter.isNotEmpty) {
       param += "&status=${widget.statusFilter}";
     }
-    if(widget.urgencyFilter.isNotEmpty){
+    if (widget.urgencyFilter.isNotEmpty) {
       param += "&urgency_level=${widget.urgencyFilter}";
     }
-    
+
     // Fetch a list of blood request data from the backend
     final resultList = await bloodRequestService.fetchBloodRequests(ref, param);
 
@@ -65,7 +70,7 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
         child: Card(
           color: Colors.white,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
@@ -132,7 +137,7 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
     if (widget.searchQuery != oldWidget.searchQuery ||
         widget.statusFilter != oldWidget.statusFilter ||
         widget.urgencyFilter != oldWidget.urgencyFilter) {
-      fetchBloodRequestData(); 
+      fetchBloodRequestData();
     }
   }
 

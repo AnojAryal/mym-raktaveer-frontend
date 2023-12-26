@@ -36,7 +36,7 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
         future: _fetchRequestDetails(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return _buildLoadingWidget();
+            return const CircularProgressIndicator();
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else if (!snapshot.hasData) {
@@ -52,6 +52,9 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
 
   Widget _buildContent(BuildContext context, BloodRequestModel bloodRequest) {
     String bloodGroup = bloodRequest.bloodGroupAbo + bloodRequest.bloodGroupRh;
+    double containerWidth = MediaQuery.of(context).size.width * 0.9;
+    bool isSmallScreen = MediaQuery.of(context).size.width < 600;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,9 +375,14 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                             TextStyle(fontSize: 16, color: Color(0xFFFD1A00)),
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        bloodRequest.dateAndTime,
-                        style: const TextStyle(fontSize: 16),
+                      FittedBox(
+                        fit: BoxFit.fill,
+                        child: Text(
+                          bloodRequest.dateAndTime,
+                          style: TextStyle(
+                            fontSize: isSmallScreen ? 12 : 10,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -441,25 +449,43 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
               ),
             ),
           ),
-          const SizedBox(height: 20),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                // Handle button press
-                // Add logic to send donation request
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFD1A00),
-                foregroundColor: Colors.white,
-              ),
-              child: const Padding(
-                padding: EdgeInsets.all(12.0),
-                child: Text(
-                  'Send Donation Request',
-                  style: TextStyle(fontSize: 18),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFFFD1A00)), // FD1A00 color
+                    fixedSize: MaterialStateProperty.all<Size>(
+                        const Size(145.0, 40.0)), // Width and height
+                  ),
+                  child: const Text(
+                    'Reject request',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
-            ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color(0xFF99FDD2)), // FD1A00 color
+                    fixedSize: MaterialStateProperty.all<Size>(
+                        const Size(145.0, 40.0)), // Width and height
+                  ),
+                  child: const Text(
+                    'Accept request',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 20),
         ],
