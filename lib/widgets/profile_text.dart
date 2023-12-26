@@ -9,32 +9,22 @@ class CustomRichText extends StatelessWidget {
     required this.label,
     required this.value,
   });
-
   @override
   Widget build(BuildContext context) {
     return RichText(
       text: TextSpan(
+        style: const TextStyle(
+          fontSize: 16,
+          color: Colors.black,
+        ),
         children: [
           TextSpan(
-            text: '$label : ',
+            text: '$label: ',
             style: const TextStyle(
-              fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: Colors.black87,
             ),
           ),
-          const WidgetSpan(
-              child: SizedBox(
-            width: 12,
-          )),
-          TextSpan(
-            text: value,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w300,
-              color: Colors.black54,
-            ),
-          ),
+          TextSpan(text: value),
         ],
       ),
     );

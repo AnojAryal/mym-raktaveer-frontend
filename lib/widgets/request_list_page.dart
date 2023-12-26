@@ -131,13 +131,6 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Request Details',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-              ),
-            ),
             Expanded(
               child: ListView.builder(
                 itemCount: bloodRequestList.length,
