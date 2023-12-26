@@ -36,11 +36,11 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
         future: _fetchRequestDetails(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return _buildLoadingWidget();
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else if (!snapshot.hasData) {
-            return Text('No data found for this request.');
+            return const Text('No data found for this request.');
           } else {
             final bloodRequest = snapshot.data!;
             return _buildContent(context, bloodRequest);
@@ -56,7 +56,6 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Back Button
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Align(
@@ -64,8 +63,7 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
               child: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
-                  // Handle back button press
-                  // You can use Navigator.pop(context) to go back
+                  Navigator.pop(context);
                 },
               ),
             ),
@@ -105,7 +103,6 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
             ),
           ),
           // Phone, Age, and Gender
-
           Padding(
             padding: const EdgeInsets.only(left: 0.0, right: 16.0, top: 10.0),
             child: Row(
@@ -129,12 +126,18 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                   children: [
                     const Text(
                       'Gender',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 4),
-                    Text(bloodRequest.user!.gender,
-                        style: const TextStyle(fontSize: 16)),
+                    Text(
+                      bloodRequest.user!.gender,
+                      style: const TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
                   ],
                 ),
                 Column(
@@ -142,18 +145,21 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                   children: [
                     const Text(
                       'Age',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 4),
-                    Text("${bloodRequest.user!.age}",
-                        style: const TextStyle(fontSize: 16)),
+                    Text(
+                      "${bloodRequest.user!.age}",
+                      style: const TextStyle(fontSize: 16),
+                    ),
                   ],
                 ),
               ],
             ),
           ),
-
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Container(
@@ -179,8 +185,10 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                  Text('Blood Group: $bloodGroup',
-                      style: const TextStyle(fontSize: 16)),
+                  Text(
+                    'Blood Group: $bloodGroup',
+                    style: const TextStyle(fontSize: 16),
+                  ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
@@ -188,8 +196,10 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Request: ${bloodRequest.quantity} ml',
-                                style: const TextStyle(fontSize: 16)),
+                            Text(
+                              'Request: ${bloodRequest.quantity} ml',
+                              style: const TextStyle(fontSize: 16),
+                            ),
                           ],
                         ),
                       ),
@@ -198,8 +208,10 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Urgency: ${bloodRequest.urgencyLevel}',
-                                style: const TextStyle(fontSize: 16)),
+                            Text(
+                              'Urgency: ${bloodRequest.urgencyLevel}',
+                              style: const TextStyle(fontSize: 16),
+                            ),
                           ],
                         ),
                       ),
@@ -266,7 +278,9 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                           const Text(
                             'Sex: ',
                             style: TextStyle(
-                                fontSize: 16, color: Color(0xFFFD1A00)),
+                              fontSize: 16,
+                              color: Color(0xFFFD1A00),
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -301,7 +315,9 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                           const Text(
                             'Room No: ',
                             style: TextStyle(
-                                fontSize: 16, color: Color(0xFFFD1A00)),
+                              fontSize: 16,
+                              color: Color(0xFFFD1A00),
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -317,7 +333,11 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                           const Text(
                             'OPD No: ',
                             style: TextStyle(
-                                fontSize: 16, color: Color(0xFFFD1A00)),
+                              fontSize: 16,
+                              color: Color(
+                                0xFFFD1A00,
+                              ),
+                            ),
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -367,8 +387,7 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                       Icon(
                         Icons.download,
                         size: 30,
-                        color:
-                            Colors.black, // Black color for the download icon
+                        color: Colors.black,
                       ),
                       SizedBox(width: 8),
                       Text(
@@ -410,7 +429,9 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                           child: Text(
                             bloodRequest.description,
                             style: const TextStyle(
-                                fontSize: 14, color: Colors.black),
+                              fontSize: 14,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ],
@@ -420,7 +441,6 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
               ),
             ),
           ),
-          // Button: Send Donation Request
           const SizedBox(height: 20),
           Center(
             child: ElevatedButton(
@@ -442,6 +462,25 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
             ),
           ),
           const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingWidget() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+          SizedBox(height: 16),
+          Text(
+            'Loading...',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.black,
+            ),
+          ),
         ],
       ),
     );
