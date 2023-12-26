@@ -148,26 +148,6 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 16.0),
-                  child: Text(
-                    'Request Details',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                  ),
-                ),
-                IconButton(
-                  padding: const EdgeInsets.only(right: 20),
-                  icon: const Icon(Icons.open_in_new),
-                  color: const Color(0xFFFD1A00),
-                  onPressed: () {
-                    // Add your navigation or action logic here when the button is pressed
-                  },
-                ),
-              ],
-            ),
             Expanded(
               child: ListView.builder(
                 itemCount: bloodRequestList.length,

@@ -172,27 +172,32 @@ class _AdminDashboardState extends State<AdminDashboard> {
               ],
             ),
           ),
+          const SizedBox(
+            height: 6,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // "Request Details" heading
-              const Text(
-                'Request Details',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              const Padding(
+                padding: EdgeInsets.only(left: 16.0),
+                child: Text(
+                  'Request Details',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
               ),
-              ElevatedButton(
+              IconButton(
+                padding: const EdgeInsets.only(right: 20),
+                icon: const Icon(Icons.open_in_new),
+                color: const Color(0xFFFD1A00),
                 onPressed: () {
                   Navigator.pushNamed(context, '/blood-request-list');
                 },
-                child: const Text('View Details'),
               ),
             ],
           ),
+
           const SizedBox(
-            height: 20,
-          ),
-          const SizedBox(
-            height: 320,
+            height: 300,
             child: RequestListPage(),
           ),
           const SizedBox(height: 10),
@@ -240,6 +245,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ),
               ),
             ),
+          ),
+          SizedBox(
+            height: 6,
           ),
         ],
       ),
