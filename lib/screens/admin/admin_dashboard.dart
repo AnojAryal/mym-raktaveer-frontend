@@ -173,16 +173,32 @@ class _AdminDashboardState extends State<AdminDashboard> {
               ],
             ),
           ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // "Request Details" heading
+              const Text(
+                'Request Details',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                 Navigator.pushNamed(context, '/blood-request-list');
+                },
+                child: const Text('View Details'),
+              ),
+            ],
+          ),
           const SizedBox(
-            height: 320,
+            height: 300,
             child: RequestListPage(),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
           Align(
             alignment: Alignment.center,
             child: Container(
               width: screenWidth * 0.8,
-              height: screenHeight * 0.08,
+              height: screenHeight * 0.07,
               decoration: BoxDecoration(
                 color: const Color(0xFFFD1A00),
                 borderRadius: BorderRadius.circular(14.0),
@@ -210,7 +226,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     Text(
                       'MYM Raktaveer',
                       style: TextStyle(
-                          fontSize: screenWidth * 0.05, color: Colors.white),
+                        fontSize: screenWidth * 0.05,
+                        color: Colors.white,
+                      ),
                     ),
                     const Icon(
                       Icons.notifications,

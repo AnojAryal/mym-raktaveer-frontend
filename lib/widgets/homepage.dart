@@ -328,13 +328,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/blood-request-list');
-                          },
+                          onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                const Color(0xFFFD1A00), // Background color
-                            foregroundColor: Colors.white, // Text color
+                                const Color(0xFFFD1A00),
+                            foregroundColor: Colors.white,
                             fixedSize: const Size(130.0, 40.0),
                           ),
                           child: const Text('Donate Now'),

@@ -1,14 +1,17 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/models/blood_request_model.dart';
-import 'package:mym_raktaveer_frontend/widgets/bloodrequestdetail.dart';
+
 import '../services/api_service.dart';
 import '../services/blood_request_service.dart';
+import 'blood_request_detail.dart';
 
 class RequestListPage extends ConsumerStatefulWidget {
-  final String searchQuery; // Add this line
+  final String searchQuery; 
 
-  const RequestListPage({super.key, this.searchQuery = ""}); // Update this line
+  const RequestListPage({super.key, this.searchQuery = ""});
 
   @override
   _RequestListPageState createState() => _RequestListPageState();
@@ -131,13 +134,6 @@ class _RequestListPageState extends ConsumerState<RequestListPage> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Request Details',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-              ),
-            ),
             Expanded(
               child: ListView.builder(
                 itemCount: bloodRequestList.length,

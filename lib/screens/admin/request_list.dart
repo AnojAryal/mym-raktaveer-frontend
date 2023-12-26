@@ -29,7 +29,7 @@ class _RequestListState extends State<RequestList> {
           IconButton(
             icon: const Icon(Icons.arrow_back),
             onPressed: () {
-              Navigator.of(context).pop(); // Go back to the previous screen
+              Navigator.of(context).pop();
             },
           ),
           const SizedBox(height: 16.0),
@@ -52,7 +52,7 @@ class _RequestListState extends State<RequestList> {
                           Expanded(
                             child: TextField(
                               controller: _searchController,
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: 'Search',
                                 border: InputBorder.none,
                               ),
@@ -88,8 +88,12 @@ class _RequestListState extends State<RequestList> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 20,
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Request Details',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
           ),
           Expanded(
             child: RequestListPage(
