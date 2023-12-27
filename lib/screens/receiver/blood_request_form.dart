@@ -39,6 +39,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   String _selectedBloodGroupAbo = 'A';
   String _selectedBloodGroupRh = 'Positive (+ve)';
   String _selectedUrgencyLevel = 'Low';
+
   final TextEditingController _patientNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _sexController = TextEditingController();
@@ -108,7 +109,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
                   _buildBloodGroupDropdown('Blood Group (ABO)'),
                   _buildBloodGroupRhDropdown('Blood Group (RH)'),
                   _buildTextFieldWithFilePicker('Document Upload'),
-                  _buildTextField('Description', _descriptionController),
+                  _buildDescriptionTextField(
+                      'Description', _descriptionController),
                   _buildUrgencyLevelDropdown(),
                   _buildDateTimePicker('Date and Time'),
                   _buildNumericTextField('Quantity', _quantityController),
@@ -154,11 +156,62 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   }
 
   Widget _buildTextField(String label, TextEditingController controller) {
+    final RegExp nameRegex =
+        RegExp(r'^[a-zA-Z ]+$'); // Allows only letters and spaces
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter the patient name';
+          } else if (!nameRegex.hasMatch(value)) {
+            return 'Special characters or numbers are not allowed';
+          }
+          // You can add additional validation logic if needed
+          return null;
+        },
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]')),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNormalTextField(String label, TextEditingController controller) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Please enter $label';
+          }
+
+          // Add a check for special characters
+          if (value.contains(RegExp(r'[!@#%^&*(),.?":{}|<>]'))) {
+            return 'Special characters are not allowed';
+          }
+
+          return null; // Validation passed
+        },
+      ),
+    );
+  }
+
+  Widget _buildDescriptionTextField(
+      String label, TextEditingController controller) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextField(
         controller: controller,
         decoration: _getTextFieldDecoration(label),
+        maxLines: 4, // Set the maximum number of lines
       ),
     );
   }
@@ -333,17 +386,94 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
+  // Widget _buildRow(
+  //     List<String> labels, List<TextEditingController> controllers) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(1.0),
+  //     child: Row(
+  //       children: List.generate(labels.length, (index) {
+  //         return Expanded(
+  //           child: _buildTextField(labels[index], controllers[index]),
+  //         );
+  //       }),
+  //     ),
+  //   );
+  // }
+
   Widget _buildRow(
       List<String> labels, List<TextEditingController> controllers) {
+    assert(labels.length == controllers.length);
+
     return Padding(
-      padding: const EdgeInsets.all(1.0),
+      padding: const EdgeInsets.all(8.0),
       child: Row(
         children: List.generate(labels.length, (index) {
-          return Expanded(
-            child: _buildTextField(labels[index], controllers[index]),
-          );
+          if (labels[index] == 'Age') {
+            return Expanded(
+              child: _buildAgeDropdown(controllers[index]),
+            );
+          } else if (labels[index] == 'Sex') {
+            return Expanded(
+              child: _buildSexDropdown(controllers[index]),
+            );
+          } else {
+            return Expanded(
+              child: _buildNormalTextField(labels[index], controllers[index]),
+            );
+          }
         }),
       ),
+    );
+  }
+
+  Widget _buildAgeDropdown(TextEditingController controller) {
+    List<int> ageOptions = List.generate(50 - 5 + 1, (index) => index + 5);
+
+    return DropdownButtonFormField<int>(
+      decoration: _getTextFieldDecoration('Age'),
+      value:
+          int.tryParse(controller.text) ?? 5, // Set a default value (e.g., 13)
+      items: ageOptions.map((age) {
+        return DropdownMenuItem<int>(
+          value: age,
+          child: Text(age.toString()),
+        );
+      }).toList(),
+      onChanged: (value) {
+        controller.text = value.toString();
+      },
+      validator: (value) {
+        if (value == null || value < 13) {
+          return 'Please select an age of 5 or older';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildSexDropdown(TextEditingController controller) {
+    List<String> sexOptions = ['Male', 'Female', 'Other'];
+
+    return DropdownButtonFormField<String>(
+      decoration: _getTextFieldDecoration('Sex'),
+      value: controller.text.isNotEmpty
+          ? controller.text
+          : 'Male', // Set default value to 'Male'
+      items: sexOptions.map((sex) {
+        return DropdownMenuItem<String>(
+          value: sex,
+          child: Text(sex),
+        );
+      }).toList(),
+      onChanged: (value) {
+        controller.text = value!;
+      },
+      validator: (value) {
+        if (value == null || !['Male', 'Female', 'Other'].contains(value)) {
+          return 'Please select a valid sex';
+        }
+        return null;
+      },
     );
   }
 
