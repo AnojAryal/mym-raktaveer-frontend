@@ -31,7 +31,9 @@ class HealthConditionQuestion extends ConsumerWidget {
                 const SizedBox(height: 16.0),
                 _buildNoteContainer(),
                 _buildHealthConditionsList(
-                    ref, personalDetail.healthConditions),
+                  ref,
+                  personalDetail.healthConditions,
+                ),
                 const SizedBox(height: 16.0),
                 _buildNavigationButtons(context, ref),
               ],
@@ -98,11 +100,15 @@ class HealthConditionQuestion extends ConsumerWidget {
               text: 'Note : ',
               style: TextStyle(
                 color: Color(0xFFFD1A00),
+                fontSize: 13,
               ),
             ),
             TextSpan(
               text:
                   'Please indicate if any of the following apply to you by ticking the relevant options.',
+              style: TextStyle(
+                fontSize: 12,
+              ),
             ),
           ],
         ),
@@ -111,50 +117,42 @@ class HealthConditionQuestion extends ConsumerWidget {
   }
 
   Widget _buildHealthConditionsList(
-      WidgetRef ref, Map<String, bool>? healthConditions) {
+    WidgetRef ref,
+    Map<String, bool>? healthConditions,
+  ) {
     return Expanded(
       child: GridView.builder(
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Two items per row
-          childAspectRatio: 3.6, // Adjust the aspect ratio for proper sizing
+          crossAxisCount: 2,
+          childAspectRatio: 4,
         ),
         itemCount: HealthConditionsModel.conditions.length,
         itemBuilder: (context, index) {
           String condition = HealthConditionsModel.conditions[index];
-          return ListTile(
-            title: Row(
-              children: <Widget>[
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Checkbox(
-                    value: healthConditions?[condition] ?? false,
-                    onChanged: (bool? newValue) {
-                      Map<String, bool> updatedConditions = {
-                        ...healthConditions ?? {}
-                      };
-                      updatedConditions[condition] = newValue ?? false;
-                      ref
-                          .read(personalDetailProvider.notifier)
-                          .updateHealthConditions(updatedConditions);
-                    },
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                Expanded(
-                  flex: 20,
-                  child: Text(
-                    condition,
-                    style: const TextStyle(
-                        fontSize: 11, fontWeight: FontWeight.w800),
-                  ),
-                ),
-              ],
+          bool isChecked = healthConditions?[condition] ?? false;
+
+          return CheckboxListTile(
+            title: Text(
+              condition,
+              style: const TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+              ),
             ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 8,
+              vertical: 4,
+            ),
+            value: isChecked,
+            onChanged: (bool? newValue) {
+              Map<String, bool> updatedConditions = {
+                ...healthConditions ?? {},
+              };
+              updatedConditions[condition] = newValue ?? false;
+              ref
+                  .read(personalDetailProvider.notifier)
+                  .updateHealthConditions(updatedConditions);
+            },
           );
         },
       ),
@@ -205,5 +203,47 @@ class HealthConditionQuestion extends ConsumerWidget {
     } else {
       // Handle error, show an error dialog or a snackbar
     }
+  }
+}
+
+class HealthConditionCheckbox extends StatelessWidget {
+  final String condition;
+  final bool isChecked;
+  final void Function(bool?) onChanged;
+
+  const HealthConditionCheckbox({
+    super.key,
+    required this.condition,
+    required this.isChecked,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Row(
+        children: <Widget>[
+          const SizedBox(width: 10),
+          Expanded(
+            flex: 1,
+            child: Checkbox(
+              value: isChecked,
+              onChanged: onChanged,
+            ),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            flex: 20,
+            child: Text(
+              condition,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
