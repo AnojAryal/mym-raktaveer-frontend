@@ -421,16 +421,16 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: List.generate(labels.length, (index) {
           if (labels[index] == 'Age') {
             return SizedBox(
-              width: 160,
+              width: 155,
               child: _buildAgeDropdown(controllers[index]),
             );
           } else if (labels[index] == 'Sex') {
             return SizedBox(
-              width: 160,
+              width: 155,
               child: _buildSexDropdown(controllers[index]),
             );
           } else {
