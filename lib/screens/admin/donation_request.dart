@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 
 class DonationRequest extends StatefulWidget {
-  const DonationRequest({super. key});
+  const DonationRequest({super.key});
 
   @override
   State<DonationRequest> createState() => _DonationRequestState();
@@ -18,8 +18,6 @@ class _DonationRequestState extends State<DonationRequest> {
       {'name': 'User1', 'sex': 'Male', 'age': '25'},
       {'name': 'User2', 'sex': 'Female', 'age': '30'},
       {'name': 'User3', 'sex': 'Male', 'age': '22'},
-      
-     
     ];
   }
 
@@ -32,7 +30,9 @@ class _DonationRequestState extends State<DonationRequest> {
           Padding(
             padding: const EdgeInsets.only(top: 16.0, left: 16.0),
             child: IconButton(
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(
+                Icons.arrow_back_ios_rounded,
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -56,7 +56,7 @@ class _DonationRequestState extends State<DonationRequest> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   // Loading state
-                  return const  Center(
+                  return const Center(
                     child: CircularProgressIndicator(),
                   );
                 } else if (snapshot.hasError) {
@@ -66,27 +66,29 @@ class _DonationRequestState extends State<DonationRequest> {
                   );
                 } else {
                   // Data loaded successfully
-                  List<Map<String, String>> donationRequests = snapshot.data ?? [];
+                  List<Map<String, String>> donationRequests =
+                      snapshot.data ?? [];
 
                   return ListView.builder(
                     itemCount: donationRequests.length,
                     itemBuilder: (context, index) {
                       return Card(
                         elevation: 5.0,
-                        margin:const  EdgeInsets.all(16.0),
+                        margin: const EdgeInsets.all(16.0),
                         child: Container(
-                          padding:const  EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.all(12.0),
                           child: Column(
                             children: [
                               ListTile(
-                                leading:const CircleAvatar(
+                                leading: const CircleAvatar(
                                   backgroundColor: Colors.blue,
                                 ),
                                 title: Row(
                                   children: [
                                     Text(
                                       donationRequests[index]['name'] ?? '',
-                                      style:const TextStyle(fontWeight: FontWeight.bold),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
                                     ),
                                     const SizedBox(width: 50.0),
                                     Text(
@@ -100,13 +102,14 @@ class _DonationRequestState extends State<DonationRequest> {
                                 ),
                                 subtitle: Text(
                                   'Age: ${donationRequests[index]['age'] ?? ''}',
-                                  style:const  TextStyle(fontWeight: FontWeight.bold),
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: Container(
-                                  margin:const  EdgeInsets.all(8.0),
+                                  margin: const EdgeInsets.all(8.0),
                                   decoration: BoxDecoration(
                                     color: Colors.red,
                                     borderRadius: BorderRadius.circular(5.0),
@@ -115,7 +118,7 @@ class _DonationRequestState extends State<DonationRequest> {
                                     onPressed: () {
                                       // Handle view details button press
                                     },
-                                    child:const Text(
+                                    child: const Text(
                                       'View Details',
                                       style: TextStyle(
                                         color: Colors.white,
