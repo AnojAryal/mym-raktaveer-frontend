@@ -1,26 +1,39 @@
 // ignore_for_file: avoid_print
+
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
+import 'package:mym_raktaveer_frontend/Providers/user_data_provider.dart';
 import 'api_service.dart';
 import '../models/blood_request_model.dart';
 
 class BloodRequestService {
   final String baseUrl;
+  static const String bloodRequestEndpoint = '/api/blood-donation-request';
 
   // Inject ApiService into BloodRequestService
   BloodRequestService(ApiService apiService)
       : baseUrl = apiService.baseUrl ?? '';
 
-  Future<void> sendDataAndImageToBackend(
-      BloodRequestModel requestData, Uint8List imageBytes) async {
+  String get bloodRequestUrl => '$baseUrl$bloodRequestEndpoint';
+
+  Future<void> sendDataAndImageToBackend(BloodRequestModel requestData,
+      Uint8List imageBytes, WidgetRef ref) async {
+    final userData = ref.watch(userDataProvider);
+
+    print(userData);
     final client = http.Client();
+    String? jwtToken = userData?.accessToken;
 
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse('$baseUrl/api/blood-donation-request'),
+        Uri.parse(bloodRequestUrl),
       );
+
+      request.headers['Authorization'] = 'Bearer $jwtToken';
 
       request.files.add(
         http.MultipartFile.fromBytes(
@@ -31,7 +44,6 @@ class BloodRequestService {
       );
 
       // Convert requestData to Map and add each field separately
-
       final requestDataMap = requestData.toJson();
       requestDataMap.forEach((key, value) {
         request.fields[key] = value.toString();
@@ -57,4 +69,108 @@ class BloodRequestService {
       client.close();
     }
   }
+
+  Future<BloodRequestModel?> fetchBloodRequestDetail(
+      WidgetRef ref, int? requestId) async {
+    final client = http.Client();
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.accessToken;
+
+    try {
+      final response = await client.get(
+        Uri.parse("$bloodRequestUrl/$requestId"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic responseData = json.decode(response.body);
+        return BloodRequestModel.fromJson(responseData['data']);
+      } else {
+        print(
+            'Failed to fetch blood request details. Status code: ${response.statusCode}');
+        return null;
+      }
+    } catch (error) {
+      print('Error fetching blood request details: $error');
+      return null;
+    } finally {
+      client.close();
+    }
+  }
+
+  Future<List<BloodRequestModel>?> fetchBloodRequests(
+      WidgetRef ref, param) async {
+    final client = http.Client();
+
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.accessToken;
+
+    try {
+      final response = await client.get(
+        Uri.parse("$bloodRequestUrl? $param"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization':
+              'Bearer $jwtToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic responseData = json.decode(response.body);
+
+        if (responseData.containsKey('data') && responseData['data'] is List) {
+          final List<dynamic> responseDataList = responseData['data'];
+
+          return responseDataList.map<BloodRequestModel>((responseDataItem) {
+            return BloodRequestModel.fromJson(responseDataItem);
+          }).toList();
+        } else {
+          print(
+              'Unexpected response format. "data" key is not present or does not contain a List.');
+          return null;
+        }
+      } else {
+        print(
+            'Failed to fetch blood group data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        return null;
+      }
+    } catch (error) {
+      print('Error fetching blood group data: $error');
+      return null;
+    } finally {
+      client.close();
+    }
+  }
+
+  Future<void> updateRequestStatus(int requestId, String status, WidgetRef ref) async {
+  final client = http.Client();
+  final userData = ref.watch(userDataProvider);
+  String? jwtToken = userData?.accessToken;
+
+  try {
+    final response = await client.put(
+      Uri.parse("$bloodRequestUrl/$requestId?status=$status"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken',
+      },
+      body: jsonEncode({'status': status}),
+    );
+
+    if (response.statusCode == 200) {
+      print('Request status updated successfully');
+    } else {
+      print('Failed to update request status. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (error) {
+    print('Error updating request status: $error');
+  } finally {
+    client.close();
+  }
+}
 }

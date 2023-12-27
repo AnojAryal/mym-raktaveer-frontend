@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mym_raktaveer_frontend/Providers/blood_donation_provider.dart'; // Update with the correct import path
+import 'package:mym_raktaveer_frontend/Providers/blood_donation_provider.dart';
 import 'package:mym_raktaveer_frontend/widgets/progress_bar.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 
@@ -22,6 +22,7 @@ class BloodTypeQuestion extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 30.0),
               _buildAppTitle(),
               const SizedBox(height: 8.0),
               _buildBloodTypeSelection(
@@ -40,6 +41,7 @@ class BloodTypeQuestion extends ConsumerWidget {
 
   Widget _buildAppTitle() {
     return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(height: 55.0),
         Center(
@@ -71,6 +73,7 @@ class BloodTypeQuestion extends ConsumerWidget {
   Widget _buildBloodTypeSelection(
       BuildContext context, WidgetRef ref, String? selectedBloodType) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 8.0),
         const Padding(
@@ -83,9 +86,8 @@ class BloodTypeQuestion extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(height: 8.0),
         const SizedBox(
-          height: 16.0,
+          height: 25.0,
         ),
         Padding(
           padding: const EdgeInsets.only(left: 22.0),
@@ -126,10 +128,10 @@ class BloodTypeQuestion extends ConsumerWidget {
         height: 40,
         margin: const EdgeInsets.only(left: 8.0),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.red : Colors.white,
+          color: isSelected ? const Color(0xFFFD1A00) : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: Colors.red,
+            color: const Color(0xFFFD1A00),
             width: 2.0,
           ),
         ),
@@ -137,7 +139,7 @@ class BloodTypeQuestion extends ConsumerWidget {
           child: Text(
             bloodType,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.red,
+              color: isSelected ? Colors.white : const Color(0xFFFD1A00),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -149,6 +151,7 @@ class BloodTypeQuestion extends ConsumerWidget {
   Widget _buildRhFactorSelection(
       BuildContext context, WidgetRef ref, String? selectedRhFactor) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16.0),
         const Padding(
@@ -191,10 +194,10 @@ class BloodTypeQuestion extends ConsumerWidget {
         height: 40,
         margin: const EdgeInsets.only(left: 8.0),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.red : Colors.white,
+          color: isSelected ? const Color(0xFFFD1A00) : Colors.white,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: Colors.red,
+            color: const Color(0xFFFD1A00),
             width: 2.0,
           ),
         ),
@@ -202,7 +205,7 @@ class BloodTypeQuestion extends ConsumerWidget {
           child: Text(
             rhFactor,
             style: TextStyle(
-              color: isSelected ? Colors.white : Colors.red,
+              color: isSelected ? Colors.white : const Color(0xFFFD1A00),
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -212,20 +215,43 @@ class BloodTypeQuestion extends ConsumerWidget {
   }
 
   Widget _buildNavigationButtons(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        ElevatedButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Previous'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pushNamed(context, '/donation-details');
-          },
-          child: const Text('Next'),
-        ),
-      ],
+    return Expanded(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color(0xFFFD1A00)), // FD1A00 color
+              fixedSize: MaterialStateProperty.all<Size>(
+                  const Size(120.0, 40.0)), // Width and height
+            ),
+            child: const Text(
+              'Previous',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+          const SizedBox(
+            width: 50,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/donation-details');
+            },
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(
+                  const Color(0xFFFD1A00)), // FD1A00 color
+              fixedSize: MaterialStateProperty.all<Size>(
+                  const Size(120.0, 40.0)), // Width and height
+            ),
+            child: const Text(
+              'Next',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mym_raktaveer_frontend/Providers/locationProvider.dart';
+import 'package:mym_raktaveer_frontend/Providers/location_Provider.dart';
 import 'package:geocoding/geocoding.dart';
 
 class MapChoice extends ConsumerStatefulWidget {
