@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/models/blood_request_model.dart';
@@ -18,15 +20,42 @@ class BloodRequestDetail extends ConsumerStatefulWidget {
 }
 
 class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
-  final double containerWidth = 400.0;
-
-  // This method fetches data for the given requestId
   Future<BloodRequestModel?> _fetchRequestDetails() async {
-    // This should be a call to your BloodRequestService
+    final bloodRequestService = BloodRequestService(ApiService());
+    return await bloodRequestService.fetchBloodRequestDetail(
+      ref,
+      widget.requestId,
+    );
+  }
+
+  void _handleRequestStatus(String status) async {
     final bloodRequestService = BloodRequestService(ApiService());
 
-    return await bloodRequestService.fetchBloodRequestDetail(
-        ref, widget.requestId);
+    try {
+      if (widget.requestId != null) {
+        await bloodRequestService.updateRequestStatus(
+          widget.requestId!,
+          status,
+          ref, // pass the WidgetRef to the method
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Request $status successfully!'),
+          ),
+        );
+        print('Error: requestId is null');
+      }
+    } catch (error) {
+      print('Error updating request status: $error');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error updating request status. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -36,23 +65,30 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
         future: _fetchRequestDetails(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
+            return _buildLoadingWidget();
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else if (!snapshot.hasData) {
             return const Text('No data found for this request.');
           } else {
             final bloodRequest = snapshot.data!;
-            return _buildContent(context, bloodRequest);
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                double containerWidth = constraints.maxWidth > 600
+                    ? 400.0
+                    : constraints.maxWidth * 0.9;
+                return _buildContent(context, bloodRequest, containerWidth);
+              },
+            );
           }
         },
       ),
     );
   }
 
-  Widget _buildContent(BuildContext context, BloodRequestModel bloodRequest) {
+  Widget _buildContent(BuildContext context, BloodRequestModel bloodRequest,
+      double containerWidth) {
     String bloodGroup = bloodRequest.bloodGroupAbo + bloodRequest.bloodGroupRh;
-    double containerWidth = MediaQuery.of(context).size.width * 0.9;
     bool isSmallScreen = MediaQuery.of(context).size.width < 600;
 
     return SingleChildScrollView(
@@ -64,14 +100,15 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
             child: Align(
               alignment: Alignment.topLeft,
               child: IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: const Icon(
+                  Icons.arrow_back_ios_rounded,
+                ),
                 onPressed: () {
                   Navigator.pop(context);
                 },
               ),
             ),
           ),
-          // Profile Picture, Name, and Email
           Padding(
             padding: const EdgeInsets.only(left: 30.0, right: 16.0, top: 0.0),
             child: Row(
@@ -105,7 +142,6 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
               ],
             ),
           ),
-          // Phone, Age, and Gender
           Padding(
             padding: const EdgeInsets.only(left: 0.0, right: 16.0, top: 10.0),
             child: Row(
@@ -224,7 +260,6 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
               ),
             ),
           ),
-          // First Container with drop shadow and circular edges
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Container(
@@ -372,7 +407,7 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                       const Text(
                         'Date and Time:',
                         style:
-                            TextStyle(fontSize: 16, color: Color(0xFFFD1A00)),
+                            TextStyle(fontSize: 10, color: Color(0xFFFD1A00)),
                       ),
                       const SizedBox(width: 8),
                       FittedBox(
@@ -386,8 +421,6 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                       ),
                     ],
                   ),
-
-                  // Download Document
                   const SizedBox(height: 20),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -406,8 +439,6 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                     ],
                   ),
                   const SizedBox(height: 12),
-
-                  // Additional Container with Note
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
@@ -456,12 +487,16 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _handleRequestStatus('rejected');
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFFFD1A00)), // FD1A00 color
+                      const Color(0xFFFD1A00),
+                    ),
                     fixedSize: MaterialStateProperty.all<Size>(
-                        const Size(145.0, 40.0)), // Width and height
+                      const Size(145.0, 40.0),
+                    ),
                   ),
                   child: const Text(
                     'Reject request',
@@ -472,12 +507,16 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _handleRequestStatus('approved');
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFF99FDD2)), // FD1A00 color
+                      const Color(0xFF99FDD2),
+                    ),
                     fixedSize: MaterialStateProperty.all<Size>(
-                        const Size(145.0, 40.0)), // Width and height
+                      const Size(145.0, 40.0),
+                    ),
                   ),
                   child: const Text(
                     'Accept request',

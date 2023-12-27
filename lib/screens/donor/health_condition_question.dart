@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/Providers/blood_donation_provider.dart';
@@ -122,7 +124,7 @@ class HealthConditionQuestion extends ConsumerWidget {
           return ListTile(
             title: Row(
               children: <Widget>[
-                SizedBox(
+                const SizedBox(
                   width: 10,
                 ),
                 Expanded(
