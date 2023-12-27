@@ -155,7 +155,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             height: screenHeight * 0.34,
             child: const RequestListPage(),
           ),
-          const SizedBox(height: 15),
+          const SizedBox(height: 10),
           Align(
             alignment: Alignment.center,
             child: Container(
