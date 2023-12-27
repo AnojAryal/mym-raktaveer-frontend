@@ -1,6 +1,7 @@
 // ignore_for_file: constant_identifier_names, unnecessary_null_comparison, avoid_print
 
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter/services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,10 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
   Gender? selectedGender = Gender.Male;
   bool isPasswordVisible = false;
   bool _acceptTermsAndPrivacy = false;
+  int? selectedAge;
+
+  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
+      GlobalKey<ScaffoldMessengerState>();
 
   @override
   void dispose() {
@@ -47,23 +52,26 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text('Registration',
-                  style:
-                      TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16.0),
-              Form(key: formKey, child: _buildForm()),
-            ],
+    return ScaffoldMessenger(
+      key: _scaffoldKey,
+      child: ListView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Text('Registration',
+                    style:
+                        TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16.0),
+                Form(key: formKey, child: _buildForm()),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -84,12 +92,35 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
 
   Widget _buildSignUpButton() {
     return ElevatedButton(
-      onPressed: signUp,
+      onPressed: () {
+        if (isFormValid()) {
+          if (_acceptTermsAndPrivacy) {
+            signUp();
+          } else {
+            showSnackbar('Please accept the terms and conditions');
+          }
+        } else {
+          showSnackbar('Please fill in all required fields');
+        }
+      },
       style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.red,
-          minimumSize: const Size(double.infinity, 48)),
+        backgroundColor: Colors.red,
+        minimumSize: const Size(double.infinity, 48),
+      ),
       child: const Text('Sign Up', style: TextStyle(color: Colors.white)),
     );
+  }
+
+  void showSnackbar(String message) {
+    final snackBar = SnackBar(
+      content: Text(message),
+      action: SnackBarAction(
+        label: 'OK',
+        onPressed: () {},
+      ),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   Widget _buildCheckbox() {
@@ -131,7 +162,6 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
         DropdownButtonFormField<Gender>(
           value: selectedGender,
           onChanged: (value) {
-            // Update the selected gender when changed
             setState(() {
               selectedGender = value;
             });
@@ -150,6 +180,7 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
               child: Text('Others'),
             ),
           ],
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (gender) => gender == null ? 'Select your gender' : null,
         ),
         const SizedBox(height: 16.0),
@@ -161,19 +192,30 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
             labelText: 'Age',
           ),
           keyboardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: (value) => value!.trim().isEmpty ? 'Enter your age' : null,
+          validator: (age) {
+            if (age == null || age.isEmpty) {
+              return 'Enter your age';
+            }
+            final intAge = int.tryParse(age);
+            if (intAge == null || intAge < 1 || intAge > 110) {
+              return 'Please enter a valid age';
+            }
+            return null;
+          },
         ),
-
         const SizedBox(height: 16.0),
 
-        // Age Input
+        // Mobile Number Input
         TextFormField(
           controller: mobileNumberController,
           decoration: const InputDecoration(
             labelText: 'Mobile Number',
+            prefixText: '+977 ',
           ),
           keyboardType: TextInputType.number,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) =>
               value!.trim().isEmpty ? 'Enter your Mobile Number' : null,
         ),
