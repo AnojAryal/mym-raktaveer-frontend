@@ -113,9 +113,14 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
           decoration: const InputDecoration(
             labelText: 'Email',
           ),
-          validator: (email) => email != null && !EmailValidator.validate(email)
-              ? 'Enter a valid email'
-              : null,
+          validator: (email) {
+            if (email == null || email.isEmpty) {
+              return 'Enter your email';
+            } else if (!EmailValidator.validate(email)) {
+              return 'Please enter a valid email';
+            }
+            return null;
+          },
           keyboardType: TextInputType.emailAddress,
         ),
         const SizedBox(height: 16.0),
@@ -188,9 +193,16 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
               },
             ),
           ),
-          validator: (value) => value != null && value.length < 6
-              ? 'Password is too short'
-              : null,
+          validator: (password) {
+            if (password == null || password.length < 6) {
+              return 'Password should be at least 6 characters';
+            } else if (!password.contains(RegExp(r'(?=.*[A-Z])'))) {
+              return 'Password should contain at least one capital letter';
+            } else if (!password.contains(RegExp(r'(?=.*[@#$%^&+=])'))) {
+              return 'Password should contain at least one special character';
+            }
+            return null;
+          },
           obscureText: !isPasswordVisible,
         ),
         const SizedBox(height: 16.0),
