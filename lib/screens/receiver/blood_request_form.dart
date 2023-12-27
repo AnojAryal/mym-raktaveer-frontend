@@ -175,6 +175,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       child: TextFormField(
         controller: controller,
         decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: validatePatientName, // Add validator
       ),
     );
@@ -187,6 +188,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       child: TextFormField(
         controller: controller,
         decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: validateHospitalName, // Add validator
       ),
     );
@@ -247,6 +249,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
                 Navigator.pushNamed(context, '/map-page');
               }
             : null,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: validateLocation,
       ),
     );
@@ -555,6 +558,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
           FilteringTextInputFormatter.digitsOnly,
         ],
         decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: validateQuantity,
       ),
     );
