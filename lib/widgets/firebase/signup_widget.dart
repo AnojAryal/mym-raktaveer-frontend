@@ -102,6 +102,7 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
           decoration: const InputDecoration(
             labelText: 'Fullname',
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) =>
               value!.trim().isEmpty ? 'Enter your fullname' : null,
         ),
@@ -113,6 +114,7 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
           decoration: const InputDecoration(
             labelText: 'Email',
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (email) {
             if (email == null || email.isEmpty) {
               return 'Enter your email';
@@ -159,6 +161,7 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
             labelText: 'Age',
           ),
           keyboardType: TextInputType.number,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) => value!.trim().isEmpty ? 'Enter your age' : null,
         ),
 
@@ -193,12 +196,13 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
               },
             ),
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (password) {
             if (password == null || password.length < 6) {
               return 'Password should be at least 6 characters';
             } else if (!password.contains(RegExp(r'(?=.*[A-Z])'))) {
               return 'Password should contain at least one capital letter';
-            } else if (!password.contains(RegExp(r'(?=.*[@#$%^&+=])'))) {
+            } else if (!password.contains(RegExp(r'(?=.*[@#$%^&+=*])'))) {
               return 'Password should contain at least one special character';
             }
             return null;
@@ -223,6 +227,7 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
               },
             ),
           ),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           validator: (value) {
             if (value != null && value != passwordController.text) {
               return 'Passwords do not match';
@@ -322,7 +327,7 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
           await deleteUser(authResult.user!);
           isLocalDbOperationPending.state = false;
 
-          Utils.showSnackBar('Registration failed in local database');
+          Utils.showSnackBar('Registration failed in the local database');
         } else {
           isLocalDbOperationPending.state = false;
         }
@@ -331,7 +336,7 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
       }
     } catch (e) {
       isLocalDbOperationPending.state =
-          false; // Ensure flag is reset in case of exception
+          false; // Ensure the flag is reset in case of an exception
       Utils.showSnackBar(e.toString());
     } finally {
       closeLoadingDialog();
