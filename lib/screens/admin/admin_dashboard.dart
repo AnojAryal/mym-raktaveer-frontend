@@ -64,28 +64,27 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     children: [
                       Text(
                         'Total Users: ${analyticsData['totalUsers']}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.black,
-                          fontSize: 16,
+                          fontSize: screenWidth * 0.04, // Responsive font size
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         'Active Users: ${analyticsData['activeUsers']}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.black,
-                          fontSize: 16,
+                          fontSize: screenWidth * 0.04,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      // Add more analytics data as needed...
                     ],
                   );
                 }
               },
             ),
           ),
-          const SizedBox(height: 20), // Add some space between the containers
+          const SizedBox(height: 20),
           Container(
             width: screenWidth * 0.86,
             padding: const EdgeInsets.all(16),
@@ -105,69 +104,24 @@ class _AdminDashboardState extends State<AdminDashboard> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // User Icon
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.person,
-                        color: const Color(0xFFFD1A00),
-                        size: screenWidth * 0.08,
-                      ),
-                      SizedBox(height: screenHeight * 0.01),
-                      Text(
-                        'Users',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: screenWidth * 0.026,
-                        ),
-                      ),
-                    ],
-                  ),
+                _buildIconColumn(
+                  Icons.person,
+                  'Users',
+                  screenWidth,
                 ),
 
                 // Admin Icon
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.admin_panel_settings,
-                        color: const Color(0xFFFD1A00),
-                        size: screenWidth * 0.08,
-                      ),
-                      SizedBox(height: screenHeight * 0.01),
-                      Text(
-                        'Admins',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: screenWidth * 0.026,
-                        ),
-                      ),
-                    ],
-                  ),
+                _buildIconColumn(
+                  Icons.admin_panel_settings,
+                  'Admins',
+                  screenWidth,
                 ),
 
                 // Active Admins Icon
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    children: [
-                      Icon(
-                        Icons.supervised_user_circle,
-                        color: const Color(0xFFFD1A00),
-                        size: screenWidth * 0.08,
-                      ),
-                      SizedBox(height: screenHeight * 0.01),
-                      Text(
-                        'Active Admins',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: screenWidth * 0.026,
-                        ),
-                      ),
-                    ],
-                  ),
+                _buildIconColumn(
+                  Icons.supervised_user_circle,
+                  'Active Admins',
+                  screenWidth,
                 ),
               ],
             ),
@@ -178,11 +132,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 16.0),
+              Padding(
+                padding: const EdgeInsets.only(left: 16.0),
                 child: Text(
                   'Request Details',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                      fontSize: screenWidth * 0.05,
+                      fontWeight: FontWeight.w600),
                 ),
               ),
               IconButton(
@@ -195,12 +151,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
               ),
             ],
           ),
-
-          const SizedBox(
-            height: 300,
-            child: RequestListPage(),
+          SizedBox(
+            height: screenHeight * 0.34,
+            child: const RequestListPage(),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 15),
           Align(
             alignment: Alignment.center,
             child: Container(
@@ -219,7 +174,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(14.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -246,8 +201,31 @@ class _AdminDashboardState extends State<AdminDashboard> {
               ),
             ),
           ),
-          SizedBox(
-            height: 6,
+          const SizedBox(
+            height: 20,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIconColumn(IconData icon, String label, double screenWidth) {
+    return Expanded(
+      flex: 1,
+      child: Column(
+        children: [
+          Icon(
+            icon,
+            color: const Color(0xFFFD1A00),
+            size: screenWidth * 0.08,
+          ),
+          SizedBox(height: screenWidth * 0.01),
+          Text(
+            label,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: screenWidth * 0.026,
+            ),
           ),
         ],
       ),
