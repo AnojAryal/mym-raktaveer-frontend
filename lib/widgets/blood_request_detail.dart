@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/models/blood_request_model.dart';
@@ -24,6 +26,36 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
       ref,
       widget.requestId,
     );
+  }
+
+  void _handleRequestStatus(String status) async {
+    final bloodRequestService = BloodRequestService(ApiService());
+
+    try {
+      if (widget.requestId != null) {
+        await bloodRequestService.updateRequestStatus(
+          widget.requestId!,
+          status,
+          ref, // pass the WidgetRef to the method
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Request $status successfully!'),
+          ),
+        );
+        print('Error: requestId is null');
+      }
+    } catch (error) {
+      print('Error updating request status: $error');
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error updating request status. Please try again.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -455,12 +487,16 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _handleRequestStatus('rejected');
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFFFD1A00)), // FD1A00 color
+                      const Color(0xFFFD1A00),
+                    ),
                     fixedSize: MaterialStateProperty.all<Size>(
-                        const Size(145.0, 40.0)), // Width and height
+                      const Size(145.0, 40.0),
+                    ),
                   ),
                   child: const Text(
                     'Reject request',
@@ -471,12 +507,16 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _handleRequestStatus('approved');
+                  },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                        const Color(0xFF99FDD2)), // FD1A00 color
+                      const Color(0xFF99FDD2),
+                    ),
                     fixedSize: MaterialStateProperty.all<Size>(
-                        const Size(145.0, 40.0)), // Width and height
+                      const Size(145.0, 40.0),
+                    ),
                   ),
                   child: const Text(
                     'Accept request',

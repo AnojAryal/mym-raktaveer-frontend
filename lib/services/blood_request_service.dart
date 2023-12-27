@@ -114,7 +114,7 @@ class BloodRequestService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization':
-              'Bearer $jwtToken', // Include the JWT token in the 'Authorization' header
+              'Bearer $jwtToken',
         },
       );
 
@@ -145,4 +145,32 @@ class BloodRequestService {
       client.close();
     }
   }
+
+  Future<void> updateRequestStatus(int requestId, String status, WidgetRef ref) async {
+  final client = http.Client();
+  final userData = ref.watch(userDataProvider);
+  String? jwtToken = userData?.accessToken;
+
+  try {
+    final response = await client.put(
+      Uri.parse("$bloodRequestUrl/$requestId?status=$status"),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $jwtToken',
+      },
+      body: jsonEncode({'status': status}),
+    );
+
+    if (response.statusCode == 200) {
+      print('Request status updated successfully');
+    } else {
+      print('Failed to update request status. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
+    }
+  } catch (error) {
+    print('Error updating request status: $error');
+  } finally {
+    client.close();
+  }
+}
 }
