@@ -140,8 +140,8 @@ class HealthConditionQuestion extends ConsumerWidget {
               ),
             ),
             contentPadding: const EdgeInsets.symmetric(
-              horizontal: 8,
-              vertical: 4,
+              horizontal: 6,
+              vertical: 0,
             ),
             value: isChecked,
             onChanged: (bool? newValue) {
