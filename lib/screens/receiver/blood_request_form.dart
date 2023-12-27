@@ -11,6 +11,7 @@ import '../../services/api_service.dart';
 import '../../services/blood_request_service.dart';
 import '../../services/location_service.dart';
 import '../../widgets/background.dart';
+import '../../widgets/firebase/blood_request_validator.dart';
 
 class BloodRequestForm extends ConsumerStatefulWidget {
   const BloodRequestForm({
@@ -35,6 +36,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
 
   File? selectedFile;
   final ImagePicker _picker = ImagePicker();
+  final _formKey = GlobalKey<FormState>();
 
   String _selectedBloodGroupAbo = 'A';
   String _selectedBloodGroupRh = 'Positive (+ve)';
@@ -87,40 +89,51 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     }
 
     return Background(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildBackButton(ref),
-          _buildBloodRequestFormTitle(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildTextField('Patient Name', _patientNameController),
-                  _buildRow(['Age', 'Sex'], [_ageController, _sexController]),
-                  _buildTextField('Hospital Name', _hospitalNameController),
-                  _buildTextFieldWithIcon(
-                    'Location',
-                    Icons.location_on,
-                    controller: _locationController,
-                  ),
-                  _buildRow(['Room No.', 'OPD No.'],
-                      [_roomNoController, _opdNoController]),
-                  _buildBloodGroupDropdown('Blood Group (ABO)'),
-                  _buildBloodGroupRhDropdown('Blood Group (RH)'),
-                  _buildTextFieldWithFilePicker('Document Upload'),
-                  _buildDescriptionTextField(
-                      'Description', _descriptionController),
-                  _buildUrgencyLevelDropdown(),
-                  _buildDateTimePicker('Date and Time'),
-                  _buildNumericTextField('Quantity', _quantityController),
-                  const SizedBox(height: 16.0),
-                  _buildSignUpButton(),
-                ],
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildBackButton(ref),
+            _buildBloodRequestFormTitle(),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildTextField('Patient Name', _patientNameController,
+                        FormValidator.validatePatientName),
+                    _buildRow(['Age', 'Sex'], [_ageController, _sexController]),
+                    _buildHospitalTextField(
+                        'Hospital Name',
+                        _hospitalNameController,
+                        FormValidator.validateHospitalName),
+                    _buildTextFieldWithIcon(
+                      'Location',
+                      Icons.location_on,
+                      FormValidator.validateLocation,
+                      controller: _locationController,
+                    ),
+                    _buildRow(['Room No.', 'OPD No.'],
+                        [_roomNoController, _opdNoController]),
+                    _buildBloodGroupDropdown('Blood Group (ABO)'),
+                    _buildBloodGroupRhDropdown('Blood Group (RH)'),
+                    _buildTextFieldWithFilePicker('Document Upload'),
+                    _buildDescriptionTextField(
+                        'Description',
+                        _descriptionController,
+                        FormValidator.validateHospitalName),
+                    _buildUrgencyLevelDropdown(),
+                    _buildDateTimePicker('Date and Time'),
+                    _buildNumericTextField('Quantity', _quantityController,
+                        FormValidator.validateQuantity),
+                    const SizedBox(height: 16.0),
+                    _buildSignUpButton(),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -155,63 +168,55 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller) {
-    final RegExp nameRegex =
-        RegExp(r'^[a-zA-Z ]+$'); // Allows only letters and spaces
-
+  Widget _buildTextField(String label, TextEditingController controller,
+      String? Function(String?) validatePatientName) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
         controller: controller,
         decoration: _getTextFieldDecoration(label),
-        autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter the patient name';
-          } else if (!nameRegex.hasMatch(value)) {
-            return 'Special characters or numbers are not allowed';
-          }
-          // You can add additional validation logic if needed
-          return null;
-        },
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z ]')),
-        ],
+        validator: validatePatientName, // Add validator
       ),
     );
   }
 
-  Widget _buildNormalTextField(String label, TextEditingController controller) {
+  Widget _buildHospitalTextField(String label, TextEditingController controller,
+      String? Function(String?) validateHospitalName) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: _getTextFieldDecoration(label),
+        validator: validateHospitalName, // Add validator
+      ),
+    );
+  }
+
+  Widget _buildNormalTextField(String label, TextEditingController controller,
+      String? Function(String?) validateRoomNumber) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
         controller: controller,
         decoration: _getTextFieldDecoration(label),
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter $label';
-          }
-
-          // Add a check for special characters
-          if (value.contains(RegExp(r'[!@#%^&*(),.?":{}|<>]'))) {
-            return 'Special characters are not allowed';
-          }
-
-          return null; // Validation passed
-        },
+        validator: validateRoomNumber,
       ),
     );
   }
 
   Widget _buildDescriptionTextField(
-      String label, TextEditingController controller) {
+      String label,
+      TextEditingController controller,
+      String? Function(String?) validateDescription) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         decoration: _getTextFieldDecoration(label),
-        maxLines: 4, // Set the maximum number of lines
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        maxLines: 5,
+        validator: validateDescription,
       ),
     );
   }
@@ -224,11 +229,16 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
-  Widget _buildTextFieldWithIcon(String label, IconData icon,
-      {bool isLocationField = true, TextEditingController? controller}) {
+  Widget _buildTextFieldWithIcon(
+    String label,
+    IconData icon,
+    String? Function(String?) validateLocation, {
+    bool isLocationField = true,
+    TextEditingController? controller,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         readOnly: true,
         decoration: _getTextFieldWithIconDecoration(label, icon),
@@ -237,6 +247,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
                 Navigator.pushNamed(context, '/map-page');
               }
             : null,
+        validator: validateLocation,
       ),
     );
   }
@@ -418,7 +429,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
             );
           } else {
             return Expanded(
-              child: _buildNormalTextField(labels[index], controllers[index]),
+              child: _buildNormalTextField(labels[index], controllers[index],
+                  FormValidator.validateRoomNumber),
             );
           }
         }),
@@ -441,12 +453,6 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       }).toList(),
       onChanged: (value) {
         controller.text = value.toString();
-      },
-      validator: (value) {
-        if (value == null || value < 13) {
-          return 'Please select an age of 5 or older';
-        }
-        return null;
       },
     );
   }
@@ -538,8 +544,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
-  Widget _buildNumericTextField(
-      String label, TextEditingController controller) {
+  Widget _buildNumericTextField(String label, TextEditingController controller,
+      String? Function(String?) validateQuantity) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
@@ -549,6 +555,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
           FilteringTextInputFormatter.digitsOnly,
         ],
         decoration: _getTextFieldDecoration(label),
+        validator: validateQuantity,
       ),
     );
   }
@@ -559,7 +566,9 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         padding: const EdgeInsets.all(8),
         child: ElevatedButton(
           onPressed: () {
-            _sendDataToBackend();
+            if (_formKey.currentState!.validate()) {
+              _sendDataToBackend();
+            }
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(150, 45),
