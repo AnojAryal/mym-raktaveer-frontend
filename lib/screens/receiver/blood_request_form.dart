@@ -11,6 +11,7 @@ import '../../services/api_service.dart';
 import '../../services/blood_request_service.dart';
 import '../../services/location_service.dart';
 import '../../widgets/background.dart';
+import '../../widgets/firebase/blood_request_validator.dart';
 
 class BloodRequestForm extends ConsumerStatefulWidget {
   const BloodRequestForm({
@@ -35,10 +36,12 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
 
   File? selectedFile;
   final ImagePicker _picker = ImagePicker();
+  final _formKey = GlobalKey<FormState>();
 
   String _selectedBloodGroupAbo = 'A';
   String _selectedBloodGroupRh = 'Positive (+ve)';
   String _selectedUrgencyLevel = 'Low';
+
   final TextEditingController _patientNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _sexController = TextEditingController();
@@ -86,39 +89,51 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     }
 
     return Background(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildBackButton(ref),
-          _buildBloodRequestFormTitle(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildTextField('Patient Name', _patientNameController),
-                  _buildRow(['Age', 'Sex'], [_ageController, _sexController]),
-                  _buildTextField('Hospital Name', _hospitalNameController),
-                  _buildTextFieldWithIcon(
-                    'Location',
-                    Icons.location_on,
-                    controller: _locationController,
-                  ),
-                  _buildRow(['Room No.', 'OPD No.'],
-                      [_roomNoController, _opdNoController]),
-                  _buildBloodGroupDropdown('Blood Group (ABO)'),
-                  _buildBloodGroupRhDropdown('Blood Group (RH)'),
-                  _buildTextFieldWithFilePicker('Document Upload'),
-                  _buildTextField('Description', _descriptionController),
-                  _buildUrgencyLevelDropdown(),
-                  _buildDateTimePicker('Date and Time'),
-                  _buildNumericTextField('Quantity', _quantityController),
-                  const SizedBox(height: 16.0),
-                  _buildSignUpButton(),
-                ],
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildBackButton(ref),
+            _buildBloodRequestFormTitle(),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildTextField('Patient Name', _patientNameController,
+                        FormValidator.validatePatientName),
+                    _buildRow(['Age', 'Sex'], [_ageController, _sexController]),
+                    _buildHospitalTextField(
+                        'Hospital Name',
+                        _hospitalNameController,
+                        FormValidator.validateHospitalName),
+                    _buildTextFieldWithIcon(
+                      'Location',
+                      Icons.location_on,
+                      FormValidator.validateLocation,
+                      controller: _locationController,
+                    ),
+                    _buildRow(['Room No.', 'OPD No.'],
+                        [_roomNoController, _opdNoController]),
+                    _buildBloodGroupDropdown('Blood Group (ABO)'),
+                    _buildBloodGroupRhDropdown('Blood Group (RH)'),
+                    _buildTextFieldWithFilePicker('Document Upload'),
+                    _buildDescriptionTextField(
+                        'Description',
+                        _descriptionController,
+                        FormValidator.validateHospitalName),
+                    _buildUrgencyLevelDropdown(),
+                    _buildDateTimePicker('Date and Time'),
+                    _buildNumericTextField('Quantity', _quantityController,
+                        FormValidator.validateQuantity),
+                    const SizedBox(height: 16.0),
+                    _buildSignUpButton(),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -153,12 +168,57 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      String? Function(String?) validatePatientName) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validatePatientName, // Add validator
+      ),
+    );
+  }
+
+  Widget _buildHospitalTextField(String label, TextEditingController controller,
+      String? Function(String?) validateHospitalName) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validateHospitalName, // Add validator
+      ),
+    );
+  }
+
+  Widget _buildNormalTextField(String label, TextEditingController controller,
+      String? Function(String?) validateRoomNumber) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validateRoomNumber,
+      ),
+    );
+  }
+
+  Widget _buildDescriptionTextField(
+      String label,
+      TextEditingController controller,
+      String? Function(String?) validateDescription) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        maxLines: 5,
+        validator: validateDescription,
       ),
     );
   }
@@ -171,11 +231,16 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
-  Widget _buildTextFieldWithIcon(String label, IconData icon,
-      {bool isLocationField = true, TextEditingController? controller}) {
+  Widget _buildTextFieldWithIcon(
+    String label,
+    IconData icon,
+    String? Function(String?) validateLocation, {
+    bool isLocationField = true,
+    TextEditingController? controller,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         readOnly: true,
         decoration: _getTextFieldWithIconDecoration(label, icon),
@@ -184,6 +249,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
                 Navigator.pushNamed(context, '/map-page');
               }
             : null,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validateLocation,
       ),
     );
   }
@@ -333,17 +400,92 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
+  // Widget _buildRow(
+  //     List<String> labels, List<TextEditingController> controllers) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(1.0),
+  //     child: Row(
+  //       children: List.generate(labels.length, (index) {
+  //         return Expanded(
+  //           child: _buildTextField(labels[index], controllers[index]),
+  //         );
+  //       }),
+  //     ),
+  //   );
+  // }
+
   Widget _buildRow(
       List<String> labels, List<TextEditingController> controllers) {
+    assert(labels.length == controllers.length);
+
     return Padding(
-      padding: const EdgeInsets.all(1.0),
+      padding: const EdgeInsets.all(8.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: List.generate(labels.length, (index) {
-          return Expanded(
-            child: _buildTextField(labels[index], controllers[index]),
-          );
+          if (labels[index] == 'Age') {
+            return SizedBox(
+              width: 155,
+              child: _buildAgeDropdown(controllers[index]),
+            );
+          } else if (labels[index] == 'Sex') {
+            return SizedBox(
+              width: 155,
+              child: _buildSexDropdown(controllers[index]),
+            );
+          } else {
+            return Expanded(
+              child: _buildNormalTextField(labels[index], controllers[index],
+                  FormValidator.validateRoomNumber),
+            );
+          }
         }),
       ),
+    );
+  }
+
+  Widget _buildAgeDropdown(TextEditingController controller) {
+    List<int> ageOptions = List.generate(50 - 5 + 1, (index) => index + 5);
+
+    return DropdownButtonFormField<int>(
+      decoration: _getTextFieldDecoration('Age'),
+      value:
+          int.tryParse(controller.text) ?? 5, // Set a default value (e.g., 13)
+      items: ageOptions.map((age) {
+        return DropdownMenuItem<int>(
+          value: age,
+          child: Text(age.toString()),
+        );
+      }).toList(),
+      onChanged: (value) {
+        controller.text = value.toString();
+      },
+    );
+  }
+
+  Widget _buildSexDropdown(TextEditingController controller) {
+    List<String> sexOptions = ['Male', 'Female', 'Other'];
+
+    return DropdownButtonFormField<String>(
+      decoration: _getTextFieldDecoration('Sex'),
+      value: controller.text.isNotEmpty
+          ? controller.text
+          : 'Male', // Set default value to 'Male'
+      items: sexOptions.map((sex) {
+        return DropdownMenuItem<String>(
+          value: sex,
+          child: Text(sex),
+        );
+      }).toList(),
+      onChanged: (value) {
+        controller.text = value!;
+      },
+      validator: (value) {
+        if (value == null || !['Male', 'Female', 'Other'].contains(value)) {
+          return 'Please select a valid sex';
+        }
+        return null;
+      },
     );
   }
 
@@ -408,8 +550,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
-  Widget _buildNumericTextField(
-      String label, TextEditingController controller) {
+  Widget _buildNumericTextField(String label, TextEditingController controller,
+      String? Function(String?) validateQuantity) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
@@ -419,6 +561,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
           FilteringTextInputFormatter.digitsOnly,
         ],
         decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validateQuantity,
       ),
     );
   }
@@ -429,7 +573,9 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         padding: const EdgeInsets.all(8),
         child: ElevatedButton(
           onPressed: () {
-            _sendDataToBackend();
+            if (_formKey.currentState!.validate()) {
+              _sendDataToBackend();
+            }
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(150, 45),
