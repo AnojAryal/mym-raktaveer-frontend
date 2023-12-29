@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/widgets/firebase/forgot_password.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
 import 'package:mym_raktaveer_frontend/services/firebase_auth_service.dart';
+import 'package:mym_raktaveer_frontend/widgets/firebase/utils.dart';
 
 class LoginWidget extends ConsumerStatefulWidget {
   const LoginWidget({
@@ -151,8 +153,13 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
         passwordController.text.trim(),
         ref,
       );
-    } catch (e) {
-      // ignore: avoid_print
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-credential') {
+        Utils.showSnackBar(
+            "Invalid credentials. Please double-check your email and password and try again.");
+      } else {
+        Utils.showSnackBar(e.code);
+      }
     } finally {
       navigatorKey.currentState!.popUntil((route) => route.isFirst);
     }
