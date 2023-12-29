@@ -22,7 +22,7 @@ class LoginWidget extends ConsumerStatefulWidget {
 class _LoginWidgetState extends ConsumerState<LoginWidget> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  bool isPasswordVisible = false; // Added to toggle password visibility
+  bool isPasswordVisible = false;
 
   @override
   void dispose() {
@@ -33,109 +33,138 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // MYM Raktabeer Heading
-          const Text(
-            'MYM Raktaveer',
-            style: TextStyle(
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.black, // Set your desired color
-            ),
-          ),
-          const SizedBox(height: 16.0),
-
-          // Email Input
-          TextField(
-            controller: emailController,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-            ),
-            keyboardType: TextInputType.emailAddress,
-          ),
-          const SizedBox(height: 16.0),
-
-          // Password Input with Show/Hide Icon
-          TextField(
-            controller: passwordController,
-            decoration: InputDecoration(
-              labelText: 'Password',
-              suffixIcon: IconButton(
-                icon: Icon(
-                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                ),
-                onPressed: () {
-                  setState(() {
-                    isPasswordVisible = !isPasswordVisible;
-                  });
-                },
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Center(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(
+                constraints.maxWidth > 600 ? 32.0 : 16.0,
               ),
-            ),
-            obscureText: !isPasswordVisible,
-          ),
-          const SizedBox(height: 24.0),
-
-          // Red Sign-In Button
-          ElevatedButton(
-              onPressed: signIn,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-              ),
-              child: const Text(
-                'Login',
-                style: TextStyle(
-                  color: Colors.white,
-                ),
-              )),
-          const SizedBox(
-            height: 24,
-          ),
-
-          GestureDetector(
-            child: const Text(
-              'Forgot Password?',
-              style: TextStyle(
-                decoration: TextDecoration.underline,
-                color: Color.fromARGB(255, 99, 99, 210),
-              ),
-            ),
-            onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const ForgotPasswordPage())),
-          ),
-
-          const SizedBox(
-            height: 14,
-          ),
-
-          RichText(
-            text: TextSpan(
-              style: const TextStyle(color: Colors.black),
-              text: 'Dont have account? ',
-              children: [
-                TextSpan(
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      // Check if the callback is not null before invoking it
-                      if (widget.onClickedSignUp != null) {
-                        // Pass the current context to the callback
-                        widget.onClickedSignUp!();
-                      }
-                    },
-                  text: "Sign Up",
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 99, 99, 210),
-                    decoration: TextDecoration.underline,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'MYM Raktaveer',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 16.0),
+                  TextFormField(
+                    controller: emailController,
+                    decoration: const InputDecoration(
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value!.trim().isEmpty) {
+                        return 'Enter your email address';
+                      }
+                      if (!RegExp(
+                        r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$',
+                      ).hasMatch(value)) {
+                        return 'Invalid email address';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16.0),
+                  TextField(
+                    controller: passwordController,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      border: const OutlineInputBorder(),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue),
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            isPasswordVisible = !isPasswordVisible;
+                          });
+                        },
+                      ),
+                    ),
+                    obscureText: !isPasswordVisible,
+                  ),
+                  const SizedBox(height: 24.0),
+                  ElevatedButton(
+                    onPressed: signIn,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 50,
+                        vertical: 15,
+                      ),
+                    ),
+                    child: const Text(
+                      'Login',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
+                  GestureDetector(
+                    child: const Text(
+                      'Forgot Password?',
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        color: Colors.blue,
+                      ),
+                    ),
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const ForgotPasswordPage(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 14,
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(color: Colors.black),
+                      text: 'Don\'t have an account? ',
+                      children: [
+                        TextSpan(
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              if (widget.onClickedSignUp != null) {
+                                widget.onClickedSignUp!();
+                              }
+                            },
+                          text: "Sign Up",
+                          style: const TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
