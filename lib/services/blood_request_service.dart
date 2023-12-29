@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -34,6 +35,7 @@ class BloodRequestService {
       );
 
       request.headers['Authorization'] = 'Bearer $jwtToken';
+      request.headers['Accept'] = 'application/json';
 
       request.files.add(
         http.MultipartFile.fromBytes(
@@ -82,6 +84,7 @@ class BloodRequestService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwtToken',
+          'Accept': 'application/json',
         },
       );
 
@@ -114,11 +117,13 @@ class BloodRequestService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwtToken',
+          'Accept': 'application/json',
         },
       );
 
       if (response.statusCode == 200) {
         final dynamic responseData = json.decode(response.body);
+        print(responseData);
 
         if (responseData.containsKey('data') && responseData['data'] is List) {
           final List<dynamic> responseDataList = responseData['data'];
@@ -157,6 +162,7 @@ class BloodRequestService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwtToken',
+          'Accept': 'application/json',
         },
         body: jsonEncode({'status': status}),
       );
