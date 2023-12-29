@@ -352,6 +352,7 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
         ref.read(isLocalDbOperationPendingProvider.notifier);
     if (!isFormValid()) return;
     showLoadingDialog();
+    isLocalDbOperationPending.state = false;
 
     try {
       UserCredential? authResult = await FirebaseAuthService.signUp(
@@ -365,21 +366,20 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
         bool dbResult = await sendUserDataToApi(authResult!.user!);
 
         if (!dbResult) {
-          // Rollback Firebase registration if local DB operation fails
           await deleteUser(authResult.user!);
           isLocalDbOperationPending.state = false;
-
-          Utils.showSnackBar('Registration failed in the local database');
         } else {
           isLocalDbOperationPending.state = false;
         }
-      } else {
-        Utils.showSnackBar('Firebase registration failed');
       }
-    } catch (e) {
+    } on FirebaseAuthException catch (e) {
       isLocalDbOperationPending.state =
           false; // Ensure the flag is reset in case of an exception
-      Utils.showSnackBar(e.toString());
+      if (e.code == 'email-already-in-use') {
+        Utils.showSnackBar("The email is already in use");
+      } else {
+        Utils.showSnackBar("An error has occured: ${e.code}");
+      }
     } finally {
       closeLoadingDialog();
     }
@@ -395,14 +395,19 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
   }
 
   Future<bool> sendUserDataToApi(User user) async {
-    final apiUrl = '${ApiService().baseUrl}/api/register';
+    final apiUrl = '${ApiService().baseUrl}/api/users/register';
     final userData = getUserData(user);
 
-    try {
-      final response = await ApiService().postAuthData(apiUrl, userData);
-      return response != null &&
-          (response['message'] == 'User created successfully');
-    } catch (error) {
+    final response = await ApiService().postAuthData(apiUrl, userData);
+    if (response != null &&
+        (response['message'] == 'User created successfully')) {
+      return true;
+    } else if (response != null &&
+        (response['message'] == 'The mobile number has already been taken.')) {
+      Utils.showSnackBar("mobile number has already been taken.");
+      return false;
+    } else {
+      Utils.showSnackBar(response?['message']);
       return false;
     }
   }
