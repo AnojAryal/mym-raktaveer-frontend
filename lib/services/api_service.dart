@@ -27,6 +27,7 @@ class ApiService {
     } catch (e) {
       Utils.showSnackBar("Error sending data. Please try again later!!");
     }
+    return null;
   }
 
   Future<Map<String, dynamic>?> postData(
