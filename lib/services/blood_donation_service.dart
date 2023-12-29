@@ -29,6 +29,7 @@ class BloodDonationService {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $jwtToken',
+          'Accept': 'application/json',
         },
         body: jsonEncode(personalData),
       );

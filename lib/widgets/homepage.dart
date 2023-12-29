@@ -289,7 +289,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        // Blood Journey icon with details
                         Expanded(
                           child: Column(
                             children: [
@@ -299,7 +298,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                             ],
                           ),
                         ),
-                        // About Us icon with details
                         Expanded(
                           child: Column(
                             children: [
@@ -309,7 +307,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                             ],
                           ),
                         ),
-                        // Feedback icon with details
                         Expanded(
                           child: Column(
                             children: [
@@ -321,17 +318,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                         ),
                       ],
                     ),
-                    const SizedBox(
-                        height:
-                            16.0), // Add some space between icons and buttons
+                    const SizedBox(height: 16.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         ElevatedButton(
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color(0xFFFD1A00),
+                            backgroundColor: const Color(0xFFFD1A00),
                             foregroundColor: Colors.white,
                             fixedSize: const Size(130.0, 40.0),
                           ),
