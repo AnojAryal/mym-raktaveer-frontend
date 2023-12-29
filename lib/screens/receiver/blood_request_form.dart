@@ -593,20 +593,14 @@ Future<void> _sendDataToBackend() async {
         String defaultBloodGroupAbo = 'A';
         String defaultBloodGroupRh = 'Positive (+ve)';
         String defaultUrgencyLevel = 'Low';
+        
+        // Use the default values unconditionally
+        String bloodGroupAbo = defaultBloodGroupAbo;
+        String bloodGroupRh = defaultBloodGroupRh;
+        String urgencyLevel = defaultUrgencyLevel;
+
         int defaultAge = 0;
         String defaultSex = 'Male';
-
-        String bloodGroupAbo = _selectedBloodGroupAbo != defaultBloodGroupAbo
-            ? _selectedBloodGroupAbo
-            : 'Default Blood Group ABO Value';
-
-        String bloodGroupRh = _selectedBloodGroupRh != defaultBloodGroupRh
-            ? _selectedBloodGroupRh
-            : 'Default Blood Group Rh Value';
-
-        String urgencyLevel = _selectedUrgencyLevel != defaultUrgencyLevel
-            ? _selectedUrgencyLevel
-            : 'Default Urgency Level Value';
 
         int age = int.tryParse(_ageController.text) ?? defaultAge;
         String sex = _sexController.text.isNotEmpty
