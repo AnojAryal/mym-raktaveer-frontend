@@ -42,6 +42,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   String _selectedBloodGroupRh = 'Positive (+ve)';
   String _selectedUrgencyLevel = 'Low';
 
+
   final TextEditingController _patientNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _sexController = TextEditingController();
@@ -176,7 +177,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         controller: controller,
         decoration: _getTextFieldDecoration(label),
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: validatePatientName, // Add validator
+        validator: validatePatientName,
       ),
     );
   }
@@ -400,20 +401,6 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
-  // Widget _buildRow(
-  //     List<String> labels, List<TextEditingController> controllers) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(1.0),
-  //     child: Row(
-  //       children: List.generate(labels.length, (index) {
-  //         return Expanded(
-  //           child: _buildTextField(labels[index], controllers[index]),
-  //         );
-  //       }),
-  //     ),
-  //   );
-  // }
-
   Widget _buildRow(
       List<String> labels, List<TextEditingController> controllers) {
     assert(labels.length == controllers.length);
@@ -445,12 +432,12 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   }
 
   Widget _buildAgeDropdown(TextEditingController controller) {
-    List<int> ageOptions = List.generate(50 - 5 + 1, (index) => index + 5);
+    List<int> ageOptions = List.generate(50 - 0 + 1, (index) => index + 0);
 
     return DropdownButtonFormField<int>(
       decoration: _getTextFieldDecoration('Age'),
       value:
-          int.tryParse(controller.text) ?? 5, // Set a default value (e.g., 13)
+          int.tryParse(controller.text) ?? 0, 
       items: ageOptions.map((age) {
         return DropdownMenuItem<int>(
           value: age,
@@ -591,51 +578,73 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       ),
     );
   }
-
-  Future<void> _sendDataToBackend() async {
-    try {
-      if (selectedFile == null) {
-        return;
-      }
-
-      final locationData = ref.watch(locationDataProvider);
-
-      if (locationData != null && locationData.coordinates != null) {
-        String? locationId = await _sendLocationData(locationData);
-
-        if (locationId != null) {
-          BloodRequestModel requestData = BloodRequestModel(
-            patientName: _patientNameController.text,
-            age: _ageController.text,
-            sex: _sexController.text,
-            hospitalName: _hospitalNameController.text,
-            location: locationId,
-            roomNo: _roomNoController.text,
-            opdNo: _opdNoController.text,
-            bloodGroupAbo: _selectedBloodGroupAbo,
-            bloodGroupRh: _selectedBloodGroupRh,
-            description: _descriptionController.text,
-            urgencyLevel: _selectedUrgencyLevel,
-            dateAndTime: _getSelectedDateTime(),
-            quantity: _quantityController.text,
-            filePath: selectedFile!.path,
-          );
-
-          Uint8List imageBytes =
-              Uint8List.fromList(await selectedFile!.readAsBytes());
-
-          await _sendBloodRequestData(requestData, imageBytes);
-        }
-      }
-    } catch (error) {
-      print("Error sending data and image to backend: $error");
+Future<void> _sendDataToBackend() async {
+  try {
+    if (selectedFile == null) {
+      return;
     }
+
+    final locationData = ref.watch(locationDataProvider);
+
+    if (locationData != null && locationData.coordinates != null) {
+      String? locationId = await _sendLocationData(locationData);
+
+      if (locationId != null) {
+        String defaultBloodGroupAbo = 'A';
+        String defaultBloodGroupRh = 'Positive (+ve)';
+        String defaultUrgencyLevel = 'Low';
+        int defaultAge = 0;
+        String defaultSex = 'Male';
+
+        String bloodGroupAbo = _selectedBloodGroupAbo != defaultBloodGroupAbo
+            ? _selectedBloodGroupAbo
+            : defaultBloodGroupAbo;
+
+        String bloodGroupRh = _selectedBloodGroupRh != defaultBloodGroupRh
+            ? _selectedBloodGroupRh
+            : defaultBloodGroupRh;
+
+        String urgencyLevel = _selectedUrgencyLevel != defaultUrgencyLevel
+            ? _selectedUrgencyLevel
+            : defaultUrgencyLevel;
+
+        int age = int.tryParse(_ageController.text) ?? defaultAge;
+        String sex = _sexController.text.isNotEmpty
+            ? _sexController.text
+            : defaultSex;
+
+        BloodRequestModel requestData = BloodRequestModel(
+          patientName: _patientNameController.text,
+          age: age.toString(),
+          sex: sex,
+          hospitalName: _hospitalNameController.text,
+          location: locationId,
+          roomNo: _roomNoController.text,
+          opdNo: _opdNoController.text,
+          bloodGroupAbo: bloodGroupAbo,
+          bloodGroupRh: bloodGroupRh,
+          description: _descriptionController.text,
+          urgencyLevel: urgencyLevel,
+          dateAndTime: _getSelectedDateTime(),
+          quantity: _quantityController.text,
+          filePath: selectedFile!.path,
+        );
+
+        Uint8List imageBytes =
+            Uint8List.fromList(await selectedFile!.readAsBytes());
+
+        await _sendBloodRequestData(requestData, imageBytes);
+      }
+    }
+  } catch (error) {
+    print("Error sending data and image to backend: $error");
   }
+}
+
 
   Future<String?> _sendLocationData(LocationData? locationData) async {
     try {
       if (locationData == null) {
-        // Handle the case where locationData is null
         return null;
       }
       LocationService service = LocationService(_apiService);
@@ -662,13 +671,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         requestData,
         imageBytes,
         ref,
-
-        // location: requestData.location, // Pass location to the service
       );
-
-      // Handle successful submission (e.g., show success message)
     } catch (e) {
-      // Handle error in sending blood request data
       print("Error sending blood request data: $e");
     }
   }
