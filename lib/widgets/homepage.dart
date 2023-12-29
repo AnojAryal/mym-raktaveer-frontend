@@ -26,7 +26,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchData(); // Your function
+      fetchData();
     });
   }
 

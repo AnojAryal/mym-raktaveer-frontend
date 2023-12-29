@@ -598,15 +598,15 @@ Future<void> _sendDataToBackend() async {
 
         String bloodGroupAbo = _selectedBloodGroupAbo != defaultBloodGroupAbo
             ? _selectedBloodGroupAbo
-            : 'Default Blood Group ABO Value';
+            : defaultBloodGroupAbo;
 
         String bloodGroupRh = _selectedBloodGroupRh != defaultBloodGroupRh
             ? _selectedBloodGroupRh
-            : 'Default Blood Group Rh Value';
+            : defaultBloodGroupRh;
 
         String urgencyLevel = _selectedUrgencyLevel != defaultUrgencyLevel
             ? _selectedUrgencyLevel
-            : 'Default Urgency Level Value';
+            : defaultUrgencyLevel;
 
         int age = int.tryParse(_ageController.text) ?? defaultAge;
         String sex = _sexController.text.isNotEmpty
