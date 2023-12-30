@@ -20,57 +20,66 @@ class BloodRequestService {
 
   String get bloodRequestUrl => '$baseUrl$bloodRequestEndpoint';
 
-  Future<void> sendDataAndImageToBackend(BloodRequestModel requestData,
-      Uint8List imageBytes, WidgetRef ref) async {
-    final userData = ref.watch(userDataProvider);
+Future<Map<String, dynamic>?> sendDataAndImageToBackend(
+  BloodRequestModel requestData, 
+  Uint8List imageBytes,
+  WidgetRef ref,
+) async {
+  final userData = ref.watch(userDataProvider);
+  final client = http.Client();
+  String? jwtToken = userData?.accessToken;
 
-    print(userData);
-    final client = http.Client();
-    String? jwtToken = userData?.accessToken;
+  try {
+    final request = http.MultipartRequest(
+      'POST',
+      Uri.parse(bloodRequestUrl),
+    );
 
-    try {
-      final request = http.MultipartRequest(
-        'POST',
-        Uri.parse(bloodRequestUrl),
-      );
+    request.headers['Authorization'] = 'Bearer $jwtToken';
+    request.headers['Accept'] = 'application/json';
 
-      request.headers['Authorization'] = 'Bearer $jwtToken';
-      request.headers['Accept'] = 'application/json';
+    request.files.add(
+      http.MultipartFile.fromBytes(
+        'document',
+        imageBytes,
+        filename: 'document.jpg',
+      ),
+    );
 
-      request.files.add(
-        http.MultipartFile.fromBytes(
-          'document',
-          imageBytes,
-          filename: 'document.jpg',
-        ),
-      );
+    final requestDataMap = requestData.toJson();
+    requestDataMap.forEach((key, value) {
+      request.fields[key] = value.toString();
+    });
 
-      // Convert requestData to Map and add each field separately
-      final requestDataMap = requestData.toJson();
-      requestDataMap.forEach((key, value) {
-        request.fields[key] = value.toString();
-      });
+    final streamedResponse = await client.send(request);
+    final response = await http.Response.fromStream(streamedResponse);
 
-      final streamedResponse = await client.send(request);
-      final response = await http.Response.fromStream(streamedResponse);
-      print(requestData.toJson());
-
-      if (response.statusCode == 201) {
-        print('Request sent successfully');
-      } else if (response.statusCode == 302) {
-        print(response.reasonPhrase);
-        final redirectUrl = response.headers['location'];
-        print('Redirecting to: $redirectUrl');
+    if (response.statusCode == 201) {
+      print('Request sent successfully');
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      if (responseData.containsKey('data') &&
+          responseData['data'].containsKey('request_detail') &&
+          responseData['data']['request_detail'].containsKey('id')) {
+        return responseData;
       } else {
-        print('Failed to send request. Status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
+        print('Invalid response structure, id not available');
       }
-    } catch (error) {
-      print('Error sending request: $error');
-    } finally {
-      client.close();
+    } else if (response.statusCode == 302) {
+      print(response.reasonPhrase);
+      final redirectUrl = response.headers['location'];
+      print('Redirecting to: $redirectUrl');
+    } else {
+      print('Failed to send request. Status code: ${response.statusCode}');
+      print('Response body: ${response.body}');
     }
+  } catch (error) {
+    print('Error sending request: $error');
+  } finally {
+    client.close();
   }
+
+  return null;
+}
 
   Future<BloodRequestModel?> fetchBloodRequestDetail(
       WidgetRef ref, int? requestId) async {

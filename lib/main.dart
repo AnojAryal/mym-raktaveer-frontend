@@ -11,6 +11,7 @@ import 'package:mym_raktaveer_frontend/screens/donor/health_condition_question.d
 import 'package:mym_raktaveer_frontend/screens/admin/admin_request_list.dart';
 import 'package:mym_raktaveer_frontend/screens/receiver/blood_request_form.dart';
 import 'package:mym_raktaveer_frontend/screens/admin/admin_dashboard.dart';
+import 'package:mym_raktaveer_frontend/screens/receiver/donor_list.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
 import 'package:mym_raktaveer_frontend/widgets/location_fetcher.dart';
 import 'package:mym_raktaveer_frontend/widgets/map.dart';
@@ -71,10 +72,11 @@ class MyApp extends StatelessWidget {
         '/profile-page': (context) => const Profile(),
         '/admin-dashboard': (context) => const AdminDashboard(),
         '/blood-request-list': (context) => const AdminRequestList(),
+        '/donor-list':(context)=> const DonorList(),
       },
     );
   }
-
+  
   Route<dynamic> _generateRoute(RouteSettings settings) {
     return MaterialPageRoute(builder: (context) => const MainPage());
   }
