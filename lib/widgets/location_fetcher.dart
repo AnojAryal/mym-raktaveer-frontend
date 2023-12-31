@@ -4,7 +4,6 @@ import 'package:flutter_background_geolocation/flutter_background_geolocation.da
     as bg;
 import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:mym_raktaveer_frontend/services/api_service.dart';
 import 'package:mym_raktaveer_frontend/services/auto_location_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,9 +33,6 @@ Future<void> fetchLocation() async {
 
     final geoLocation = await getPlaceNameFromCoordinates(latitude, longitude);
     sendLocation(cordinates, geoLocation);
-
-    print(cordinates);
-    print(geoLocation);
   });
 
   // Fired whenever the plugin changes motion-state
@@ -49,9 +45,6 @@ Future<void> fetchLocation() async {
     final geoLocation = await getPlaceNameFromCoordinates(latitude, longitude);
 
     sendLocation(cordinates, geoLocation);
-
-    print(cordinates);
-    print(geoLocation);
   });
 
   // Fired when the state of location-services changes
@@ -72,7 +65,6 @@ Future<String> getPlaceNameFromCoordinates(
       return "No place found";
     }
   } catch (e) {
-    print('Error during reverse geocoding: $e');
     return "Error during reverse geocoding";
   }
 }
@@ -80,8 +72,6 @@ Future<String> getPlaceNameFromCoordinates(
 Future<void> sendLocation(LatLng cordinates, String geoLocation) async {
   final prefs = await SharedPreferences.getInstance();
   final userDataJson = prefs.getString('userData');
-
-  print("reached to send location");
 
   if (userDataJson == null) {
     return;
@@ -95,7 +85,5 @@ Future<void> sendLocation(LatLng cordinates, String geoLocation) async {
 
   String accessToken = userData['accessToken'];
 
-  print(accessToken);
-
-  autoSendLocationData(cordinates, geoLocation, accessToken);
+  autoSendLocationData(cordinates, geoLocation, userData);
 }

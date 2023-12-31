@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/Providers/auth_state_provider.dart';
 import 'package:mym_raktaveer_frontend/screens/donor/blood_donation_related_question.dart';
 import 'package:mym_raktaveer_frontend/screens/donor/blood_type_question.dart';
+import 'package:mym_raktaveer_frontend/screens/donor/donor_available_request.dart';
 import 'package:mym_raktaveer_frontend/screens/donor/final_question_screen.dart';
 import 'package:mym_raktaveer_frontend/screens/donor/health_condition_question.dart';
 import 'package:mym_raktaveer_frontend/screens/admin/admin_request_list.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
         '/profile-page': (context) => const Profile(),
         '/admin-dashboard': (context) => const AdminDashboard(),
         '/blood-request-list': (context) => const AdminRequestList(),
+        '/donor_available_request': (context) => const DonorAvailableRequest(),
       },
     );
   }
