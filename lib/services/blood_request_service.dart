@@ -82,7 +82,9 @@ Future<Map<String, dynamic>?> sendDataAndImageToBackend(
 }
 
   Future<BloodRequestModel?> fetchBloodRequestDetail(
-      WidgetRef ref, int? requestId) async {
+    WidgetRef ref,
+    int? requestId,
+  ) async {
     final client = http.Client();
     final userData = ref.watch(userDataProvider);
     String? jwtToken = userData?.accessToken;

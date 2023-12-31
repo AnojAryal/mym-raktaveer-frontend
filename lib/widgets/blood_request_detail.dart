@@ -282,7 +282,7 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                       const Text(
                         'Patient Name:',
                         style:
-                            TextStyle(fontSize: 16, color: Color(0xFFFD1A00)),
+                            TextStyle(fontSize: 10, color: Color(0xFFFD1A00)),
                       ),
                       const SizedBox(width: 8),
                       Text(

@@ -1,25 +1,39 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../services/api_service.dart';
+import '../../services/blood_request_service.dart';
 import '../../widgets/background.dart';
 
-class DonorList extends StatefulWidget {
-  final Map<String, dynamic>? response;
+final bloodRequestProvider = Provider<BloodRequestService>(
+  (ref) {
+    return BloodRequestService(ApiService());
+  },
+);
 
+class DonorList extends ConsumerStatefulWidget {
   const DonorList({super.key, this.response});
+
+  final Map<String, dynamic>? response;
 
   @override
   _DonorListState createState() => _DonorListState();
 }
 
-class _DonorListState extends State<DonorList> {
+class _DonorListState extends ConsumerState<DonorList> {
   late Map<String, dynamic> response;
 
-  @override
-  void initState() {
-    super.initState();
-    response = widget.response ?? {};
-  }
+ @override
+void initState() {
+  super.initState();
+  response = widget.response ?? {};
+
+  // Schedule the fetchBloodRequestDetails method to be called after the first frame is built
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    fetchBloodRequestDetails(ref);
+  });
+}
 
   void updateResponseData(Map<String, dynamic> newResponseData) {
     setState(() {
@@ -27,14 +41,36 @@ class _DonorListState extends State<DonorList> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Future<void> fetchBloodRequestDetails(WidgetRef ref) async {
     // Extracting response from ModalRoute settings
     final Map<String, dynamic> responseData =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
 
-    updateResponseData(responseData);
-  
+    final int? requestId = responseData['data']?['request_detail']?['id'];
+
+    if (requestId != null) {
+      final bloodRequestService = ref.read(bloodRequestProvider);
+
+      final bloodRequest =
+          await bloodRequestService.fetchBloodRequestDetail(ref, requestId);
+
+      if (bloodRequest != null) {
+        // Update the response data with the fetched details
+        updateResponseData({
+          'data': {
+            'request_detail': {
+              'id': bloodRequest.id,
+            },
+          },
+        });
+      } else {
+        print('Failed to fetch blood request details.');
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Background(
       child: Center(
         child: Padding(
