@@ -49,7 +49,7 @@ void initState() {
     final int? requestId = responseData['data']?['request_detail']?['id'];
 
     if (requestId != null) {
-      final bloodRequestService = ref.read(bloodRequestProvider);
+      final bloodRequestService = ref.watch(bloodRequestProvider);
 
       final bloodRequest =
           await bloodRequestService.fetchBloodRequestDetail(ref, requestId);
