@@ -15,18 +15,10 @@ import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
 import 'package:mym_raktaveer_frontend/widgets/location_fetcher.dart';
 import 'package:mym_raktaveer_frontend/widgets/map.dart';
 import 'package:mym_raktaveer_frontend/widgets/profile.dart';
-import 'package:workmanager/workmanager.dart';
 import 'widgets/firebase/firebase_options.dart';
 import 'widgets/firebase/auth_page.dart';
 import 'widgets/firebase/verify_email.dart';
 import 'widgets/firebase/utils.dart';
-
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    await fetchLocation(); // Call the function to fetch location
-    return Future.value(true);
-  });
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,13 +26,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load();
-
-  Workmanager().initialize(callbackDispatcher);
-  Workmanager().registerPeriodicTask(
-    "1",
-    "fetchLocationTask",
-    frequency: const Duration(minutes: 30),
-  );
+  await fetchLocation();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
