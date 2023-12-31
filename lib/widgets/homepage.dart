@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/Providers/user_data_provider.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
+import 'package:mym_raktaveer_frontend/widgets/location_fetcher.dart';
 import 'background.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -31,6 +32,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   Future<void> fetchData() async {
+    fetchLocation();
+
     final userData = ref.watch(userDataProvider);
     final userUid = userData?.uid;
     String? apiUrl = 'api/personal-details/$userUid';

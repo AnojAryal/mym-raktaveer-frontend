@@ -39,9 +39,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   final _formKey = GlobalKey<FormState>();
 
   String _selectedBloodGroupAbo = 'A';
-  String _selectedBloodGroupRh = 'Positive (+ve)';
+  String _selectedBloodGroupRh = '+ve';
   String _selectedUrgencyLevel = 'Low';
-
 
   final TextEditingController _patientNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
@@ -436,8 +435,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
 
     return DropdownButtonFormField<int>(
       decoration: _getTextFieldDecoration('Age'),
-      value:
-          int.tryParse(controller.text) ?? 0, 
+      value: int.tryParse(controller.text) ?? 0,
       items: ageOptions.map((age) {
         return DropdownMenuItem<int>(
           value: age,
@@ -477,7 +475,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   }
 
   Widget _buildBloodGroupRhDropdown(String label) {
-    List<String> bloodGroupRh = ['Positive (+ve)', 'Negative (-ve)'];
+    List<String> bloodGroupRh = ['+ve', '-ve'];
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -578,69 +576,68 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
       ),
     );
   }
-Future<void> _sendDataToBackend() async {
-  try {
-    if (selectedFile == null) {
-      return;
-    }
 
-    final locationData = ref.watch(locationDataProvider);
-
-    if (locationData != null && locationData.coordinates != null) {
-      String? locationId = await _sendLocationData(locationData);
-
-      if (locationId != null) {
-        String defaultBloodGroupAbo = 'A';
-        String defaultBloodGroupRh = 'Positive (+ve)';
-        String defaultUrgencyLevel = 'Low';
-        int defaultAge = 0;
-        String defaultSex = 'Male';
-
-        String bloodGroupAbo = _selectedBloodGroupAbo != defaultBloodGroupAbo
-            ? _selectedBloodGroupAbo
-            : defaultBloodGroupAbo;
-
-        String bloodGroupRh = _selectedBloodGroupRh != defaultBloodGroupRh
-            ? _selectedBloodGroupRh
-            : defaultBloodGroupRh;
-
-        String urgencyLevel = _selectedUrgencyLevel != defaultUrgencyLevel
-            ? _selectedUrgencyLevel
-            : defaultUrgencyLevel;
-
-        int age = int.tryParse(_ageController.text) ?? defaultAge;
-        String sex = _sexController.text.isNotEmpty
-            ? _sexController.text
-            : defaultSex;
-
-        BloodRequestModel requestData = BloodRequestModel(
-          patientName: _patientNameController.text,
-          age: age.toString(),
-          sex: sex,
-          hospitalName: _hospitalNameController.text,
-          location: locationId,
-          roomNo: _roomNoController.text,
-          opdNo: _opdNoController.text,
-          bloodGroupAbo: bloodGroupAbo,
-          bloodGroupRh: bloodGroupRh,
-          description: _descriptionController.text,
-          urgencyLevel: urgencyLevel,
-          dateAndTime: _getSelectedDateTime(),
-          quantity: _quantityController.text,
-          filePath: selectedFile!.path,
-        );
-
-        Uint8List imageBytes =
-            Uint8List.fromList(await selectedFile!.readAsBytes());
-
-        await _sendBloodRequestData(requestData, imageBytes);
+  Future<void> _sendDataToBackend() async {
+    try {
+      if (selectedFile == null) {
+        return;
       }
-    }
-  } catch (error) {
-    print("Error sending data and image to backend: $error");
-  }
-}
 
+      final locationData = ref.watch(locationDataProvider);
+
+      if (locationData != null && locationData.coordinates != null) {
+        String? locationId = await _sendLocationData(locationData);
+
+        if (locationId != null) {
+          String defaultBloodGroupAbo = 'A';
+          String defaultBloodGroupRh = 'Positive (+ve)';
+          String defaultUrgencyLevel = 'Low';
+          int defaultAge = 0;
+          String defaultSex = 'Male';
+
+          String bloodGroupAbo = _selectedBloodGroupAbo != defaultBloodGroupAbo
+              ? _selectedBloodGroupAbo
+              : defaultBloodGroupAbo;
+
+          String bloodGroupRh = _selectedBloodGroupRh != defaultBloodGroupRh
+              ? _selectedBloodGroupRh
+              : defaultBloodGroupRh;
+
+          String urgencyLevel = _selectedUrgencyLevel != defaultUrgencyLevel
+              ? _selectedUrgencyLevel
+              : defaultUrgencyLevel;
+
+          int age = int.tryParse(_ageController.text) ?? defaultAge;
+          String sex =
+              _sexController.text.isNotEmpty ? _sexController.text : defaultSex;
+
+          BloodRequestModel requestData = BloodRequestModel(
+            patientName: _patientNameController.text,
+            age: age.toString(),
+            sex: sex,
+            hospitalName: _hospitalNameController.text,
+            location: locationId,
+            roomNo: _roomNoController.text,
+            opdNo: _opdNoController.text,
+            bloodGroupAbo: bloodGroupAbo,
+            bloodGroupRh: bloodGroupRh,
+            description: _descriptionController.text,
+            urgencyLevel: urgencyLevel,
+            dateAndTime: _getSelectedDateTime(),
+            quantity: _quantityController.text,
+            filePath: selectedFile!.path,
+          );
+
+          Uint8List imageBytes =
+              Uint8List.fromList(await selectedFile!.readAsBytes());
+
+          await _sendBloodRequestData(requestData, imageBytes);
+        }
+      }
+    } catch (error) {
+      print("Error sending data and image to backend: $error");
+    }
+  }
 
   Future<String?> _sendLocationData(LocationData? locationData) async {
     try {
