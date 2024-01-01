@@ -192,3 +192,4 @@ Future<Map<String, dynamic>?> sendDataAndImageToBackend(
     }
   }
 }
+

@@ -55,6 +55,7 @@ void initState() {
           await bloodRequestService.fetchBloodRequestDetail(ref, requestId);
 
       if (bloodRequest != null) {
+        print('The response fetched from backend: ${bloodRequest.toJson()}');
         // Update the response data with the fetched details
         updateResponseData({
           'data': {

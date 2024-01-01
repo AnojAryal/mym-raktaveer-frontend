@@ -18,6 +18,7 @@ class BloodRequestModel {
   String dateAndTime;
   String quantity;
   final UserModel? user;
+  String? status;
 
   BloodRequestModel({
     this.id,
@@ -36,6 +37,7 @@ class BloodRequestModel {
     required this.dateAndTime,
     required this.quantity,
     this.user,
+    this.status,
   });
 
   Map<String, dynamic> toJson() {
@@ -58,6 +60,7 @@ class BloodRequestModel {
       'urgency_level': urgencyLevel,
       'preferred_datetime': dateAndTime,
       'quantity': quantity,
+      'status' : status,
     };
   }
 
@@ -79,6 +82,7 @@ class BloodRequestModel {
       dateAndTime: json['preferred_datetime'] as String,
       quantity: json['quantity'].toString(),
       user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
+      status: json['status'] as String,
     );
   }
 }
