@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Providers/location_Provider.dart';
 import '../../models/blood_request_model.dart';
 import '../../services/api_service.dart';
@@ -51,6 +53,25 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   final TextEditingController _opdNoController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+  LatLng? userLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentLocation();
+  }
+
+  Future<void> _loadCurrentLocation() async {
+    final prefs = await SharedPreferences.getInstance();
+    double? latitude = prefs.getDouble('latitude');
+    double? longitude = prefs.getDouble('longitude');
+
+    if (latitude != null && longitude != null) {
+      setState(() {
+        userLocation = LatLng(latitude, longitude);
+      });
+    }
+  }
 
   Future<void> _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -246,7 +267,11 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         decoration: _getTextFieldWithIconDecoration(label, icon),
         onTap: isLocationField
             ? () {
-                Navigator.pushNamed(context, '/map-page');
+                Navigator.pushNamed(
+                  context,
+                  '/map-page',
+                  arguments: userLocation,
+                );
               }
             : null,
         autovalidateMode: AutovalidateMode.onUserInteraction,

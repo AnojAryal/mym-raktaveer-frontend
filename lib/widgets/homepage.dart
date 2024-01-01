@@ -28,12 +28,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchData();
+      fetchLocation();
     });
   }
 
   Future<void> fetchData() async {
-    fetchLocation();
-
     final userData = ref.watch(userDataProvider);
     final userUid = userData?.uid;
     String? apiUrl = 'api/personal-details/$userUid';

@@ -72,6 +72,8 @@ Future<String> getPlaceNameFromCoordinates(
 Future<void> sendLocation(LatLng cordinates, String geoLocation) async {
   final prefs = await SharedPreferences.getInstance();
   final userDataJson = prefs.getString('userData');
+  prefs.setDouble('latitude', cordinates.latitude);
+  prefs.setDouble('longitude', cordinates.longitude);
 
   if (userDataJson == null) {
     return;
@@ -82,8 +84,6 @@ Future<void> sendLocation(LatLng cordinates, String geoLocation) async {
   if (userData['uid'] == null || userData['accessToken'] == null) {
     return;
   }
-
-  String accessToken = userData['accessToken'];
 
   autoSendLocationData(cordinates, geoLocation, userData);
 }
