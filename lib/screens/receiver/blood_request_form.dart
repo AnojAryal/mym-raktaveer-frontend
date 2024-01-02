@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Providers/location_Provider.dart';
 import '../../models/blood_request_model.dart';
 import '../../services/api_service.dart';
@@ -39,7 +41,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   final _formKey = GlobalKey<FormState>();
 
   String _selectedBloodGroupAbo = 'A';
-  String _selectedBloodGroupRh = 'Positive (+ve)';
+  String _selectedBloodGroupRh = '+ve';
   String _selectedUrgencyLevel = 'Low';
 
   final TextEditingController _patientNameController = TextEditingController();
@@ -51,6 +53,25 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   final TextEditingController _opdNoController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+  LatLng? userLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentLocation();
+  }
+
+  Future<void> _loadCurrentLocation() async {
+    final prefs = await SharedPreferences.getInstance();
+    double? latitude = prefs.getDouble('latitude');
+    double? longitude = prefs.getDouble('longitude');
+
+    if (latitude != null && longitude != null) {
+      setState(() {
+        userLocation = LatLng(latitude, longitude);
+      });
+    }
+  }
 
   Future<void> _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -246,7 +267,11 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         decoration: _getTextFieldWithIconDecoration(label, icon),
         onTap: isLocationField
             ? () {
-                Navigator.pushNamed(context, '/map-page');
+                Navigator.pushNamed(
+                  context,
+                  '/map-page',
+                  arguments: userLocation,
+                );
               }
             : null,
         autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -475,7 +500,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   }
 
   Widget _buildBloodGroupRhDropdown(String label) {
-    List<String> bloodGroupRh = ['Positive (+ve)', 'Negative (-ve)'];
+    List<String> bloodGroupRh = ['+ve', '-ve'];
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -639,7 +664,6 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
             print(response);
 
             if (requestId != null) {
-
               Navigator.pushNamed(
                 context,
                 '/donor-list',

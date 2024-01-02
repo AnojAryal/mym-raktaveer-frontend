@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:mym_raktaveer_frontend/Providers/user_data_provider.dart';
@@ -161,6 +162,76 @@ Future<Map<String, dynamic>?> sendDataAndImageToBackend(
     }
   }
 
+  Future<Map<String, dynamic>> createDonationPortal(
+      int requestId, WidgetRef ref) async {
+    final client = http.Client();
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.accessToken;
+    String? firebaseUid = userData?.uid;
+
+    try {
+      final response = await client.post(
+        Uri.parse("$bloodRequestUrl/request-to-participate"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'donor_firebase_uid': firebaseUid,
+          'blood_request_id': requestId,
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        Map<String, dynamic> decodedResponse = json.decode(response.body);
+        return decodedResponse;
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+
+        throw Exception('Request failed with status: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error updating request status: $error');
+
+      throw Exception('Error updating request status: $error');
+    } finally {
+      client.close();
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchDonationPortal(
+      int portalId, WidgetRef ref) async {
+    final client = http.Client();
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.accessToken;
+
+    try {
+      final response = await client.get(
+        Uri.parse("$bloodRequestUrl/portal-detail/$portalId"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> decodedResponse = json.decode(response.body);
+        return decodedResponse;
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+        throw Exception('Request failed with status: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error updating request status: $error');
+
+      throw Exception('Error updating request status: $error');
+    } finally {
+      client.close();
+    }
+  }
+
   Future<void> updateRequestStatus(
       int requestId, String status, WidgetRef ref) async {
     final client = http.Client();
@@ -187,6 +258,53 @@ Future<Map<String, dynamic>?> sendDataAndImageToBackend(
       }
     } catch (error) {
       print('Error updating request status: $error');
+    } finally {
+      client.close();
+    }
+  }
+
+  Future<List<BloodRequestModel>?> fetchDonorAvailabeBloodRequests(
+      WidgetRef ref) async {
+    final client = http.Client();
+
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.accessToken;
+    String? uid = userData?.uid;
+
+    try {
+      final response = await client.get(
+        Uri.parse("$bloodRequestUrl/available-request/$uid"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic responseData = json.decode(response.body);
+        print(responseData);
+
+        if (responseData.containsKey('data') && responseData['data'] is List) {
+          final List<dynamic> responseDataList = responseData['data'];
+
+          return responseDataList.map<BloodRequestModel>((responseDataItem) {
+            return BloodRequestModel.fromJson(responseDataItem);
+          }).toList();
+        } else {
+          print(
+              'Unexpected response format. "data" key is not present or does not contain a List.');
+          return null;
+        }
+      } else {
+        print(
+            'Failed to fetch blood group data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        return null;
+      }
+    } catch (error) {
+      print('Error fetching blood group data: $error');
+      return null;
     } finally {
       client.close();
     }

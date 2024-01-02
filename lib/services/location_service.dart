@@ -30,4 +30,25 @@ class LocationService {
       return null;
     }
   }
+
+  Future<String?> sendUserLocationData(
+      ref, LatLng coordinates, String geoLocation) async {
+    try {
+      final response =
+          await _apiService.postData(ref, '$baseUrl/api/locations/create', {
+        'x_coordinates': coordinates.latitude,
+        'y_coordinates': coordinates.longitude,
+        'geo_location': geoLocation,
+      });
+
+      if (response != null && response['location']['id'] != null) {
+        String locationId = response['location']['id'].toString();
+        return locationId;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
 }

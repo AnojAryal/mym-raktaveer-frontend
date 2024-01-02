@@ -34,7 +34,7 @@ class _DonorListState extends ConsumerState<DonorList> {
     response = widget.response ?? {};
 
     // Start a periodic timer to check the status every 5 seconds
-    statusCheckTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    statusCheckTimer = Timer.periodic(const Duration(seconds: 15), (timer) {
       checkStatusAndHandleUpdates(ref);
     });
 
@@ -43,7 +43,6 @@ class _DonorListState extends ConsumerState<DonorList> {
       fetchBloodRequestDetails(ref);
     });
   }
-
 
   void checkStatusAndHandleUpdates(WidgetRef ref) async {
     try {
