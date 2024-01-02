@@ -6,7 +6,6 @@ import 'package:mym_raktaveer_frontend/models/blood_request_model.dart';
 import 'package:mym_raktaveer_frontend/widgets/blood_request_detail_for_donor.dart';
 import '../services/api_service.dart';
 import '../services/blood_request_service.dart';
-import 'blood_request_detail.dart';
 
 class DonorAvailableRequestList extends ConsumerStatefulWidget {
   const DonorAvailableRequestList({

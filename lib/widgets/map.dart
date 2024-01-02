@@ -4,7 +4,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/Providers/location_Provider.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MapChoice extends ConsumerStatefulWidget {
   const MapChoice({super.key});

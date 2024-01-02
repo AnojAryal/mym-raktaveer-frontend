@@ -666,7 +666,7 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
             if (requestId != null) {
               Navigator.pushNamed(
                 context,
-                '/donor-list',
+                '/approval-request',
                 arguments: response,
               );
             } else {

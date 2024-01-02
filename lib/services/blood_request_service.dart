@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:mym_raktaveer_frontend/Providers/user_data_provider.dart';
@@ -310,4 +309,3 @@ Future<Map<String, dynamic>?> sendDataAndImageToBackend(
     }
   }
 }
-

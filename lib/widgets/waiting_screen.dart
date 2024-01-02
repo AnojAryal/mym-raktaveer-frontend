@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
 import 'package:mym_raktaveer_frontend/services/blood_request_service.dart';
@@ -45,7 +43,7 @@ class _WaitingScreenState extends ConsumerState<WaitingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Status Checker'),
+        title:const Text('Status Checker'),
       ),
       body: Center(
         child: Text(status),

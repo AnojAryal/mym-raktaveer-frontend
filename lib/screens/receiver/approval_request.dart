@@ -8,16 +8,16 @@ import '../../services/api_service.dart';
 import '../../services/blood_request_service.dart';
 import '../../widgets/background.dart';
 
-class DonorList extends ConsumerStatefulWidget {
-  const DonorList({super.key, this.response});
+class ApprovalRequest extends ConsumerStatefulWidget {
+  const ApprovalRequest({super.key, this.response});
 
   final Map<String, dynamic>? response;
 
   @override
-  _DonorListState createState() => _DonorListState();
+  _ApprovalRequestState createState() => _ApprovalRequestState();
 }
 
-class _DonorListState extends ConsumerState<DonorList> {
+class _ApprovalRequestState extends ConsumerState<ApprovalRequest> {
   late Map<String, dynamic> response;
   late Timer statusCheckTimer;
   bool acceptedStatus = false;
