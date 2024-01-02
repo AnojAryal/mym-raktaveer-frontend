@@ -4,22 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/models/blood_request_model.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
-import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/services/blood_request_service.dart';
+import 'package:mym_raktaveer_frontend/widgets/background.dart';
+import 'package:mym_raktaveer_frontend/widgets/waiting_screen.dart';
 
-class BloodRequestDetail extends ConsumerStatefulWidget {
+class BloodRequestDetailForDonor extends ConsumerStatefulWidget {
   final int? requestId;
 
-  const BloodRequestDetail({
+  const BloodRequestDetailForDonor({
     super.key,
     required this.requestId,
   });
 
   @override
-  ConsumerState<BloodRequestDetail> createState() => _BloodRequestDetailState();
+  ConsumerState<BloodRequestDetailForDonor> createState() =>
+      _BloodRequestDetailState();
 }
 
-class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
+class _BloodRequestDetailState
+    extends ConsumerState<BloodRequestDetailForDonor> {
   Future<BloodRequestModel?> _fetchRequestDetails() async {
     final bloodRequestService = BloodRequestService(ApiService());
     return await bloodRequestService.fetchBloodRequestDetail(
@@ -28,23 +31,29 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
     );
   }
 
-  void _handleRequestStatus(String status) async {
+  void _handleRequestStatus() async {
     final bloodRequestService = BloodRequestService(ApiService());
 
     try {
       if (widget.requestId != null) {
-        await bloodRequestService.updateRequestStatus(
+        final Map<String, dynamic> response =
+            await bloodRequestService.createDonationPortal(
           widget.requestId!,
-          status,
           ref, // pass the WidgetRef to the method
         );
-
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Request $status successfully!'),
+          const SnackBar(
+            content: Text('Blood donation request offer sent successfully'),
+            backgroundColor: Colors.red,
           ),
         );
-        print('Error: requestId is null');
+        int id = (response["data"]["id"]);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => WaitingScreen(
+                      id: id,
+                    )));
       }
     } catch (error) {
       print('Error updating request status: $error');
@@ -282,7 +291,7 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                       const Text(
                         'Patient Name:',
                         style:
-                            TextStyle(fontSize: 10, color: Color(0xFFFD1A00)),
+                            TextStyle(fontSize: 16, color: Color(0xFFFD1A00)),
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -487,9 +496,7 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () {
-                    _handleRequestStatus('rejected');
-                  },
+                  onPressed: () {},
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
                       const Color(0xFFFD1A00),
@@ -499,8 +506,8 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                     ),
                   ),
                   child: const Text(
-                    'Reject request',
-                    style: TextStyle(color: Colors.white),
+                    'Ignore request',
+                    style: TextStyle(color: Colors.white, fontSize: 12),
                   ),
                 ),
               ),
@@ -508,19 +515,19 @@ class _BloodRequestDetailState extends ConsumerState<BloodRequestDetail> {
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    _handleRequestStatus('approved');
+                    _handleRequestStatus();
                   },
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
                       const Color(0xFF99FDD2),
                     ),
                     fixedSize: MaterialStateProperty.all<Size>(
-                      const Size(145.0, 40.0),
+                      const Size(150.0, 40.0),
                     ),
                   ),
                   child: const Text(
-                    'Accept request',
-                    style: TextStyle(color: Colors.black),
+                    'Request to donate',
+                    style: TextStyle(color: Colors.black, fontSize: 12),
                   ),
                 ),
               ),

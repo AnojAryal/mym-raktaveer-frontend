@@ -32,9 +32,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
   void checkAndSendEmailVerification() async {
     final user = ref.read(authStateProvider).asData?.value;
     if (user != null) {
-      if (!user.emailVerified) {
-        await sendVerificationEmail(user);
-      } else {
+      if (user.emailVerified) {
         ref.read(emailVerifiedProvider.notifier).state = true;
       }
     }

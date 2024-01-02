@@ -1,16 +1,19 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Providers/location_Provider.dart';
 import '../../models/blood_request_model.dart';
 import '../../services/api_service.dart';
 import '../../services/blood_request_service.dart';
 import '../../services/location_service.dart';
 import '../../widgets/background.dart';
+import '../../widgets/firebase/blood_request_validator.dart';
 
 class BloodRequestForm extends ConsumerStatefulWidget {
   const BloodRequestForm({
@@ -35,10 +38,12 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
 
   File? selectedFile;
   final ImagePicker _picker = ImagePicker();
+  final _formKey = GlobalKey<FormState>();
 
   String _selectedBloodGroupAbo = 'A';
-  String _selectedBloodGroupRh = 'Positive (+ve)';
+  String _selectedBloodGroupRh = '+ve';
   String _selectedUrgencyLevel = 'Low';
+
   final TextEditingController _patientNameController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _sexController = TextEditingController();
@@ -48,6 +53,25 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
   final TextEditingController _opdNoController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
+  LatLng? userLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCurrentLocation();
+  }
+
+  Future<void> _loadCurrentLocation() async {
+    final prefs = await SharedPreferences.getInstance();
+    double? latitude = prefs.getDouble('latitude');
+    double? longitude = prefs.getDouble('longitude');
+
+    if (latitude != null && longitude != null) {
+      setState(() {
+        userLocation = LatLng(latitude, longitude);
+      });
+    }
+  }
 
   Future<void> _selectDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -86,39 +110,51 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     }
 
     return Background(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildBackButton(ref),
-          _buildBloodRequestFormTitle(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildTextField('Patient Name', _patientNameController),
-                  _buildRow(['Age', 'Sex'], [_ageController, _sexController]),
-                  _buildTextField('Hospital Name', _hospitalNameController),
-                  _buildTextFieldWithIcon(
-                    'Location',
-                    Icons.location_on,
-                    controller: _locationController,
-                  ),
-                  _buildRow(['Room No.', 'OPD No.'],
-                      [_roomNoController, _opdNoController]),
-                  _buildBloodGroupDropdown('Blood Group (ABO)'),
-                  _buildBloodGroupRhDropdown('Blood Group (RH)'),
-                  _buildTextFieldWithFilePicker('Document Upload'),
-                  _buildTextField('Description', _descriptionController),
-                  _buildUrgencyLevelDropdown(),
-                  _buildDateTimePicker('Date and Time'),
-                  _buildNumericTextField('Quantity', _quantityController),
-                  const SizedBox(height: 16.0),
-                  _buildSignUpButton(),
-                ],
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildBackButton(ref),
+            _buildBloodRequestFormTitle(),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildTextField('Patient Name', _patientNameController,
+                        FormValidator.validatePatientName),
+                    _buildRow(['Age', 'Sex'], [_ageController, _sexController]),
+                    _buildHospitalTextField(
+                        'Hospital Name',
+                        _hospitalNameController,
+                        FormValidator.validateHospitalName),
+                    _buildTextFieldWithIcon(
+                      'Location',
+                      Icons.location_on,
+                      FormValidator.validateLocation,
+                      controller: _locationController,
+                    ),
+                    _buildRow(['Room No.', 'OPD No.'],
+                        [_roomNoController, _opdNoController]),
+                    _buildBloodGroupDropdown('Blood Group (ABO)'),
+                    _buildBloodGroupRhDropdown('Blood Group (RH)'),
+                    _buildTextFieldWithFilePicker('Document Upload'),
+                    _buildDescriptionTextField(
+                        'Description',
+                        _descriptionController,
+                        FormValidator.validateHospitalName),
+                    _buildUrgencyLevelDropdown(),
+                    _buildDateTimePicker('Date and Time'),
+                    _buildNumericTextField('Quantity', _quantityController,
+                        FormValidator.validateQuantity),
+                    const SizedBox(height: 16.0),
+                    _buildSignUpButton(),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -153,12 +189,57 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller) {
+  Widget _buildTextField(String label, TextEditingController controller,
+      String? Function(String?) validatePatientName) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validatePatientName,
+      ),
+    );
+  }
+
+  Widget _buildHospitalTextField(String label, TextEditingController controller,
+      String? Function(String?) validateHospitalName) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validateHospitalName, // Add validator
+      ),
+    );
+  }
+
+  Widget _buildNormalTextField(String label, TextEditingController controller,
+      String? Function(String?) validateRoomNumber) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validateRoomNumber,
+      ),
+    );
+  }
+
+  Widget _buildDescriptionTextField(
+      String label,
+      TextEditingController controller,
+      String? Function(String?) validateDescription) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        maxLines: 5,
+        validator: validateDescription,
       ),
     );
   }
@@ -171,19 +252,30 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
-  Widget _buildTextFieldWithIcon(String label, IconData icon,
-      {bool isLocationField = true, TextEditingController? controller}) {
+  Widget _buildTextFieldWithIcon(
+    String label,
+    IconData icon,
+    String? Function(String?) validateLocation, {
+    bool isLocationField = true,
+    TextEditingController? controller,
+  }) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         readOnly: true,
         decoration: _getTextFieldWithIconDecoration(label, icon),
         onTap: isLocationField
             ? () {
-                Navigator.pushNamed(context, '/map-page');
+                Navigator.pushNamed(
+                  context,
+                  '/map-page',
+                  arguments: userLocation,
+                );
               }
             : null,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validateLocation,
       ),
     );
   }
@@ -335,20 +427,80 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
 
   Widget _buildRow(
       List<String> labels, List<TextEditingController> controllers) {
+    assert(labels.length == controllers.length);
+
     return Padding(
-      padding: const EdgeInsets.all(1.0),
+      padding: const EdgeInsets.all(8.0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: List.generate(labels.length, (index) {
-          return Expanded(
-            child: _buildTextField(labels[index], controllers[index]),
-          );
+          if (labels[index] == 'Age') {
+            return SizedBox(
+              width: 155,
+              child: _buildAgeDropdown(controllers[index]),
+            );
+          } else if (labels[index] == 'Sex') {
+            return SizedBox(
+              width: 155,
+              child: _buildSexDropdown(controllers[index]),
+            );
+          } else {
+            return Expanded(
+              child: _buildNormalTextField(labels[index], controllers[index],
+                  FormValidator.validateRoomNumber),
+            );
+          }
         }),
       ),
     );
   }
 
+  Widget _buildAgeDropdown(TextEditingController controller) {
+    List<int> ageOptions = List.generate(50 - 0 + 1, (index) => index + 0);
+
+    return DropdownButtonFormField<int>(
+      decoration: _getTextFieldDecoration('Age'),
+      value: int.tryParse(controller.text) ?? 0,
+      items: ageOptions.map((age) {
+        return DropdownMenuItem<int>(
+          value: age,
+          child: Text(age.toString()),
+        );
+      }).toList(),
+      onChanged: (value) {
+        controller.text = value.toString();
+      },
+    );
+  }
+
+  Widget _buildSexDropdown(TextEditingController controller) {
+    List<String> sexOptions = ['Male', 'Female', 'Other'];
+
+    return DropdownButtonFormField<String>(
+      decoration: _getTextFieldDecoration('Sex'),
+      value: controller.text.isNotEmpty
+          ? controller.text
+          : 'Male', // Set default value to 'Male'
+      items: sexOptions.map((sex) {
+        return DropdownMenuItem<String>(
+          value: sex,
+          child: Text(sex),
+        );
+      }).toList(),
+      onChanged: (value) {
+        controller.text = value!;
+      },
+      validator: (value) {
+        if (value == null || !['Male', 'Female', 'Other'].contains(value)) {
+          return 'Please select a valid sex';
+        }
+        return null;
+      },
+    );
+  }
+
   Widget _buildBloodGroupRhDropdown(String label) {
-    List<String> bloodGroupRh = ['Positive (+ve)', 'Negative (-ve)'];
+    List<String> bloodGroupRh = ['+ve', '-ve'];
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -408,8 +560,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     );
   }
 
-  Widget _buildNumericTextField(
-      String label, TextEditingController controller) {
+  Widget _buildNumericTextField(String label, TextEditingController controller,
+      String? Function(String?) validateQuantity) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: TextFormField(
@@ -419,6 +571,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
           FilteringTextInputFormatter.digitsOnly,
         ],
         decoration: _getTextFieldDecoration(label),
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validateQuantity,
       ),
     );
   }
@@ -429,7 +583,9 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         padding: const EdgeInsets.all(8),
         child: ElevatedButton(
           onPressed: () {
-            _sendDataToBackend();
+            if (_formKey.currentState!.validate()) {
+              _sendDataToBackend();
+            }
           },
           style: ElevatedButton.styleFrom(
             minimumSize: const Size(150, 45),
@@ -458,18 +614,40 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         String? locationId = await _sendLocationData(locationData);
 
         if (locationId != null) {
+          String defaultBloodGroupAbo = 'A';
+          String defaultBloodGroupRh = 'Positive (+ve)';
+          String defaultUrgencyLevel = 'Low';
+          int defaultAge = 0;
+          String defaultSex = 'Male';
+
+          String bloodGroupAbo = _selectedBloodGroupAbo != defaultBloodGroupAbo
+              ? _selectedBloodGroupAbo
+              : defaultBloodGroupAbo;
+
+          String bloodGroupRh = _selectedBloodGroupRh != defaultBloodGroupRh
+              ? _selectedBloodGroupRh
+              : defaultBloodGroupRh;
+
+          String urgencyLevel = _selectedUrgencyLevel != defaultUrgencyLevel
+              ? _selectedUrgencyLevel
+              : defaultUrgencyLevel;
+
+          int age = int.tryParse(_ageController.text) ?? defaultAge;
+          String sex =
+              _sexController.text.isNotEmpty ? _sexController.text : defaultSex;
+
           BloodRequestModel requestData = BloodRequestModel(
             patientName: _patientNameController.text,
-            age: _ageController.text,
-            sex: _sexController.text,
+            age: age.toString(),
+            sex: sex,
             hospitalName: _hospitalNameController.text,
             location: locationId,
             roomNo: _roomNoController.text,
             opdNo: _opdNoController.text,
-            bloodGroupAbo: _selectedBloodGroupAbo,
-            bloodGroupRh: _selectedBloodGroupRh,
+            bloodGroupAbo: bloodGroupAbo,
+            bloodGroupRh: bloodGroupRh,
             description: _descriptionController.text,
-            urgencyLevel: _selectedUrgencyLevel,
+            urgencyLevel: urgencyLevel,
             dateAndTime: _getSelectedDateTime(),
             quantity: _quantityController.text,
             filePath: selectedFile!.path,
@@ -478,7 +656,25 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
           Uint8List imageBytes =
               Uint8List.fromList(await selectedFile!.readAsBytes());
 
-          await _sendBloodRequestData(requestData, imageBytes);
+          final response =
+              await _sendBloodRequestDataFunction(requestData, imageBytes);
+
+          if (response != null) {
+            final requestId = response['data']['request_detail']['id'];
+            print(response);
+
+            if (requestId != null) {
+              Navigator.pushNamed(
+                context,
+                '/approval-request',
+                arguments: response,
+              );
+            } else {
+              print('Request id not available in the response');
+            }
+          } else {
+            print('Response is null');
+          }
         }
       }
     } catch (error) {
@@ -486,10 +682,27 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
     }
   }
 
+  Future<Map<String, dynamic>?> _sendBloodRequestDataFunction(
+    BloodRequestModel requestData,
+    Uint8List imageBytes,
+  ) async {
+    try {
+      final response = await _bloodRequestService.sendDataAndImageToBackend(
+        requestData,
+        imageBytes,
+        ref,
+      );
+
+      return response;
+    } catch (e) {
+      print("Error sending blood request data: $e");
+      return null;
+    }
+  }
+
   Future<String?> _sendLocationData(LocationData? locationData) async {
     try {
       if (locationData == null) {
-        // Handle the case where locationData is null
         return null;
       }
       LocationService service = LocationService(_apiService);
@@ -499,31 +712,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         locationData.coordinates!,
         locationData.geoLocation!,
       );
-
-      // );
     } catch (e) {
-      // Handle error in sending location data
       return null;
-    }
-  }
-
-  Future<void> _sendBloodRequestData(
-    BloodRequestModel requestData,
-    Uint8List imageBytes,
-  ) async {
-    try {
-      _bloodRequestService.sendDataAndImageToBackend(
-        requestData,
-        imageBytes,
-        ref,
-
-        // location: requestData.location, // Pass location to the service
-      );
-
-      // Handle successful submission (e.g., show success message)
-    } catch (e) {
-      // Handle error in sending blood request data
-      print("Error sending blood request data: $e");
     }
   }
 
