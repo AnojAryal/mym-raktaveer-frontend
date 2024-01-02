@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, use_build_context_synchronously
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -656,11 +656,47 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
           Uint8List imageBytes =
               Uint8List.fromList(await selectedFile!.readAsBytes());
 
-          await _sendBloodRequestData(requestData, imageBytes);
+          final response =
+              await _sendBloodRequestDataFunction(requestData, imageBytes);
+
+          if (response != null) {
+            final requestId = response['data']['request_detail']['id'];
+            print(response);
+
+            if (requestId != null) {
+              Navigator.pushNamed(
+                context,
+                '/approval-request',
+                arguments: response,
+              );
+            } else {
+              print('Request id not available in the response');
+            }
+          } else {
+            print('Response is null');
+          }
         }
       }
     } catch (error) {
       print("Error sending data and image to backend: $error");
+    }
+  }
+
+  Future<Map<String, dynamic>?> _sendBloodRequestDataFunction(
+    BloodRequestModel requestData,
+    Uint8List imageBytes,
+  ) async {
+    try {
+      final response = await _bloodRequestService.sendDataAndImageToBackend(
+        requestData,
+        imageBytes,
+        ref,
+      );
+
+      return response;
+    } catch (e) {
+      print("Error sending blood request data: $e");
+      return null;
     }
   }
 
@@ -676,26 +712,8 @@ class _BloodRequestFormState extends ConsumerState<BloodRequestForm> {
         locationData.coordinates!,
         locationData.geoLocation!,
       );
-
-      // );
     } catch (e) {
-      // Handle error in sending location data
       return null;
-    }
-  }
-
-  Future<void> _sendBloodRequestData(
-    BloodRequestModel requestData,
-    Uint8List imageBytes,
-  ) async {
-    try {
-      _bloodRequestService.sendDataAndImageToBackend(
-        requestData,
-        imageBytes,
-        ref,
-      );
-    } catch (e) {
-      print("Error sending blood request data: $e");
     }
   }
 

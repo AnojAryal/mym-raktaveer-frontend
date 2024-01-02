@@ -4,7 +4,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:mym_raktaveer_frontend/services/user_location_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 Future<Map<String, dynamic>?> autoSendLocationData(
     LatLng coordinates, String geoLocation, userData) async {
