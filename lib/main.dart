@@ -13,9 +13,9 @@ import 'package:mym_raktaveer_frontend/screens/admin/admin_request_list.dart';
 import 'package:mym_raktaveer_frontend/screens/receiver/blood_request_form.dart';
 import 'package:mym_raktaveer_frontend/screens/admin/admin_dashboard.dart';
 import 'package:mym_raktaveer_frontend/widgets/homepage.dart';
-import 'package:mym_raktaveer_frontend/widgets/location_fetcher.dart';
 import 'package:mym_raktaveer_frontend/widgets/map.dart';
 import 'package:mym_raktaveer_frontend/widgets/profile.dart';
+import 'package:mym_raktaveer_frontend/widgets/waiting_screen.dart';
 import 'widgets/firebase/firebase_options.dart';
 import 'widgets/firebase/auth_page.dart';
 import 'widgets/firebase/verify_email.dart';
@@ -27,7 +27,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await dotenv.load();
-  await fetchLocation();
 
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {

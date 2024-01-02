@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/models/blood_request_model.dart';
+import 'package:mym_raktaveer_frontend/widgets/blood_request_detail_for_donor.dart';
 import '../services/api_service.dart';
 import '../services/blood_request_service.dart';
 import 'blood_request_detail.dart';
@@ -43,7 +44,8 @@ class _RequestListPageState extends ConsumerState<DonorAvailableRequestList> {
     return InkWell(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => BloodRequestDetail(requestId: bloodRequest.id),
+          builder: (context) =>
+              BloodRequestDetailForDonor(requestId: bloodRequest.id),
         ));
       },
       child: Padding(
