@@ -180,4 +180,51 @@ class BloodRequestService {
       client.close();
     }
   }
+
+  Future<List<BloodRequestModel>?> fetchDonorAvailabeBloodRequests(
+      WidgetRef ref) async {
+    final client = http.Client();
+
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.accessToken;
+    String? uid = userData?.uid;
+
+    try {
+      final response = await client.get(
+        Uri.parse("$bloodRequestUrl/available-request/$uid"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic responseData = json.decode(response.body);
+        print(responseData);
+
+        if (responseData.containsKey('data') && responseData['data'] is List) {
+          final List<dynamic> responseDataList = responseData['data'];
+
+          return responseDataList.map<BloodRequestModel>((responseDataItem) {
+            return BloodRequestModel.fromJson(responseDataItem);
+          }).toList();
+        } else {
+          print(
+              'Unexpected response format. "data" key is not present or does not contain a List.');
+          return null;
+        }
+      } else {
+        print(
+            'Failed to fetch blood group data. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        return null;
+      }
+    } catch (error) {
+      print('Error fetching blood group data: $error');
+      return null;
+    } finally {
+      client.close();
+    }
+  }
 }

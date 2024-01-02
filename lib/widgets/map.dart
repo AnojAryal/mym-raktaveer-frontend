@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/Providers/location_Provider.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MapChoice extends ConsumerStatefulWidget {
   const MapChoice({super.key});
@@ -38,10 +39,8 @@ class _MapChoiceState extends ConsumerState<MapChoice> {
         ref.read(locationDataProvider.notifier).state =
             LocationData(coordinates: latlng, geoLocation: selectedAddress);
       }
-    // ignore: empty_catches
-    } catch (e) {
-
-    }
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   Marker _createMarker(LatLng latlng) {
@@ -59,6 +58,9 @@ class _MapChoiceState extends ConsumerState<MapChoice> {
 
   @override
   Widget build(BuildContext context) {
+    final LatLng userLocation =
+        ModalRoute.of(context)?.settings.arguments as LatLng;
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -77,9 +79,10 @@ class _MapChoiceState extends ConsumerState<MapChoice> {
             Expanded(
               child: FlutterMap(
                 options: MapOptions(
-                  center: selectedLocation ?? LatLng(27.7172, 85.3240),
-                  zoom: 10.0,
+                  center: selectedLocation ?? userLocation,
+                  zoom: 16.0,
                   maxZoom: 18.0,
+                  minZoom: 10.0,
                   onTap: (_, latlng) => _handleTap(latlng),
                 ),
                 children: [
@@ -118,8 +121,6 @@ class _MapChoiceState extends ConsumerState<MapChoice> {
       ref.read(locationDataProvider.notifier).state = LocationData(
           coordinates: selectedLocation, geoLocation: selectedAddress);
       Navigator.of(context).pop();
-    } else {
-
-    }
+    } else {}
   }
 }
