@@ -1,16 +1,12 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_print
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/api_service.dart';
 import '../../services/blood_request_service.dart';
 import '../../widgets/background.dart';
-
-final bloodRequestProvider = Provider<BloodRequestService>(
-  (ref) {
-    return BloodRequestService(ApiService());
-  },
-);
 
 class DonorList extends ConsumerStatefulWidget {
   const DonorList({super.key, this.response});
@@ -23,17 +19,52 @@ class DonorList extends ConsumerStatefulWidget {
 
 class _DonorListState extends ConsumerState<DonorList> {
   late Map<String, dynamic> response;
+  late Timer statusCheckTimer;
+  bool acceptedStatus = false;
 
- @override
-void initState() {
-  super.initState();
-  response = widget.response ?? {};
+  final bloodRequestProvider = Provider<BloodRequestService>(
+    (ref) {
+      return BloodRequestService(ApiService());
+    },
+  );
 
-  // Schedule the fetchBloodRequestDetails method to be called after the first frame is built
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    fetchBloodRequestDetails(ref);
-  });
-}
+  @override
+  void initState() {
+    super.initState();
+    response = widget.response ?? {};
+
+    // Start a periodic timer to check the status every 5 seconds
+    statusCheckTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      checkStatusAndHandleUpdates(ref);
+    });
+
+    // Schedule the fetchBloodRequestDetails method to be called after the first frame is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchBloodRequestDetails(ref);
+    });
+  }
+
+
+  void checkStatusAndHandleUpdates(WidgetRef ref) async {
+    try {
+      final String? status = response['data']?['request_detail']?['status'];
+
+      print('Checking status: $status');
+
+      if (status != null && status == 'approved') {
+        print('Status is approved');
+        statusCheckTimer.cancel();
+        setState(() {
+          acceptedStatus = true;
+        });
+      } else {
+        // If the status is not approved, fetch blood request details again
+        fetchBloodRequestDetails(ref);
+      }
+    } catch (e) {
+      print('Error in checkStatusAndHandleUpdates: $e');
+    }
+  }
 
   void updateResponseData(Map<String, dynamic> newResponseData) {
     setState(() {
@@ -44,7 +75,7 @@ void initState() {
   Future<void> fetchBloodRequestDetails(WidgetRef ref) async {
     // Extracting response from ModalRoute settings
     final Map<String, dynamic> responseData =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
 
     final int? requestId = responseData['data']?['request_detail']?['id'];
 
@@ -61,6 +92,7 @@ void initState() {
           'data': {
             'request_detail': {
               'id': bloodRequest.id,
+              'status': bloodRequest.status,
             },
           },
         });
@@ -68,6 +100,13 @@ void initState() {
         print('Failed to fetch blood request details.');
       }
     }
+  }
+
+  @override
+  void dispose() {
+    // Dispose of the periodic timer when the widget is disposed
+    statusCheckTimer.cancel();
+    super.dispose();
   }
 
   @override
@@ -79,15 +118,26 @@ void initState() {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
-                'Attention: Blood request has been sent. Please wait until our administration verifies your request.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
+              if (!acceptedStatus)
+                const Text(
+                  'Attention: Blood request has been sent. Please wait until our administration verifies your request.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                )
+              else
+                const Text(
+                  'Your request has been approved.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
                 ),
-              ),
               const SizedBox(height: 16),
               Text(
                 'Blood Request ID: ${response['data']?['request_detail']?['id'] ?? 'N/A'}',
