@@ -2,11 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:http/http.dart';
 import 'package:mym_raktaveer_frontend/models/blood_request_model.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
-import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/services/blood_request_service.dart';
+import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/waiting_screen.dart';
 
 class BloodRequestDetailForDonor extends ConsumerStatefulWidget {
@@ -37,19 +36,24 @@ class _BloodRequestDetailState
 
     try {
       if (widget.requestId != null) {
-        final response = await bloodRequestService.createDonationPortal(
+        final Map<String, dynamic> response =
+            await bloodRequestService.createDonationPortal(
           widget.requestId!,
           ref, // pass the WidgetRef to the method
         );
-        if (response != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Blood donation request offer sent successfully'),
-              backgroundColor: Colors.red,
-            ),
-          );
-          Navigator.pushNamed(context, '/waiting-room', arguments: response);
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Blood donation request offer sent successfully'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        int id = (response["data"]["id"]);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => WaitingScreen(
+                      id: id,
+                    )));
       }
     } catch (error) {
       print('Error updating request status: $error');

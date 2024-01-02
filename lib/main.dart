@@ -58,7 +58,6 @@ class MyApp extends StatelessWidget {
         '/admin-dashboard': (context) => const AdminDashboard(),
         '/blood-request-list': (context) => const AdminRequestList(),
         '/donor_available_request': (context) => const DonorAvailableRequest(),
-        '/waiting-room': (context) => const WaitingScreen(),
       },
     );
   }

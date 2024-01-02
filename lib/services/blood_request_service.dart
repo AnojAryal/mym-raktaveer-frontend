@@ -151,7 +151,8 @@ class BloodRequestService {
     }
   }
 
-  Future<dynamic> createDonationPortal(int requestId, WidgetRef ref) async {
+  Future<Map<String, dynamic>> createDonationPortal(
+      int requestId, WidgetRef ref) async {
     final client = http.Client();
     final userData = ref.watch(userDataProvider);
     String? jwtToken = userData?.accessToken;
@@ -165,12 +166,56 @@ class BloodRequestService {
           'Authorization': 'Bearer $jwtToken',
           'Accept': 'application/json',
         },
-        body: jsonEncode(
-            {'donor_firebase_uid': firebaseUid, 'blood_request_id': requestId}),
+        body: jsonEncode({
+          'donor_firebase_uid': firebaseUid,
+          'blood_request_id': requestId,
+        }),
       );
-      return response;
+
+      if (response.statusCode == 201) {
+        Map<String, dynamic> decodedResponse = json.decode(response.body);
+        return decodedResponse;
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+
+        throw Exception('Request failed with status: ${response.statusCode}');
+      }
     } catch (error) {
-      return null;
+      print('Error updating request status: $error');
+
+      throw Exception('Error updating request status: $error');
+    } finally {
+      client.close();
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchDonationPortal(
+      int portalId, WidgetRef ref) async {
+    final client = http.Client();
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.accessToken;
+
+    try {
+      final response = await client.get(
+        Uri.parse("$bloodRequestUrl/portal-detail/$portalId"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> decodedResponse = json.decode(response.body);
+        return decodedResponse;
+      } else {
+        print('Request failed with status: ${response.statusCode}');
+        throw Exception('Request failed with status: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error updating request status: $error');
+
+      throw Exception('Error updating request status: $error');
     } finally {
       client.close();
     }
