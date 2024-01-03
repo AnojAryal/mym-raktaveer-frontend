@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:mym_raktaveer_frontend/screens/donor/donor_profile.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/blood_request_service.dart';
@@ -117,7 +118,13 @@ class _DonorListState extends ConsumerState<DonorList> {
     double screenHeight = MediaQuery.of(context).size.height;
 
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    DonorProfile(participantData: participant)));
+      },
       child: Card(
         color: Colors.white,
         shape: RoundedRectangleBorder(
