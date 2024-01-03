@@ -56,13 +56,39 @@ class _DonorListState extends ConsumerState<DonorList> {
   @override
   Widget build(BuildContext context) {
     return Background(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _participants.isEmpty
-              ? const Center(child: CircularProgressIndicator())
-              : buildListView(_participants),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                const SizedBox(width: 50.0),
+                const Text(
+                  'Donor List',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: _participants.isEmpty
+                ? const Center(child: CircularProgressIndicator())
+                : buildListView(_participants),
+          ),
+        ],
       ),
     );
   }
