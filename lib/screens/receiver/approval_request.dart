@@ -7,6 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/api_service.dart';
 import '../../services/blood_request_service.dart';
 import '../../widgets/background.dart';
+import '../donor/donor_list.dart';
+
 
 class ApprovalRequest extends ConsumerStatefulWidget {
   const ApprovalRequest({super.key, this.response});
@@ -33,7 +35,7 @@ class _ApprovalRequestState extends ConsumerState<ApprovalRequest> {
     super.initState();
     response = widget.response ?? {};
 
-    // Start a periodic timer to check the status every 5 seconds
+    // Start a periodic timer to check the status every 15 seconds
     statusCheckTimer = Timer.periodic(const Duration(seconds: 15), (timer) {
       checkStatusAndHandleUpdates(ref);
     });
@@ -44,7 +46,7 @@ class _ApprovalRequestState extends ConsumerState<ApprovalRequest> {
     });
   }
 
-  void checkStatusAndHandleUpdates(WidgetRef ref) async {
+ void checkStatusAndHandleUpdates(WidgetRef ref) async {
     try {
       final String? status = response['data']?['request_detail']?['status'];
 
@@ -56,8 +58,15 @@ class _ApprovalRequestState extends ConsumerState<ApprovalRequest> {
         setState(() {
           acceptedStatus = true;
         });
+
+        // Navigate to the donor list page here
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DonorList(response: response),
+          ),
+        );
       } else {
-        // If the status is not approved, fetch blood request details again
         fetchBloodRequestDetails(ref);
       }
     } catch (e) {
