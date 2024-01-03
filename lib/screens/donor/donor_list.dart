@@ -14,11 +14,37 @@ class DonorList extends ConsumerWidget {
     int bloodRequestId = response['data']?['request_detail']?['id'];
 
     return Background(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: buildParticipantList(bloodRequestId, ref),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                const SizedBox(width: 50.0),
+                const Text(
+                  'Donor List',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: buildParticipantList(bloodRequestId, ref),
+          ),
+        ],
       ),
     );
   }
@@ -53,15 +79,94 @@ class DonorList extends ConsumerWidget {
 
   Card buildParticipantCard(Map<String, dynamic> participant) {
     return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+      ),
+      elevation: 5,
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
         key: UniqueKey(),
-        title: Text('Name: ${participant['full_name']}'),
+        leading: const CircleAvatar(
+          radius: 20,
+          backgroundColor: Colors.white,
+          child: Icon(
+            Icons.person,
+            size: 20,
+            color: Color(0xFFFD1A00), // Adjust the icon color
+          ), // Adjust the background color of the circle
+        ),
+        title: Row(
+          children: [
+            Text(
+              '${participant['full_name']}',
+              style: const TextStyle(
+                fontWeight: FontWeight.w500,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(
+              width: 20,
+            ),
+            Text(
+              '${participant['gender']}',
+              style: const TextStyle(
+                fontStyle: FontStyle.normal,
+                color: Color.fromARGB(255, 78, 78, 78),
+              ),
+            ),
+          ],
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Age: ${participant['age']}'),
-            Text('Gender: ${participant['gender']}'),
-            Text('Email: ${participant['email']}'),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                const Text(
+                  'Age: ',
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  '${participant['age']}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color.fromARGB(255, 78, 78, 78),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(
+              height: 8,
+            ),
+
+            Row(
+              children: [
+                const Text(
+                  'Email: ',
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.w500),
+                ),
+                const SizedBox(
+                  width: 4,
+                ),
+                Text(
+                  '${participant['email']}',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color.fromARGB(255, 78, 78, 78),
+                  ),
+                ),
+              ],
+            ),
             // Add more details as needed
           ],
         ),
