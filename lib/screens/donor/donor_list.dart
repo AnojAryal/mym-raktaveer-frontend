@@ -6,12 +6,14 @@ import 'package:mym_raktaveer_frontend/services/api_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/blood_request_service.dart';
 import '../../widgets/background.dart';
-import '../../widgets/blood_request_detail.dart';
 
 class DonorList extends ConsumerStatefulWidget {
   final Map<String, dynamic> response;
 
-  const DonorList({super.key, required this.response});
+  const DonorList({
+    super.key,
+    required this.response,
+  });
 
   @override
   _DonorListState createState() => _DonorListState();
@@ -55,15 +57,16 @@ class _DonorListState extends ConsumerState<DonorList> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Background(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(screenWidth * 0.04),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 IconButton(
                   icon: const Icon(Icons.arrow_back),
@@ -71,22 +74,28 @@ class _DonorListState extends ConsumerState<DonorList> {
                     Navigator.pop(context);
                   },
                 ),
-                const SizedBox(width: 50.0),
-                const Text(
+                const SizedBox(width: 20.0),
+                Text(
                   'Donor List',
                   style: TextStyle(
-                    fontSize: 24.0,
+                    fontSize: screenWidth * 0.06,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
                   ),
                 ),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _participants.isEmpty
-                ? const Center(child: CircularProgressIndicator())
-                : buildListView(_participants),
+          SizedBox(
+            height: screenHeight * 0.02,
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(screenWidth * 0.04),
+              child: _participants.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : buildListView(_participants),
+            ),
           ),
         ],
       ),
@@ -104,37 +113,36 @@ class _DonorListState extends ConsumerState<DonorList> {
   }
 
   InkWell buildParticipantCard(Map<String, dynamic> participant) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return InkWell(
-      onTap: () {
-        // Navigator.of(context).push(MaterialPageRoute(
-        //   builder: (context) => BloodRequestDetail(requestId: bloodRequest.id),
-        // ));
-      },
+      onTap: () {},
       child: Card(
         color: Colors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
+          borderRadius: BorderRadius.circular(screenWidth * 0.02),
         ),
         elevation: 5,
-        margin: const EdgeInsets.symmetric(vertical: 8),
+        margin: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
         child: ListTile(
           key: UniqueKey(),
-          leading: const CircleAvatar(
+          leading: CircleAvatar(
             radius: 20,
-            backgroundColor: Colors.white,
-            child: Icon(
+            backgroundColor: Theme.of(context).primaryColor,
+            child: const Icon(
               Icons.person,
               size: 20,
-              color: Color(0xFFFD1A00), // Adjust the icon color
-            ), // Adjust the background color of the circle
+              color: Colors.white,
+            ),
           ),
           title: Row(
             children: [
               Text(
                 '${participant['full_name']}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  fontSize: 16,
+                  fontSize: screenWidth * 0.04,
                 ),
               ),
               const SizedBox(
@@ -144,7 +152,7 @@ class _DonorListState extends ConsumerState<DonorList> {
                 '${participant['gender']}',
                 style: const TextStyle(
                   fontStyle: FontStyle.normal,
-                  color: Color.fromARGB(255, 78, 78, 78),
+                  color: Colors.grey,
                 ),
               ),
             ],
@@ -155,51 +163,29 @@ class _DonorListState extends ConsumerState<DonorList> {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Text(
+                  Text(
                     'Age: ',
                     style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
+                      fontSize: screenWidth * 0.036,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   const SizedBox(
                     width: 4,
                   ),
                   Text(
                     '${participant['age']}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color.fromARGB(255, 78, 78, 78),
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.036,
+                      color: Colors.grey,
                     ),
                   ),
                 ],
               ),
               const SizedBox(
-                height: 8,
+                height: 16,
               ),
-
-              Row(
-                children: [
-                  const Text(
-                    'Email: ',
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Text(
-                    '${participant['email']}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Color.fromARGB(255, 78, 78, 78),
-                    ),
-                  ),
-                ],
-              ),
-              // Add more details as needed
             ],
           ),
         ),
