@@ -308,4 +308,49 @@ Future<Map<String, dynamic>?> sendDataAndImageToBackend(
       client.close();
     }
   }
+
+  Future<List<Map<String, dynamic>>?> fetchParticipateList(int requestId, WidgetRef ref) async {
+    final client = http.Client();
+
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.accessToken;
+
+    try {
+      final response = await client.get(
+        Uri.parse("$bloodRequestUrl/participate-list/$requestId"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+          'Accept': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final dynamic responseData = json.decode(response.body);
+        print(responseData);
+
+        if (responseData.containsKey('data') && responseData['data'] is List) {
+          final List<dynamic> responseDataList = responseData['data'];
+
+          return responseDataList.cast<Map<String, dynamic>>();
+        } else {
+          print(
+              'Unexpected response format. "data" key is not present or does not contain a List.');
+          return null;
+        }
+      } else {
+        print(
+            'Failed to fetch participate list. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        return null;
+      }
+    } catch (error) {
+      print('Error fetching participate list: $error');
+      return null;
+    } finally {
+      client.close();
+    }
+  }
+
+
 }
