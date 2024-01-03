@@ -20,66 +20,66 @@ class BloodRequestService {
 
   String get bloodRequestUrl => '$baseUrl$bloodRequestEndpoint';
 
-Future<Map<String, dynamic>?> sendDataAndImageToBackend(
-  BloodRequestModel requestData, 
-  Uint8List imageBytes,
-  WidgetRef ref,
-) async {
-  final userData = ref.watch(userDataProvider);
-  final client = http.Client();
-  String? jwtToken = userData?.accessToken;
+  Future<Map<String, dynamic>?> sendDataAndImageToBackend(
+    BloodRequestModel requestData,
+    Uint8List imageBytes,
+    WidgetRef ref,
+  ) async {
+    final userData = ref.watch(userDataProvider);
+    final client = http.Client();
+    String? jwtToken = userData?.accessToken;
 
-  try {
-    final request = http.MultipartRequest(
-      'POST',
-      Uri.parse(bloodRequestUrl),
-    );
+    try {
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse(bloodRequestUrl),
+      );
 
-    request.headers['Authorization'] = 'Bearer $jwtToken';
-    request.headers['Accept'] = 'application/json';
+      request.headers['Authorization'] = 'Bearer $jwtToken';
+      request.headers['Accept'] = 'application/json';
 
-    request.files.add(
-      http.MultipartFile.fromBytes(
-        'document',
-        imageBytes,
-        filename: 'document.jpg',
-      ),
-    );
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'document',
+          imageBytes,
+          filename: 'document.jpg',
+        ),
+      );
 
-    final requestDataMap = requestData.toJson();
-    requestDataMap.forEach((key, value) {
-      request.fields[key] = value.toString();
-    });
+      final requestDataMap = requestData.toJson();
+      requestDataMap.forEach((key, value) {
+        request.fields[key] = value.toString();
+      });
 
-    final streamedResponse = await client.send(request);
-    final response = await http.Response.fromStream(streamedResponse);
+      final streamedResponse = await client.send(request);
+      final response = await http.Response.fromStream(streamedResponse);
 
-    if (response.statusCode == 201) {
-      print('Request sent successfully');
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      if (responseData.containsKey('data') &&
-          responseData['data'].containsKey('request_detail') &&
-          responseData['data']['request_detail'].containsKey('id')) {
-        return responseData;
+      if (response.statusCode == 201) {
+        print('Request sent successfully');
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        if (responseData.containsKey('data') &&
+            responseData['data'].containsKey('request_detail') &&
+            responseData['data']['request_detail'].containsKey('id')) {
+          return responseData;
+        } else {
+          print('Invalid response structure, id not available');
+        }
+      } else if (response.statusCode == 302) {
+        print(response.reasonPhrase);
+        final redirectUrl = response.headers['location'];
+        print('Redirecting to: $redirectUrl');
       } else {
-        print('Invalid response structure, id not available');
+        print('Failed to send request. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
       }
-    } else if (response.statusCode == 302) {
-      print(response.reasonPhrase);
-      final redirectUrl = response.headers['location'];
-      print('Redirecting to: $redirectUrl');
-    } else {
-      print('Failed to send request. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+    } catch (error) {
+      print('Error sending request: $error');
+    } finally {
+      client.close();
     }
-  } catch (error) {
-    print('Error sending request: $error');
-  } finally {
-    client.close();
-  }
 
-  return null;
-}
+    return null;
+  }
 
   Future<BloodRequestModel?> fetchBloodRequestDetail(
     WidgetRef ref,
@@ -309,53 +309,53 @@ Future<Map<String, dynamic>?> sendDataAndImageToBackend(
     }
   }
 
-Future<List<Map<String, dynamic>>?> fetchParticipateList(int requestId, WidgetRef ref) async {
-  final client = http.Client();
+  Future<List<Map<String, dynamic>>?> fetchParticipateList(
+      int requestId, WidgetRef ref) async {
+    final client = http.Client();
 
-  final userData = ref.watch(userDataProvider);
-  String? jwtToken = userData?.accessToken;
+    final userData = ref.watch(userDataProvider);
+    String? jwtToken = userData?.accessToken;
 
-  try {
-    final response = await client.get(
-      Uri.parse("$bloodRequestUrl/participate-list/$requestId"),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $jwtToken',
-        'Accept': 'application/json',
-      },
-    );
+    try {
+      final response = await client.get(
+        Uri.parse("$bloodRequestUrl/participate-list/$requestId"),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $jwtToken',
+          'Accept': 'application/json',
+        },
+      );
 
-    if (response.statusCode == 200) {
-      print("Raw API Response: ${response.body}");
-      final dynamic responseData = json.decode(response.body);
-      print(responseData);
+      if (response.statusCode == 200) {
+        print("Raw API Response: ${response.body}");
+        final dynamic responseData = json.decode(response.body);
+        print(responseData);
 
-      if (responseData.containsKey('data')) {
-        final dynamic data = responseData['data'];
+        if (responseData.containsKey('data')) {
+          final dynamic data = responseData['data'];
 
-        if (data is List) {
-          return data.cast<Map<String, dynamic>>();
+          if (data is List) {
+            return data.cast<Map<String, dynamic>>();
+          } else {
+            print(
+                'Unexpected response format. "data" key does not contain a List.');
+            return null;
+          }
         } else {
-          print('Unexpected response format. "data" key does not contain a List.');
+          print('Unexpected response format. "data" key is not present.');
           return null;
         }
       } else {
-        print('Unexpected response format. "data" key is not present.');
+        print(
+            'Failed to fetch participate list. Status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
         return null;
       }
-    } else {
-      print('Failed to fetch participate list. Status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
+    } catch (error) {
+      print('Error fetching participate list: $error');
       return null;
+    } finally {
+      client.close();
     }
-  } catch (error) {
-    print('Error fetching participate list: $error');
-    return null;
-  } finally {
-    client.close();
   }
-}
-
-
-
 }

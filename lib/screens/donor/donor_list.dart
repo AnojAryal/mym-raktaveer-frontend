@@ -55,9 +55,16 @@ class DonorList extends ConsumerWidget {
     return Card(
       child: ListTile(
         key: UniqueKey(),
-        title: Text('Participant: ${participant['full_name']}'),
-        subtitle: Text('Email: ${participant['email']}'),
-        // Add more details as needed
+        title: Text('Name: ${participant['full_name']}'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Age: ${participant['age']}'),
+            Text('Gender: ${participant['gender']}'),
+            Text('Email: ${participant['email']}'),
+            // Add more details as needed
+          ],
+        ),
       ),
     );
   }
