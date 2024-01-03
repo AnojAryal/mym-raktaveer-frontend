@@ -10,7 +10,10 @@ import '../../widgets/background.dart';
 class DonorList extends ConsumerStatefulWidget {
   final Map<String, dynamic> response;
 
-  const DonorList({super.key, required this.response});
+  const DonorList({
+    super.key,
+    required this.response,
+  });
 
   @override
   _DonorListState createState() => _DonorListState();
@@ -24,7 +27,8 @@ class _DonorListState extends ConsumerState<DonorList> {
   void initState() {
     super.initState();
     _participants = [];
-    _timer = Timer.periodic(const Duration(seconds: 15), (Timer t) => _fetchData());
+    _timer =
+        Timer.periodic(const Duration(seconds: 15), (Timer t) => _fetchData());
   }
 
   @override
@@ -53,14 +57,47 @@ class _DonorListState extends ConsumerState<DonorList> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
     return Background(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: _participants.isEmpty
-              ? const Center(child: CircularProgressIndicator())
-              : buildListView(_participants),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.all(screenWidth * 0.04),
+            child: Row(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                const SizedBox(width: 20.0),
+                Text(
+                  'Donor List',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.06,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: screenHeight * 0.02,
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(screenWidth * 0.04),
+              child: _participants.isEmpty
+                  ? const Center(child: CircularProgressIndicator())
+                  : buildListView(_participants),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -75,19 +112,82 @@ class _DonorListState extends ConsumerState<DonorList> {
     );
   }
 
-  Card buildParticipantCard(Map<String, dynamic> participant) {
-    return Card(
-      child: ListTile(
-        key: UniqueKey(),
-        title: Text('Name: ${participant['full_name']}'),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Age: ${participant['age']}'),
-            Text('Gender: ${participant['gender']}'),
-            Text('Email: ${participant['email']}'),
-            // Add more details as needed
-          ],
+  InkWell buildParticipantCard(Map<String, dynamic> participant) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    return InkWell(
+      onTap: () {},
+      child: Card(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(screenWidth * 0.02),
+        ),
+        elevation: 5,
+        margin: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
+        child: ListTile(
+          key: UniqueKey(),
+          leading: CircleAvatar(
+            radius: 20,
+            backgroundColor: Theme.of(context).primaryColor,
+            child: const Icon(
+              Icons.person,
+              size: 20,
+              color: Colors.white,
+            ),
+          ),
+          title: Row(
+            children: [
+              Text(
+                '${participant['full_name']}',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: screenWidth * 0.04,
+                ),
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              Text(
+                '${participant['gender']}',
+                style: const TextStyle(
+                  fontStyle: FontStyle.normal,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Text(
+                    'Age: ',
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.036,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  Text(
+                    '${participant['age']}',
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.036,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 16,
+              ),
+            ],
+          ),
         ),
       ),
     );
