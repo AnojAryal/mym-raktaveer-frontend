@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter_background_geolocation/flutter_background_geolocation.dart'
     as bg;
@@ -8,43 +9,39 @@ import 'package:mym_raktaveer_frontend/services/auto_location_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> fetchLocation() async {
-  LatLng cordinates;
+  LatLng coordinates;
+  DateTime lastUpdateTime = DateTime.now().subtract(Duration(minutes: 30));
+
   // Configure Background Geolocation
   bg.BackgroundGeolocation.ready(bg.Config(
           desiredAccuracy: bg.Config.DESIRED_ACCURACY_HIGH,
-          distanceFilter: 10.0,
+          distanceFilter: 100.0, // Increased distance filter
           stopOnTerminate: false,
           startOnBoot: true,
           debug: true,
           logLevel: bg.Config.LOG_LEVEL_VERBOSE))
       .then((bg.State state) {
     if (!state.enabled) {
-      // Start the plugin if not enabled
       bg.BackgroundGeolocation.start();
     }
   });
 
   // Fired whenever a location is recorded
   bg.BackgroundGeolocation.onLocation((bg.Location location) async {
-    double latitude = location.coords.latitude;
-    double longitude = location.coords.longitude;
+    // Time check
+    if (DateTime.now().difference(lastUpdateTime).inMinutes >= 10) {
+      double latitude = location.coords.latitude;
+      double longitude = location.coords.longitude;
 
-    cordinates = LatLng(latitude, longitude);
+      coordinates = LatLng(latitude, longitude);
 
-    final geoLocation = await getPlaceNameFromCoordinates(latitude, longitude);
-    sendLocation(cordinates, geoLocation);
-  });
+      final geoLocation =
+          await getPlaceNameFromCoordinates(latitude, longitude);
+      sendLocation(coordinates, geoLocation);
 
-  // Fired whenever the plugin changes motion-state
-  bg.BackgroundGeolocation.onMotionChange((bg.Location location) async {
-    double latitude = location.coords.latitude;
-    double longitude = location.coords.longitude;
-
-    cordinates = LatLng(latitude, longitude);
-
-    final geoLocation = await getPlaceNameFromCoordinates(latitude, longitude);
-
-    sendLocation(cordinates, geoLocation);
+      // Update the last update time
+      lastUpdateTime = DateTime.now();
+    }
   });
 
   // Fired when the state of location-services changes
@@ -69,11 +66,11 @@ Future<String> getPlaceNameFromCoordinates(
   }
 }
 
-Future<void> sendLocation(LatLng cordinates, String geoLocation) async {
+Future<void> sendLocation(LatLng coordinates, String geoLocation) async {
   final prefs = await SharedPreferences.getInstance();
   final userDataJson = prefs.getString('userData');
-  prefs.setDouble('latitude', cordinates.latitude);
-  prefs.setDouble('longitude', cordinates.longitude);
+  prefs.setDouble('latitude', coordinates.latitude);
+  prefs.setDouble('longitude', coordinates.longitude);
 
   if (userDataJson == null) {
     return;
@@ -85,5 +82,5 @@ Future<void> sendLocation(LatLng cordinates, String geoLocation) async {
     return;
   }
 
-  autoSendLocationData(cordinates, geoLocation, userData);
+  autoSendLocationData(coordinates, geoLocation, userData);
 }
