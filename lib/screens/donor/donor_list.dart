@@ -1,43 +1,67 @@
+// ignore_for_file: library_private_types_in_public_api
+
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../services/blood_request_service.dart';
 import '../../widgets/background.dart';
 
-class DonorList extends ConsumerWidget {
+class DonorList extends ConsumerStatefulWidget {
   final Map<String, dynamic> response;
 
   const DonorList({super.key, required this.response});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    int bloodRequestId = response['data']?['request_detail']?['id'];
+  _DonorListState createState() => _DonorListState();
+}
 
+class _DonorListState extends ConsumerState<DonorList> {
+  late Timer _timer;
+  late List<Map<String, dynamic>> _participants;
+
+  @override
+  void initState() {
+    super.initState();
+    _participants = [];
+    _timer = Timer.periodic(const Duration(seconds: 15), (Timer t) => _fetchData());
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchData();
+  }
+
+  void _fetchData() {
+    int bloodRequestId = widget.response['data']?['request_detail']?['id'];
+    final bloodRequestService = ref.read(bloodRequestServiceProvider);
+    bloodRequestService.fetchParticipateList(bloodRequestId, ref).then((data) {
+      if (mounted) {
+        setState(() {
+          _participants = data ?? [];
+        });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Background(
       child: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: buildParticipantList(bloodRequestId, ref),
+          child: _participants.isEmpty
+              ? const Center(child: CircularProgressIndicator())
+              : buildListView(_participants),
         ),
       ),
-    );
-  }
-
-  FutureBuilder<List<Map<String, dynamic>>?> buildParticipantList(
-      int bloodRequestId, WidgetRef ref) {
-    final bloodRequestService = ref.read(bloodRequestServiceProvider);
-
-    return FutureBuilder<List<Map<String, dynamic>>?>(
-      future: bloodRequestService.fetchParticipateList(bloodRequestId, ref),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError || !snapshot.hasData) {
-          return const Center(child: Text('Failed to fetch participants'));
-        } else {
-          return buildListView(snapshot.data!);
-        }
-      },
     );
   }
 
