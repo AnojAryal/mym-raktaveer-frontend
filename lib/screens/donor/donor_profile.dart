@@ -5,6 +5,7 @@ import 'package:mym_raktaveer_frontend/widgets/profile_text.dart';
 
 import '../../services/accept_donor_request_service.dart';
 import '../../services/api_service.dart';
+import '../../widgets/chat_page.dart';
 
 class DonorProfile extends ConsumerWidget {
   final Map<String, dynamic> participantData;
@@ -14,10 +15,19 @@ class DonorProfile extends ConsumerWidget {
     required this.participantData,
   });
 
-  Future<void> _acceptRequest(WidgetRef ref) async {
+  Future<void> _acceptRequest(WidgetRef ref, BuildContext context) async {
     final AcceptDonorRequestService acceptDonorRequestService =
         AcceptDonorRequestService(ApiService(), ref);
-    await acceptDonorRequestService.acceptRequest(participantData['id']);
+
+    try {
+      await acceptDonorRequestService.acceptRequest(participantData['id']);
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ChatPage()),
+      );
+    } catch (error) {
+      print('Error accepting request: $error');
+    }
   }
 
   Future<void> _rejectRequest(WidgetRef ref) async {
@@ -308,7 +318,9 @@ class DonorProfile extends ConsumerWidget {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () => _acceptRequest(ref),
+                      onPressed: () async {
+                        await _acceptRequest(ref, context);
+                      },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                           const Color(0xFF99FDD2),
