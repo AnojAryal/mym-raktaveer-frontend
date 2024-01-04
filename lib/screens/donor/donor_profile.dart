@@ -21,9 +21,14 @@ class DonorProfile extends ConsumerWidget {
 
     try {
       await acceptDonorRequestService.acceptRequest(participantData['id']);
+      // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const ChatPage()),
+        MaterialPageRoute(
+            builder: (context) => ChatPage(
+                  receiverUserEmail: participantData['email'],
+                  receiverUserID: participantData['donor_firebase_uid'],
+                )),
       );
     } catch (error) {
       print('Error accepting request: $error');
