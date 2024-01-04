@@ -23,7 +23,7 @@ Future<Map<String, dynamic>?> sendUserLocationData(
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      print('sucess');
+      print('success');
     }
   } catch (e) {
     // Handle error, you might want to log it or display a message.
