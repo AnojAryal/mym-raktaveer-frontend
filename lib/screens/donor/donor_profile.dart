@@ -1,14 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/profile_text.dart';
 
-class DonorProfile extends StatelessWidget {
+import '../../services/accept_donor_request_service.dart';
+import '../../services/api_service.dart';
+
+class DonorProfile extends ConsumerWidget {
   final Map<String, dynamic> participantData;
 
-  const DonorProfile({super.key, required this.participantData});
+  const DonorProfile({
+    super.key,
+    required this.participantData,
+  });
+
+  Future<void> _acceptRequest(WidgetRef ref) async {
+    final AcceptDonorRequestService acceptDonorRequestService =
+        AcceptDonorRequestService(ApiService(), ref);
+    await acceptDonorRequestService.acceptRequest(participantData['id']);
+  }
+
+  Future<void> _rejectRequest(WidgetRef ref) async {
+    final AcceptDonorRequestService acceptDonorRequestService =
+        AcceptDonorRequestService(ApiService(), ref);
+    await acceptDonorRequestService.rejectRequest(participantData['id']);
+  }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Background(
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -103,10 +122,12 @@ class DonorProfile extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Gender',
-                              style: TextStyle(
-                                  fontSize: isSmallScreen ? 12 : 16,
-                                  fontWeight: FontWeight.w500)),
+                          Text(
+                            'Gender',
+                            style: TextStyle(
+                                fontSize: isSmallScreen ? 12 : 16,
+                                fontWeight: FontWeight.w500),
+                          ),
                           const SizedBox(height: 4),
                           Text(participantData['gender'] ?? "N/A",
                               style: TextStyle(
@@ -257,7 +278,7 @@ class DonorProfile extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => _rejectRequest(ref),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                           const Color(0xFFFD1A00),
@@ -287,7 +308,7 @@ class DonorProfile extends StatelessWidget {
                       ),
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () => _acceptRequest(ref),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                           const Color(0xFF99FDD2),
