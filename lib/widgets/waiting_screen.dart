@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
 import 'package:mym_raktaveer_frontend/services/blood_request_service.dart';
+import 'package:mym_raktaveer_frontend/widgets/chat_page.dart';
 
 class WaitingScreen extends ConsumerStatefulWidget {
   final int id;
@@ -29,9 +30,15 @@ class _WaitingScreenState extends ConsumerState<WaitingScreen> {
     final Map<String, dynamic> response =
         await bloodRequestService.fetchDonationPortal(widget.id, ref);
     if (response['data']['status'] == 'approved') {
-      setState(() {
-        status = 'Accepted';
-      });
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ChatPage(
+                  receiverUserEmail: response['data']['reciever_firebase_uid'],
+                  receiverUserID: response['data']['reciever_firebase_uid'],
+                )),
+      );
     } else if (response['data']['status'] == 'pending') {
       setState(() {
         status = 'Pending';
@@ -43,7 +50,7 @@ class _WaitingScreenState extends ConsumerState<WaitingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:const Text('Status Checker'),
+        title: const Text('Status Checker'),
       ),
       body: Center(
         child: Text(status),
