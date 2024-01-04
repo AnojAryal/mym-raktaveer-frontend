@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 
@@ -11,37 +10,43 @@ class DonorProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     String fullName = participantData['full_name'] ?? "N/A";
     String email = participantData['email'] ?? "N/A";
-    String mobileNumber = participantData['mobile_number'] ?? "N/A";
     String gender = participantData['gender'] ?? "N/A";
     int age = participantData['age'] ?? 0;
 
-    String? bloodGroupAbo = participantData['blood_detail']?['blood_group_abo'];
-    String? bloodGroupRh = participantData['blood_detail']?['blood_group_rh'];
+    String? bloodGroupAbo =
+        participantData['blood_details'][0]['blood_group_abo'];
+    String? bloodGroupRh =
+        participantData['blood_details'][0]['blood_group_rh'];
 
     String bloodGroup = (bloodGroupAbo != null && bloodGroupRh != null)
         ? bloodGroupAbo + bloodGroupRh
         : 'N/A';
 
     int? donationCount =
-        participantData['blood_detail']?['donation_count'] ?? 0;
+        participantData['blood_details'][0]['donation_count'] ?? 0;
     int? donatedQuantity =
-        participantData['blood_detail']?['donated_quantity'] ?? 0;
+        participantData['blood_details'][0]['donated_quantity'] ?? 0;
 
-    Map<String, dynamic>? healthCondition = participantData['health_condition'];
-    List<String> conditions = [];
+    Map<String, dynamic>? healthCondition =
+        participantData['health_conditions'][0];
+    List<dynamic> conditions = [];
     List<bool?> isCheckedList = [];
 
     if (healthCondition != null) {
       conditions = healthCondition.keys.toList();
-      isCheckedList = conditions.map((key) {
-        final value = healthCondition[key];
-        if (value is bool) {
-          return value;
-        } else if (value is String) {
-          return value.toLowerCase() == 'true';
+      isCheckedList = healthCondition.values.map((value) {
+        if (value == 1) {
+          return true;
+        } else if (value == 0) {
+          return false;
         }
         return null;
       }).toList();
+      print(isCheckedList);
+      // print(isCheckedList);
+    } else {
+      // Handle the case where healthCondition is null
+      print('Health condition data is null');
     }
 
     return Background(
@@ -67,41 +72,6 @@ class DonorProfile extends StatelessWidget {
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 100.0,
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.admin_panel_settings,
-                          color: Color(0xFFFD1A00),
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/admin-dashboard',
-                          );
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          FirebaseAuth.instance.signOut();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFD1A00),
-                          foregroundColor: Colors.white,
-                          minimumSize: const Size(50, 25),
-                        ),
-                        child: Text(
-                          'Sign Out',
-                          style: TextStyle(fontSize: isSmallScreen ? 10 : 12),
-                        ),
                       ),
                     ),
                   ],
@@ -151,7 +121,6 @@ class DonorProfile extends StatelessWidget {
                 ),
                 const SizedBox(height: 10.0),
 
-                // Phone, Age, and Gender
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
@@ -169,7 +138,7 @@ class DonorProfile extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            mobileNumber,
+                            "N/A",
                             style: TextStyle(
                               fontSize: isSmallScreen ? 12 : 16,
                               fontWeight: FontWeight.w300,
