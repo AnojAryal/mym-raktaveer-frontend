@@ -29,17 +29,23 @@ class _WaitingScreenState extends ConsumerState<WaitingScreen> {
     final bloodRequestService = BloodRequestService(ApiService());
     final Map<String, dynamic> response =
         await bloodRequestService.fetchDonationPortal(widget.id, ref);
+
+    print(response['data']);
+
     if (response['data']['status'] == 'approved') {
+      print(response['data']);
       // ignore: use_build_context_synchronously
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
             builder: (context) => ChatPage(
-                  receiverUserEmail: response['data']['reciever_firebase_uid'],
-                  receiverUserID: response['data']['reciever_firebase_uid'],
+                  receiverUserEmail: response['data']['receiver_firebase_uid'],
+                  receiverUserID: response['data']['receiver_firebase_uid'],
                 )),
       );
     } else if (response['data']['status'] == 'pending') {
+      print(response['data']);
+
       setState(() {
         status = 'Pending';
       });
