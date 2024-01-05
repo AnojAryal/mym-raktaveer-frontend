@@ -26,9 +26,9 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
+    fetchLocation();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchData();
-      fetchLocation();
     });
   }
 
