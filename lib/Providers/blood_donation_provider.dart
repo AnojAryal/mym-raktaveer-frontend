@@ -1,12 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/models/personal_detail_model.dart';
 
-
-
-final personalDetailProvider = StateNotifierProvider<PersonalDetailNotifier, PersonalDetailModel>((ref) {
+final personalDetailProvider =
+    StateNotifierProvider<PersonalDetailNotifier, PersonalDetailModel>((ref) {
   return PersonalDetailNotifier();
 });
-
 
 class PersonalDetailNotifier extends StateNotifier<PersonalDetailModel> {
   PersonalDetailNotifier() : super(PersonalDetailModel());
@@ -26,6 +24,5 @@ class PersonalDetailNotifier extends StateNotifier<PersonalDetailModel> {
 
   void updateHealthConditions(Map<String, bool> conditions) {
     state = state.copyWith(healthConditions: conditions);
-    print(state.healthConditions);
   }
 }

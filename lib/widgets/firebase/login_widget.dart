@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mym_raktaveer_frontend/Providers/blood_donation_provider.dart';
+import 'package:mym_raktaveer_frontend/Providers/persnal_detail_provider.dart';
+import 'package:mym_raktaveer_frontend/services/api_service.dart';
 import 'package:mym_raktaveer_frontend/widgets/firebase/forgot_password.dart';
 import 'package:mym_raktaveer_frontend/main.dart';
 import 'package:mym_raktaveer_frontend/services/firebase_auth_service.dart';
@@ -169,6 +172,8 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
   }
 
   Future<void> signIn() async {
+    final userTypeNotifier = ref.read(userTypeProvider.notifier);
+
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -177,11 +182,15 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
       ),
     );
     try {
-      await FirebaseAuthService.signIn(
+      UserCredential? authResult = await FirebaseAuthService.signIn(
         emailController.text.trim(),
         passwordController.text.trim(),
         ref,
       );
+
+      if (authResult?.user != null) {
+        await signupData(authResult!.user!, userTypeNotifier);
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-credential') {
         Utils.showSnackBar(
@@ -191,6 +200,20 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
       }
     } finally {
       navigatorKey.currentState!.popUntil((route) => route.isFirst);
+    }
+  }
+
+  Future<bool> signupData(User user, userTypeNotifier) async {
+    final apiUrl = '${ApiService().baseUrl}/api/users/sign-in/${user.uid}';
+
+    final response = await ApiService().getAuthData(apiUrl);
+    if (response != null) {
+      final userType = response['data']['user_details']['user_type'];
+      userTypeNotifier.setUserType(userType);
+      return true;
+    } else {
+      Utils.showSnackBar(response?['message']);
+      return false;
     }
   }
 }

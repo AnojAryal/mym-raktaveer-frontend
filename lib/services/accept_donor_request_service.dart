@@ -13,7 +13,7 @@ class AcceptDonorRequestService {
   static const String bloodRequestEndpoint =
       '/api/blood-donation-request/accept-participate-request';
 
-   Future<void> acceptRequest(int participantId) async {
+  Future<void> acceptRequest(int participantId) async {
     await _sendRequest(participantId, 'approved');
   }
 
@@ -27,7 +27,6 @@ class AcceptDonorRequestService {
       final String? accessToken = _ref.read(userDataProvider)?.accessToken;
 
       if (firebaseUid == null || accessToken == null) {
-        print('Firebase UID or access token is null');
         return;
       }
 
@@ -44,7 +43,8 @@ class AcceptDonorRequestService {
       if (response.statusCode == 200) {
         print('$status request successful for participant ID: $participantId');
       } else {
-        print('$status request failed with status code: ${response.statusCode}');
+        print(
+            '$status request failed with status code: ${response.statusCode}');
         print('Response body: ${response.body}');
       }
     } catch (e) {

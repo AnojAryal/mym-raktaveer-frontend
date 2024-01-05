@@ -13,6 +13,14 @@ class UserModel {
     required this.email,
   });
 
+  Map<String, dynamic> toJson() => {
+        'full_name': fullName,
+        'mobile_numer': mobileNumber,
+        'gender': gender,
+        'age': age,
+        'email': email,
+      };
+
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       fullName: json['full_name'] as String,

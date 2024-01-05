@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 
 class NotificationPage extends StatefulWidget {
-  const NotificationPage({super. key});
+  const NotificationPage({super.key});
 
   @override
   State<NotificationPage> createState() => _NotificationPageState();
@@ -32,9 +32,7 @@ class _NotificationPageState extends State<NotificationPage> {
             padding: const EdgeInsets.only(top: 16.0, left: 16.0),
             child: IconButton(
               icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                
-              },
+              onPressed: () {},
             ),
           ),
           const Padding(

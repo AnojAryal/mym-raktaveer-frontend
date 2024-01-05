@@ -81,9 +81,27 @@ class ApiService {
         return json.decode(response.body);
       } else {
         print('Failed to get data. Status code: ${response.statusCode}');
-        print(response.body);
         return null; // Consider a more descriptive error object or throwing an exception
       }
+    } catch (error) {
+      print('Error getting data: $error');
+      rethrow; // Rethrow to allow calling code to handle the exception
+    }
+  }
+
+  Future<Map<String, dynamic>?> getAuthData(String apiUrl) async {
+    final String fullUrl = apiUrl;
+
+    try {
+      final response = await http.get(
+        Uri.parse(fullUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+// Include the JWT token in the 'Authorization' header
+        },
+      );
+      return json.decode(response.body);
     } catch (error) {
       print('Error getting data: $error');
       rethrow; // Rethrow to allow calling code to handle the exception

@@ -1,10 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mym_raktaveer_frontend/Providers/persnal_detail_provider.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
 
+  @override
+  ConsumerState<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends ConsumerState<Profile> {
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic> responseData =
@@ -15,6 +22,7 @@ class Profile extends StatelessWidget {
     String mobileNumber = responseData['mobile_number'] ?? "N/A";
     String gender = responseData['gender'] ?? "N/A";
     int age = responseData['age'] ?? 0;
+    final userType = ref.watch(userTypeProvider);
 
     String? bloodGroupAbo = responseData['blood_detail']?['blood_group_abo'];
     String? bloodGroupRh = responseData['blood_detail']?['blood_group_rh'];
@@ -69,24 +77,26 @@ class Profile extends StatelessWidget {
                         },
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 100.0,
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.admin_panel_settings,
-                          color: Color(0xFFFD1A00),
-                          size: 30,
+                    if (userType!.userType == "admin" ||
+                        userType.userType == "super_admin")
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 100.0,
                         ),
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/admin-dashboard',
-                          );
-                        },
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.admin_panel_settings,
+                            color: Color(0xFFFD1A00),
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              '/admin-dashboard',
+                            );
+                          },
+                        ),
                       ),
-                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: ElevatedButton(

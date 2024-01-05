@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/Providers/auth_state_provider.dart';
+import 'package:mym_raktaveer_frontend/Providers/persnal_detail_provider.dart';
 import 'package:mym_raktaveer_frontend/widgets/firebase/utils.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
 import '../../main.dart';
@@ -350,6 +351,8 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
   }
 
   Future<void> signUp() async {
+    final userTypeNotifier = ref.read(userTypeProvider.notifier);
+
     final isLocalDbOperationPending =
         ref.read(isLocalDbOperationPendingProvider.notifier);
     if (!isFormValid()) return;
@@ -365,7 +368,8 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
 
       if (authResult?.user != null) {
         isLocalDbOperationPending.state = true;
-        bool dbResult = await sendUserDataToApi(authResult!.user!);
+        bool dbResult =
+            await sendUserDataToApi(authResult!.user!, userTypeNotifier);
 
         if (!dbResult) {
           await deleteUser(authResult.user!);
@@ -395,13 +399,15 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
     }
   }
 
-  Future<bool> sendUserDataToApi(User user) async {
+  Future<bool> sendUserDataToApi(User user, userTypeNotifier) async {
     final apiUrl = '${ApiService().baseUrl}/api/users/register';
     final userData = getUserData(user);
 
     final response = await ApiService().postAuthData(apiUrl, userData);
     if (response != null &&
         (response['message'] == 'User created successfully')) {
+      final userType = response['data']['user_details']['user_type'];
+      userTypeNotifier.setUserType(userType);
       return true;
     } else if (response != null &&
         (response['message'] == 'The mobile number has already been taken.')) {
