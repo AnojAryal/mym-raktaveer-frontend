@@ -1,115 +1,74 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
+import 'package:mym_raktaveer_frontend/widgets/profile_text.dart';
 
-class Profile extends StatelessWidget {
-  const Profile({super.key});
+import '../../services/accept_donor_request_service.dart';
+import '../../services/api_service.dart';
+import '../../widgets/chat_page.dart';
+
+class DonorProfile extends ConsumerWidget {
+  final Map<String, dynamic> participantData;
+
+  const DonorProfile({
+    super.key,
+    required this.participantData,
+  });
+
+  Future<void> _acceptRequest(WidgetRef ref, BuildContext context) async {
+    final AcceptDonorRequestService acceptDonorRequestService =
+        AcceptDonorRequestService(ApiService(), ref);
+
+    try {
+      await acceptDonorRequestService.acceptRequest(participantData['id']);
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ChatPage(
+                  receiverUserEmail: participantData['email'],
+                  receiverUserID: participantData['donor_firebase_uid'],
+                )),
+      );
+    } catch (error) {
+      print('Error accepting request: $error');
+    }
+  }
+
+  Future<void> _rejectRequest(WidgetRef ref) async {
+    final AcceptDonorRequestService acceptDonorRequestService =
+        AcceptDonorRequestService(ApiService(), ref);
+    await acceptDonorRequestService.rejectRequest(participantData['id']);
+  }
 
   @override
-  Widget build(BuildContext context) {
-    final Map<String, dynamic> responseData =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-
-    String fullName = responseData['full_name'] ?? "N/A";
-    String email = responseData['email'] ?? "N/A";
-    String mobileNumber = responseData['mobile_number'] ?? "N/A";
-    String gender = responseData['gender'] ?? "N/A";
-    int age = responseData['age'] ?? 0;
-
-    String? bloodGroupAbo = responseData['blood_detail']?['blood_group_abo'];
-    String? bloodGroupRh = responseData['blood_detail']?['blood_group_rh'];
-
-    String bloodGroup = (bloodGroupAbo != null && bloodGroupRh != null)
-        ? bloodGroupAbo + bloodGroupRh
-        : 'N/A';
-
-    int? donationCount = responseData['blood_detail']?['donation_count'] ?? 0;
-    int? donatedQuantity =
-        responseData['blood_detail']?['donated_quantity'] ?? 0;
-
-    Map<String, dynamic>? healthCondition = responseData['health_condition'];
-    List<String> conditions = [];
-    List<bool?> isCheckedList = [];
-
-    if (healthCondition != null) {
-      conditions = healthCondition.keys.toList();
-      isCheckedList = conditions.map((key) {
-        final value = healthCondition[key];
-        if (value is bool) {
-          return value;
-        } else if (value is String) {
-          return value.toLowerCase() == 'true';
-        }
-        return null;
-      }).toList();
-    }
-
+  Widget build(BuildContext context, WidgetRef ref) {
     return Background(
       child: LayoutBuilder(
         builder: (context, constraints) {
-          double containerWidth = constraints.maxWidth * 0.9;
           bool isSmallScreen = constraints.maxWidth < 600;
+          double containerWidth =
+              isSmallScreen ? constraints.maxWidth * 0.9 : 600;
 
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Back Button, Admin Button, and Sign Out Button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back_ios_rounded,
-                        ),
+                        icon: const Icon(Icons.arrow_back_ios_rounded),
                         onPressed: () {
                           Navigator.pop(context);
                         },
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: 100.0,
-                      ),
-                      child: IconButton(
-                        icon: const Icon(
-                          Icons.admin_panel_settings,
-                          color: Color(0xFFFD1A00),
-                          size: 30,
-                        ),
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/admin-dashboard',
-                          );
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          FirebaseAuth.instance.signOut();
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFD1A00),
-                          foregroundColor: Colors.white,
-                          minimumSize: const Size(50, 25),
-                        ),
-                        child: Text(
-                          'Sign Out',
-                          style: TextStyle(fontSize: isSmallScreen ? 10 : 12),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
-
                 const SizedBox(height: 16.0),
-
-                // Profile Picture, Name, and Email
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
@@ -125,7 +84,7 @@ class Profile extends StatelessWidget {
                             FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                fullName,
+                                participantData['full_name'] ?? "N/A",
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 14 : 16,
                                   fontWeight: FontWeight.w500,
@@ -136,7 +95,7 @@ class Profile extends StatelessWidget {
                             FittedBox(
                               fit: BoxFit.scaleDown,
                               child: Text(
-                                email,
+                                participantData['email'] ?? "N/A",
                                 style: TextStyle(
                                   fontSize: isSmallScreen ? 14 : 16,
                                   fontWeight: FontWeight.w300,
@@ -150,8 +109,6 @@ class Profile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 10.0),
-
-                // Phone, Age, and Gender
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
@@ -169,7 +126,7 @@ class Profile extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            mobileNumber,
+                            "N/A",
                             style: TextStyle(
                               fontSize: isSmallScreen ? 12 : 16,
                               fontWeight: FontWeight.w300,
@@ -180,12 +137,14 @@ class Profile extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Gender',
-                              style: TextStyle(
-                                  fontSize: isSmallScreen ? 12 : 16,
-                                  fontWeight: FontWeight.w500)),
+                          Text(
+                            'Gender',
+                            style: TextStyle(
+                                fontSize: isSmallScreen ? 12 : 16,
+                                fontWeight: FontWeight.w500),
+                          ),
                           const SizedBox(height: 4),
-                          Text(gender,
+                          Text(participantData['gender'] ?? "N/A",
                               style: TextStyle(
                                   fontSize: isSmallScreen ? 12 : 16,
                                   fontWeight: FontWeight.w300)),
@@ -203,7 +162,7 @@ class Profile extends StatelessWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '$age',
+                            '${participantData['age'] ?? 0}',
                             style: TextStyle(
                               fontSize: isSmallScreen ? 12 : 16,
                               fontWeight: FontWeight.w300,
@@ -215,8 +174,6 @@ class Profile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16.0),
-
-                // First Container with circular edges and box shadow
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Container(
@@ -238,18 +195,22 @@ class Profile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         const SizedBox(height: 8),
-                        CustomRichText(label: "Blood Group", value: bloodGroup),
+                        CustomRichText(
+                            label: "Blood Group",
+                            value: _getBloodGroup(participantData)),
                         const SizedBox(height: 8),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CustomRichText(
                                 label: "Donation Count",
-                                value: "$donationCount"),
+                                value:
+                                    "${participantData['blood_details'][0]['donation_count'] ?? 0}"),
                             const SizedBox(height: 8),
                             CustomRichText(
                               label: "Donated Quantity",
-                              value: "$donatedQuantity",
+                              value:
+                                  "${participantData['blood_details'][0]['donated_quantity'] ?? 0}",
                             ),
                           ],
                         ),
@@ -273,7 +234,12 @@ class Profile extends StatelessWidget {
                           ),
                           SizedBox(height: isSmallScreen ? 10 : 14),
                           for (int index = 0;
-                              index < conditions.length;
+                              index <
+                                  (participantData['health_conditions'][0]
+                                              ?.keys
+                                              .toList() ??
+                                          [])
+                                      .length;
                               index++)
                             Padding(
                               padding: const EdgeInsets.only(bottom: 8.0),
@@ -282,7 +248,10 @@ class Profile extends StatelessWidget {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    conditions[index],
+                                    (participantData['health_conditions'][0]
+                                            ?.keys
+                                            .toList() ??
+                                        [])[index],
                                     style: TextStyle(
                                       fontSize: isSmallScreen ? 14 : 16,
                                     ),
@@ -291,18 +260,20 @@ class Profile extends StatelessWidget {
                                     width: isSmallScreen ? 60 : 70,
                                     height: isSmallScreen ? 18 : 22,
                                     decoration: BoxDecoration(
-                                      color: isCheckedList[index] ?? false
-                                          ? const Color(0xFF99FDD2)
-                                          : Colors.red,
+                                      color: _getHealthConditionColor(
+                                          participantData['health_conditions']
+                                                  [0]
+                                              ?.values
+                                              .elementAt(index)),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     alignment: Alignment.center,
                                     child: Text(
-                                      isCheckedList[index] == true
-                                          ? 'Yes'
-                                          : isCheckedList[index] == false
-                                              ? 'No'
-                                              : 'N/A',
+                                      _getHealthConditionText(
+                                          participantData['health_conditions']
+                                                  [0]
+                                              ?.values
+                                              .elementAt(index)),
                                       style: TextStyle(
                                         fontSize: isSmallScreen ? 12 : 14,
                                         color: Colors.white,
@@ -318,6 +289,74 @@ class Profile extends StatelessWidget {
                     ),
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => _rejectRequest(ref),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xFFFD1A00),
+                        ),
+                        fixedSize: MaterialStateProperty.all<Size>(
+                          isSmallScreen
+                              ? Size(constraints.maxWidth * 0.4, 40.0)
+                              : const Size(145.0, 40.0),
+                        ),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                        elevation: MaterialStateProperty.all<double>(8.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Reject Request',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: isSmallScreen ? 14 : 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        await _acceptRequest(ref, context);
+                      },
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          const Color(0xFF99FDD2),
+                        ),
+                        fixedSize: MaterialStateProperty.all<Size>(
+                          isSmallScreen
+                              ? Size(constraints.maxWidth * 0.4, 40.0)
+                              : const Size(145.0, 40.0),
+                        ),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                        ),
+                        elevation: MaterialStateProperty.all<double>(8.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Accept Request',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: isSmallScreen ? 14 : 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
               ],
             ),
           );
@@ -325,33 +364,25 @@ class Profile extends StatelessWidget {
       ),
     );
   }
-}
 
-class CustomRichText extends StatelessWidget {
-  final String label;
-  final String value;
+  String _getBloodGroup(Map<String, dynamic> data) {
+    String? bloodGroupAbo = data['blood_details'][0]['blood_group_abo'];
+    String? bloodGroupRh = data['blood_details'][0]['blood_group_rh'];
 
-  const CustomRichText({
-    super.key,
-    required this.label,
-    required this.value,
-  });
+    return (bloodGroupAbo != null && bloodGroupRh != null)
+        ? bloodGroupAbo + bloodGroupRh
+        : 'N/A';
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return RichText(
-      text: TextSpan(
-        style: DefaultTextStyle.of(context).style,
-        children: [
-          TextSpan(
-            text: '$label: ',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          TextSpan(text: value),
-        ],
-      ),
-    );
+  Color _getHealthConditionColor(dynamic value) {
+    return value == 1 ? const Color(0xFF99FDD2) : Colors.red;
+  }
+
+  String _getHealthConditionText(dynamic value) {
+    return value == true
+        ? 'Yes'
+        : value == false
+            ? 'No'
+            : 'N/A';
   }
 }

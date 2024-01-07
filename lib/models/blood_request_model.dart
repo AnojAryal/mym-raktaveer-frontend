@@ -3,6 +3,7 @@ import 'package:mym_raktaveer_frontend/models/user_model.dart';
 
 class BloodRequestModel {
   final int? id;
+  String? status;
   String patientName;
   String age;
   String sex;
@@ -21,6 +22,7 @@ class BloodRequestModel {
 
   BloodRequestModel({
     this.id,
+    this.status,
     required this.patientName,
     required this.age,
     required this.sex,
@@ -58,6 +60,7 @@ class BloodRequestModel {
       'urgency_level': urgencyLevel,
       'preferred_datetime': dateAndTime,
       'quantity': quantity,
+      'status': status,
     };
   }
 
@@ -79,6 +82,7 @@ class BloodRequestModel {
       dateAndTime: json['preferred_datetime'] as String,
       quantity: json['quantity'].toString(),
       user: json['user'] != null ? UserModel.fromJson(json['user']) : null,
+      status: json['status'] as String,
     );
   }
 }

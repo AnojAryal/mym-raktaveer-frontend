@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mym_raktaveer_frontend/Providers/user_data_provider.dart';
 import 'package:mym_raktaveer_frontend/services/api_service.dart';
+import 'package:mym_raktaveer_frontend/widgets/location_fetcher.dart';
 import 'background.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -25,8 +26,9 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
+    fetchLocation();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      fetchData(); // Your function
+      fetchData();
     });
   }
 
@@ -289,7 +291,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        // Blood Journey icon with details
                         Expanded(
                           child: Column(
                             children: [
@@ -299,7 +300,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                             ],
                           ),
                         ),
-                        // About Us icon with details
                         Expanded(
                           child: Column(
                             children: [
@@ -309,7 +309,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                             ],
                           ),
                         ),
-                        // Feedback icon with details
                         Expanded(
                           child: Column(
                             children: [
@@ -321,17 +320,17 @@ class _HomePageState extends ConsumerState<HomePage> {
                         ),
                       ],
                     ),
-                    const SizedBox(
-                        height:
-                            16.0), // Add some space between icons and buttons
+                    const SizedBox(height: 16.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.pushNamed(
+                                context, '/donor_available_request');
+                          },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color(0xFFFD1A00),
+                            backgroundColor: const Color(0xFFFD1A00),
                             foregroundColor: Colors.white,
                             fixedSize: const Size(130.0, 40.0),
                           ),
