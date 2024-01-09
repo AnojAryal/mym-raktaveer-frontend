@@ -137,7 +137,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                         borderRadius: BorderRadius.circular(
                             5), // Same radius as the container for a perfect circle
                         child: Image.asset(
-                          'assets/images/Image2.jpg',
+                          'assets/images/Image3.jpg',
                           height: 150,
                           width: 230,
                           fit: BoxFit.cover,
@@ -235,7 +235,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       child: Image.asset(
                         'assets/images/News1.jpg',
                         height: 145,
-                        width: 250, // Set the desired width for your image
+                        width: 220, // Set the desired width for your image
                         fit: BoxFit
                             .cover, // Ensure the image covers the available spac
                       ),
@@ -265,7 +265,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     child: Center(
                       child: Image.asset(
-                        'assets/images/News2.jpg',
+                        'assets/images/News3.jpg',
                         height: 145,
                         width: 250, // Set the desired width for your image
                         fit: BoxFit
