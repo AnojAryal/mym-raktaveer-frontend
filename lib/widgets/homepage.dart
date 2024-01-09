@@ -85,20 +85,21 @@ class _HomePageState extends ConsumerState<HomePage> {
                       color: Colors.green,
                       borderRadius: BorderRadius.circular(16.0),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.article, color: Colors.white, size: 40),
-                          SizedBox(height: 8.0),
-                          Text(
-                            'Article 1',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          Image.asset(
+                            'assets/Image1.jpg', // Replace 'Image1.png' with the actual path to your image asset
+                            height: 80, // Set the desired height for your image
+                            width: 80, // Set the desired width for your image
                           ),
+                          const SizedBox(height: 8.0),
                         ],
                       ),
                     ),
                   ),
+
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.teal,
