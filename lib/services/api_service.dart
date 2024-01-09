@@ -74,7 +74,7 @@ class ApiService {
           'Authorization': 'Bearer $jwtToken',
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-// Include the JWT token in the 'Authorization' header
+        // Include the JWT token in the 'Authorization' header
         },
       );
       if (response.statusCode == 200) {
