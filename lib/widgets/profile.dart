@@ -1,10 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mym_raktaveer_frontend/Providers/user_type_provider.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 
-class Profile extends StatelessWidget {
+class Profile extends ConsumerStatefulWidget {
   const Profile({super.key});
 
+  @override
+  ConsumerState<Profile> createState() => _ProfileState();
+}
+
+class _ProfileState extends ConsumerState<Profile> {
   @override
   Widget build(BuildContext context) {
     final Map<String, dynamic> responseData =
@@ -78,6 +85,7 @@ class Profile extends StatelessWidget {
                           Icons.admin_panel_settings,
                           color: Color(0xFFFD1A00),
                           size: 30,
+
                         ),
                         onPressed: () {
                           Navigator.pushNamed(
