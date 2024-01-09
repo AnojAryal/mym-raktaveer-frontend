@@ -82,59 +82,66 @@ class _HomePageState extends ConsumerState<HomePage> {
                   // Customize each item in the carousel
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: const Center(
+                        borderRadius: BorderRadius.circular(16.0),
+                        border: Border.all(color: Colors.black)),
+                    child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.article, color: Colors.white, size: 40),
-                          SizedBox(height: 8.0),
-                          Text(
-                            'Article 1',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          Image.asset(
+                            'assets/images/Image1.jpg',
+                            height: 150,
+                            width: 250, // Set the desired width for your image
+                            fit: BoxFit
+                                .cover, // Ensure the image covers the available spac
                           ),
                         ],
                       ),
                     ),
                   ),
+
                   Container(
+                    height: 155,
+                    width:
+                        250, // Ensure both height and width are equal for a perfect circle
                     decoration: BoxDecoration(
-                      color: Colors.teal,
-                      borderRadius: BorderRadius.circular(16.0),
+                      borderRadius: BorderRadius.circular(
+                          16), // Half of the width/height for a perfect circle
+                      border: Border.all(color: Colors.black),
                     ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.photo, color: Colors.white, size: 40),
-                          SizedBox(height: 8.0),
-                          Text(
-                            'Photo Gallery',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
-                          ),
-                        ],
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            5), // Same radius as the container for a perfect circle
+                        child: Image.asset(
+                          'assets/images/Image2.jpg',
+                          height: 155,
+                          width: 230,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
+
                   Container(
+                    height: 150,
+                    width:
+                        250, // Ensure both height and width are equal for a perfect circle
                     decoration: BoxDecoration(
-                      color: Colors.deepPurple,
-                      borderRadius: BorderRadius.circular(16.0),
+                      borderRadius: BorderRadius.circular(
+                          16), // Half of the width/height for a perfect circle
+                      border: Border.all(color: Colors.black),
                     ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.video_library,
-                              color: Colors.white, size: 40),
-                          SizedBox(height: 8.0),
-                          Text(
-                            'Videos',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
-                          ),
-                        ],
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            5), // Same radius as the container for a perfect circle
+                        child: Image.asset(
+                          'assets/images/Image3.jpg',
+                          height: 150,
+                          width: 230,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
@@ -221,25 +228,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                   // Customize each item in the carousel
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.blue,
                       borderRadius: BorderRadius.circular(16.0),
+                      border: Border.all(color: Colors.black),
                     ),
-                    child: const Center(
-                      child: Text(
-                        'News 1',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'News 2',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
+                    child: Center(
+                      child: Image.asset(
+                        'assets/images/News1.jpg',
+                        height: 145,
+                        width: 220, // Set the desired width for your image
+                        fit: BoxFit
+                            .cover, // Ensure the image covers the available spac
                       ),
                     ),
                   ),
@@ -247,11 +245,31 @@ class _HomePageState extends ConsumerState<HomePage> {
                     decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(16.0),
+                      border: Border.all(color: Colors.black),
                     ),
-                    child: const Center(
-                      child: Text(
-                        'News 3',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
+                    child: Center(
+                      child: Image.asset(
+                        'assets/images/News2.jpg',
+                        height: 145,
+                        width: 250, // Set the desired width for your image
+                        fit: BoxFit
+                            .cover, // Ensure the image covers the available spac
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(16.0),
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: Center(
+                      child: Image.asset(
+                        'assets/images/News3.jpg',
+                        height: 145,
+                        width: 250, // Set the desired width for your image
+                        fit: BoxFit
+                            .cover, // Ensure the image covers the available spac
                       ),
                     ),
                   ),

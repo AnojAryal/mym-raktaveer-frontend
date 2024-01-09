@@ -125,8 +125,7 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                     child: const Text(
                       'Forgot Password?',
                       style: TextStyle(
-                        decoration: TextDecoration.underline,
-                        color: Colors.blue,
+                        color: Colors.red,
                       ),
                     ),
                     onTap: () => Navigator.of(context).push(
@@ -152,8 +151,7 @@ class _LoginWidgetState extends ConsumerState<LoginWidget> {
                             },
                           text: "Sign Up",
                           style: const TextStyle(
-                            color: Colors.blue,
-                            decoration: TextDecoration.underline,
+                            color: Colors.red,
                           ),
                         ),
                       ],
