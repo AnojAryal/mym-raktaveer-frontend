@@ -85,6 +85,7 @@ class _ProfileState extends ConsumerState<Profile> {
                           Icons.admin_panel_settings,
                           color: Color(0xFFFD1A00),
                           size: 30,
+
                         ),
                         onPressed: () {
                           Navigator.pushNamed(
