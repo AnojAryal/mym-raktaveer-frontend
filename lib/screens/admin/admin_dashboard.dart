@@ -1,9 +1,12 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
+import 'package:mym_raktaveer_frontend/widgets/admin_graph.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/request_list_page.dart';
 
 class AdminDashboard extends StatefulWidget {
-  const AdminDashboard({Key? key}) : super(key: key);
+  const AdminDashboard({super.key});
 
   @override
   _AdminDashboardState createState() => _AdminDashboardState();
@@ -38,9 +41,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                // You can add other widgets or text here if needed
-              ],
+              children: [AdminGraph()],
             ),
           ),
           const SizedBox(height: 20),
