@@ -35,18 +35,16 @@ class _AdminGraphState extends State<AdminGraph> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          child: SfCartesianChart(
-            legend: Legend(isVisible: true),
-            primaryXAxis: CategoryAxis(),
-            series: <ChartSeries>[
-              LineSeries<GraphModel, String>(
-                dataSource: _graphData,
-                xValueMapper: (GraphModel data, _) => data.users,
-                yValueMapper: (GraphModel data, _) => data.count,
-              ),
-            ],
-          ),
+        child: SfCartesianChart(
+          legend: Legend(isVisible: true),
+          primaryXAxis: CategoryAxis(),
+          series: <ChartSeries>[
+            LineSeries<GraphModel, String>(
+              dataSource: _graphData,
+              xValueMapper: (GraphModel data, _) => data.users,
+              yValueMapper: (GraphModel data, _) => data.count,
+            ),
+          ],
         ),
       ),
     );

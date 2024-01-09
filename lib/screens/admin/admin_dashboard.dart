@@ -41,7 +41,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [AdminGraph()],
+              children: [
+                SizedBox(
+                  height: 120,
+                  width: 260,
+                  child: AdminGraph(),
+                )
+              ],
             ),
           ),
           const SizedBox(height: 20),
