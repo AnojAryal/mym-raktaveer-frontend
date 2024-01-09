@@ -78,8 +78,8 @@ class _ProfileState extends ConsumerState<Profile> {
                         },
                       ),
                     ),
-                    if (userType!.userType == "admin" ||
-                        userType.userType == "super_admin")
+                    if (userType?.userType == "admin" ||
+                        userType?.userType == "super_admin")
                       Padding(
                         padding: const EdgeInsets.only(
                           left: 100.0,
