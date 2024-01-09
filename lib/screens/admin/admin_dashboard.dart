@@ -47,6 +47,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                   width: 260,
                   child: AdminGraph(),
                 )
+
               ],
             ),
           ),
