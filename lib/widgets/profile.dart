@@ -38,8 +38,6 @@ class _ProfileState extends ConsumerState<Profile> {
     List<String> conditions = [];
     List<bool?> isCheckedList = [];
 
-    final userType = ref.watch(userTypeProvider);
-
     if (healthCondition != null) {
       conditions = healthCondition.keys.toList();
       isCheckedList = conditions.map((key) {
@@ -78,26 +76,25 @@ class _ProfileState extends ConsumerState<Profile> {
                         },
                       ),
                     ),
-                    if (userType?.userType == "admin" ||
-                        userType?.userType == "super_admin")
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 100.0,
-                        ),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.admin_panel_settings,
-                            color: Color(0xFFFD1A00),
-                            size: 30,
-                          ),
-                          onPressed: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/admin-dashboard',
-                            );
-                          },
-                        ),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 100.0,
                       ),
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.admin_panel_settings,
+                          color: Color(0xFFFD1A00),
+                          size: 30,
+
+                        ),
+                        onPressed: () {
+                          Navigator.pushNamed(
+                            context,
+                            '/admin-dashboard',
+                          );
+                        },
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: ElevatedButton(

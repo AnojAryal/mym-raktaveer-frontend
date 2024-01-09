@@ -406,8 +406,6 @@ class _SignUpWidgetState extends ConsumerState<SignUpWidget> {
     final response = await ApiService().postAuthData(apiUrl, userData);
     if (response != null &&
         (response['message'] == 'User created successfully')) {
-      final userType = response['data']['user_details']['user_type'];
-      userTypeNotifier.setUserType(userType);
       return true;
     } else if (response != null &&
         (response['message'] == 'The mobile number has already been taken.')) {
