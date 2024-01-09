@@ -10,7 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> fetchLocation() async {
   LatLng coordinates;
-  DateTime lastUpdateTime = DateTime.now().subtract(Duration(minutes: 30));
+  DateTime lastUpdateTime = DateTime.now().subtract(const Duration(minutes: 30));
 
   // Configure Background Geolocation
   bg.BackgroundGeolocation.ready(bg.Config(

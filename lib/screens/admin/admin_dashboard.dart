@@ -1,28 +1,18 @@
-import 'dart:convert';
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
+import 'package:mym_raktaveer_frontend/widgets/admin_graph.dart';
 import 'package:mym_raktaveer_frontend/widgets/background.dart';
 import 'package:mym_raktaveer_frontend/widgets/request_list_page.dart';
-import 'package:http/http.dart' as http;
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
 
   @override
-  State<AdminDashboard> createState() => _AdminDashboardState();
+  _AdminDashboardState createState() => _AdminDashboardState();
 }
 
 class _AdminDashboardState extends State<AdminDashboard> {
-  Future<Map<String, dynamic>> fetchAnalyticsData() async {
-    final response = await http.get(Uri.parse(
-        'https://console.firebase.google.com/u/0/project/mym-raktaveer-90ff3/analytics/'));
-
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to load analytics data');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -49,39 +39,16 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 ),
               ],
             ),
-            child: FutureBuilder<Map<String, dynamic>>(
-              future: fetchAnalyticsData(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return _buildLoadingWidget();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  final analyticsData = snapshot.data!;
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  height: 120,
+                  width: 260,
+                  child: AdminGraph(),
+                )
 
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Text(
-                        'Total Users: ${analyticsData['totalUsers']}',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: screenWidth * 0.04, // Responsive font size
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Active Users: ${analyticsData['activeUsers']}',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: screenWidth * 0.04,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                    ],
-                  );
-                }
-              },
+              ],
             ),
           ),
           const SizedBox(height: 20),
@@ -229,21 +196,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildLoadingWidget() {
-    return const Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'Loading...',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-          ),
-        ),
-      ],
     );
   }
 }
