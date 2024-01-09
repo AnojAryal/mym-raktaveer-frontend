@@ -10,7 +10,7 @@
         android:label="mym_raktaveer_frontend"
         android:name="${applicationName}"
         tools:replace="android:label"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
