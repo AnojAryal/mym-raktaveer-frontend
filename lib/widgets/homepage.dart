@@ -1,63 +1,67 @@
-import 'dart:convert';
+// ignore_for_file: avoid_print
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mym_raktaveer_frontend/Providers/user_data_provider.dart';
+import 'package:mym_raktaveer_frontend/services/api_service.dart';
+import 'package:mym_raktaveer_frontend/widgets/location_fetcher.dart';
 import 'background.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:http/http.dart' as http;
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   final CarouselController _carouselController = CarouselController();
 
   String? bloodGroup = '';
   int? donationCount = 0;
   bool? status;
-  late final Map<String, dynamic> data;
+  late final Map<String, dynamic>? data;
 
   @override
   void initState() {
     super.initState();
-    fetchData();
+    fetchLocation();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchData();
+    });
   }
 
   Future<void> fetchData() async {
-    String? baseUrl = dotenv.env['BASE_URL'];
-    final userUID = FirebaseAuth.instance.currentUser?.uid;
-    String? apiUrl = '$baseUrl/api/personal-details/$userUID';
+    final userData = ref.watch(userDataProvider);
+    final userUid = userData?.uid;
+    String? apiUrl = 'api/personal-details/$userUid';
 
     try {
-      final response = await http.get(
-        Uri.parse(apiUrl),
-        headers: {'Content-Type': 'application/json'},
-      );
+      final apiService = ApiService(); // Instantiate the ApiService
+      final apiData = await apiService.getData(apiUrl, ref);
+      setState(() {
+        data = apiData;
+      });
 
-      if (response.statusCode == 200) {
-        setState(() {
-          data = json.decode(response.body)['data'];
-        });
-
-        String? bloodGroupAbo = data['blood_detail']?['blood_group_abo'];
-        String? bloodGroupRh = data['blood_detail']?['blood_group_rh'];
+      if (data != null) {
+        String? bloodGroupAbo =
+            apiData?['data']['blood_detail']?['blood_group_abo'];
+        String? bloodGroupRh =
+            apiData?['data']['blood_detail']?['blood_group_rh'];
 
         setState(() {
           bloodGroup = (bloodGroupAbo != null && bloodGroupRh != null)
               ? bloodGroupAbo + bloodGroupRh
               : 'N/A';
 
-          donationCount = data['blood_detail']?['donation_count'] ?? 0;
-          status = data['blood_detail']?['status'] ?? false;
+          donationCount =
+              apiData?['data']['blood_detail']?['donation_count'] ?? 0;
+          status = apiData?['data']['blood_detail']?['status'] ?? false;
         });
       } else {
-        print('Not Found: ${response.statusCode}');
-        print('Response: ${response.body}');
+        print('Not Found');
+        print('Response');
       }
     } catch (error) {
       print('Error fetching data : $error');
@@ -78,59 +82,66 @@ class _HomePageState extends State<HomePage> {
                   // Customize each item in the carousel
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: const Center(
+                        borderRadius: BorderRadius.circular(16.0),
+                        border: Border.all(color: Colors.black)),
+                    child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.article, color: Colors.white, size: 40),
-                          SizedBox(height: 8.0),
-                          Text(
-                            'Article 1',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          Image.asset(
+                            'assets/images/Image1.jpg',
+                            height: 150,
+                            width: 250, // Set the desired width for your image
+                            fit: BoxFit
+                                .cover, // Ensure the image covers the available spac
                           ),
                         ],
                       ),
                     ),
                   ),
+
                   Container(
+                    height: 155,
+                    width:
+                        250, // Ensure both height and width are equal for a perfect circle
                     decoration: BoxDecoration(
-                      color: Colors.teal,
-                      borderRadius: BorderRadius.circular(16.0),
+                      borderRadius: BorderRadius.circular(
+                          16), // Half of the width/height for a perfect circle
+                      border: Border.all(color: Colors.black),
                     ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.photo, color: Colors.white, size: 40),
-                          SizedBox(height: 8.0),
-                          Text(
-                            'Photo Gallery',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
-                          ),
-                        ],
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            5), // Same radius as the container for a perfect circle
+                        child: Image.asset(
+                          'assets/images/Image2.jpg',
+                          height: 155,
+                          width: 230,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
+
                   Container(
+                    height: 150,
+                    width:
+                        250, // Ensure both height and width are equal for a perfect circle
                     decoration: BoxDecoration(
-                      color: Colors.deepPurple,
-                      borderRadius: BorderRadius.circular(16.0),
+                      borderRadius: BorderRadius.circular(
+                          16), // Half of the width/height for a perfect circle
+                      border: Border.all(color: Colors.black),
                     ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.video_library,
-                              color: Colors.white, size: 40),
-                          SizedBox(height: 8.0),
-                          Text(
-                            'Videos',
-                            style: TextStyle(fontSize: 20, color: Colors.white),
-                          ),
-                        ],
+                    child: Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            5), // Same radius as the container for a perfect circle
+                        child: Image.asset(
+                          'assets/images/Image3.jpg',
+                          height: 150,
+                          width: 230,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
@@ -217,25 +228,16 @@ class _HomePageState extends State<HomePage> {
                   // Customize each item in the carousel
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.blue,
                       borderRadius: BorderRadius.circular(16.0),
+                      border: Border.all(color: Colors.black),
                     ),
-                    child: const Center(
-                      child: Text(
-                        'News 1',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.orange,
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'News 2',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
+                    child: Center(
+                      child: Image.asset(
+                        'assets/images/News1.jpg',
+                        height: 145,
+                        width: 220, // Set the desired width for your image
+                        fit: BoxFit
+                            .cover, // Ensure the image covers the available spac
                       ),
                     ),
                   ),
@@ -243,11 +245,31 @@ class _HomePageState extends State<HomePage> {
                     decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(16.0),
+                      border: Border.all(color: Colors.black),
                     ),
-                    child: const Center(
-                      child: Text(
-                        'News 3',
-                        style: TextStyle(fontSize: 20, color: Colors.white),
+                    child: Center(
+                      child: Image.asset(
+                        'assets/images/News2.jpg',
+                        height: 145,
+                        width: 250, // Set the desired width for your image
+                        fit: BoxFit
+                            .cover, // Ensure the image covers the available spac
+                      ),
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(16.0),
+                      border: Border.all(color: Colors.black),
+                    ),
+                    child: Center(
+                      child: Image.asset(
+                        'assets/images/News3.jpg',
+                        height: 145,
+                        width: 250, // Set the desired width for your image
+                        fit: BoxFit
+                            .cover, // Ensure the image covers the available spac
                       ),
                     ),
                   ),
@@ -287,7 +309,6 @@ class _HomePageState extends State<HomePage> {
                     const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        // Blood Journey icon with details
                         Expanded(
                           child: Column(
                             children: [
@@ -297,7 +318,6 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
-                        // About Us icon with details
                         Expanded(
                           child: Column(
                             children: [
@@ -307,7 +327,6 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                         ),
-                        // Feedback icon with details
                         Expanded(
                           child: Column(
                             children: [
@@ -319,20 +338,18 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                    const SizedBox(
-                        height:
-                            16.0), // Add some space between icons and buttons
+                    const SizedBox(height: 16.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            // Handle button tap
+                            Navigator.pushNamed(
+                                context, '/donor_available_request');
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color(0xFFFD1A00), // Background color
-                            foregroundColor: Colors.white, // Text color
+                            backgroundColor: const Color(0xFFFD1A00),
+                            foregroundColor: Colors.white,
                             fixedSize: const Size(130.0, 40.0),
                           ),
                           child: const Text('Donate Now'),
@@ -390,7 +407,7 @@ class _HomePageState extends State<HomePage> {
                             Navigator.pushNamed(
                               context,
                               '/profile-page',
-                              arguments: data,
+                              arguments: data?['data'],
                             );
                           },
                         ),
